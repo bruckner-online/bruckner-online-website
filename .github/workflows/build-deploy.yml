@@ -70,20 +70,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Install Saxon, ant
         run: |
           sudo apt-get update && sudo apt-get install openjdk-17-jre-headless ant -y --no-install-recommends
           ./src/scripts/shellscripts/dl_saxon.sh
+
       - name: Install Ant-Contrib
         run: |
           wget https://repo1.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar
           mv ant-contrib-1.0b3.jar /usr/share/ant/lib
+
       - name: Fetch Edition Data
         run: |
           ./src/scripts/shellscripts/fetch_data.sh
+
       - name: Build the site
         run: |
           ant -f ./src/scripts/ant/build.xml
+
       - name: Ensure astro build artefacts folder exists
         run: mkdir -p node_modules/.astro
 
@@ -92,7 +97,7 @@ jobs:
         with:
           path: node_modules/.astro/
           key: ${{ runner.os }}-astro-20.x-${{ github.run_id }}
-          restore-keys: ${{ runner.os }}-astro-20.x
+          restore-keys: ${{ runner.os }}-astro-22.x
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -151,7 +156,7 @@ jobs:
   deploy:
     name: Deploy docker image
     needs: [env, vars, build]
-    uses: acdh-oeaw/gl-autodevops-minimal-port/.github/workflows/deploy.yml@main
+    uses: bruckner-online/gl-autodevops-minimal-port/.github/workflows/deploy.yml@main
     secrets: inherit
     with:
       environment: "${{ needs.env.outputs.environment }}"
