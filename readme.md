@@ -7,7 +7,7 @@ website for the "bruckner online" project.
 prerequisites:
 
 - [node.js 24.x](https://nodejs.org/en/download)
-- [pnpm 9.x](https://pnpm.io/installation)
+- [pnpm 10.x](https://pnpm.io/installation)
 
 > [!TIP]
 >
