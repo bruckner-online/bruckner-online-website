@@ -1,0 +1,23 @@
+name: Build bruckner-kopisten site
+
+runs:
+  using: composite
+
+  steps:
+    - name: Install saxon and ant
+      run: |
+        sudo apt-get update && sudo apt-get install openjdk-17-jre-headless ant -y --no-install-recommends
+        ./src/scripts/shellscripts/download-saxon.sh
+
+    - name: Install ant-contrib
+      run: |
+        wget https://repo1.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar
+        mv ant-contrib-1.0b3.jar /usr/share/ant/lib
+
+    - name: Fetch data
+      run: |
+        ./src/scripts/shellscripts/fetch-data.sh
+
+    - name: Build site
+      run: |
+        ant -f ./src/scripts/ant/build.xml

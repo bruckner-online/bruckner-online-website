@@ -34,11 +34,11 @@ dist/
 /playwright-report/
 /test-results/
 
-#saxon
+# saxon
 saxon/
+download*
 
-#kopisten-edition
+# kopisten-edition
 src/edition/
 src/data/editions/
 src/data/meta/
-
