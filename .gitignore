@@ -36,7 +36,7 @@ dist/
 
 # saxon
 saxon/
-download*
+/download*
 
 # kopisten-edition
 src/edition/

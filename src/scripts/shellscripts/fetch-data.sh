@@ -1,6 +1,6 @@
 # bin/bash
 
-echo "📥 fetching bruckner-kopisten data..."
+echo "📦 Fetching bruckner-kopisten data..."
 
 rm -rf src/data/editions && mkdir src/data/editions
 rm -rf src/data/meta && mkdir src/data/meta

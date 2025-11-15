@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"type": "module",
 	"engines": {
-		"node": "22.x",
+		"node": "24.x",
 		"pnpm": "9.x"
 	},
 	"packageManager": "pnpm@9.14.4",
@@ -109,7 +109,7 @@
 		"@types/leaflet.markercluster": "^1.5.5",
 		"@types/mdast": "^4.0.4",
 		"@types/mdx": "^2.0.13",
-		"@types/node": "^22.10.1",
+		"@types/node": "^24.10.1",
 		"@types/nodemailer": "^6.4.17",
 		"@types/pdfkit": "^0.13.9",
 		"@types/react": "^18.3.12",
@@ -124,7 +124,7 @@
 		"eslint": "^9.16.0",
 		"eslint-config-flat-gitignore": "^0.3.0",
 		"eslint-plugin-tailwindcss": "^3.18.0",
-		"globals": "^15.13.0",
+		"globals": "^16.5.0",
 		"is-ci": "^3.0.1",
 		"lint-staged": "^15.5.1",
 		"mdast-util-mdx-jsx": "^3.2.0",
