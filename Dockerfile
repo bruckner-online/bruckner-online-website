@@ -4,7 +4,7 @@
 # @see https://sharp.pixelplumbing.com/install#linux-memory-allocator
 
 # base
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
 RUN corepack enable
 
@@ -32,6 +32,7 @@ ARG PUBLIC_APP_BASE_PATH
 ARG PUBLIC_APP_BASE_URL
 ARG PUBLIC_BOTS
 ARG PUBLIC_GOOGLE_SITE_VERIFICATION
+ARG PUBLIC_IMPRINT_SERVICE_BASE_URL
 ARG PUBLIC_KEYSTATIC_GITHUB_APP_SLUG
 ARG PUBLIC_KEYSTATIC_GITHUB_REPO_NAME
 ARG PUBLIC_KEYSTATIC_GITHUB_REPO_OWNER
@@ -61,7 +62,7 @@ RUN --mount=type=secret,id=KEYSTATIC_GITHUB_CLIENT_ID,uid=1000 \
 		pnpm run build
 
 # serve
-FROM node:22-alpine AS serve
+FROM node:24-alpine AS serve
 
 RUN mkdir /app && chown -R node:node /app
 WORKDIR /app

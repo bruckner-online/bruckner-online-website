@@ -24,7 +24,7 @@ const { title } = Astro.props;
 	<PageSection fullWidth={true}>
 		<PageTitle class="sr-only">{title}</PageTitle>
 		<div class="prose mx-auto grid w-full max-w-[80%] gap-y-8">
-			<KopistenLanguageToggle languages={["de", "en"]} client:only="solid" />
+			<KopistenLanguageToggle languages={["de", "en"]} client:only="solid-js" />
 			<slot />
 		</div>
 	</PageSection>

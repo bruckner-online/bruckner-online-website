@@ -31,7 +31,7 @@ const { html, title } = Astro.props;
 
 <PageLayout locale={locale} title={title}>
 	<KopistenDetailLayout title={""}>
-		<DataTable labels={labels} client:only="solid">
+		<DataTable labels={labels} client:only="solid-js">
 			<Fragment set:html={html} />
 		</DataTable>
 	</KopistenDetailLayout>

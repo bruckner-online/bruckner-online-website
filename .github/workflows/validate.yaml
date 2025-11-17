@@ -21,33 +21,34 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        node-version: [22.x]
-        os: [ubuntu-latest]
+        node-version: [24.x]
+        os: [ubuntu-24.04]
+
+    env:
+      EMAIL_CONTACT_ADDRESS: "acdh@example.com"
+      EMAIL_SMTP_PORT: "1025"
+      EMAIL_SMTP_SERVER: "localhost"
+      PUBLIC_APP_BASE_URL: "http://localhost:3000"
+      PUBLIC_IMPRINT_SERVICE_BASE_URL: "${{ vars.PUBLIC_IMPRINT_SERVICE_BASE_URL }}"
+      PUBLIC_REDMINE_ID: "${{ vars.SERVICE_ID }}"
+      PUBLIC_TYPESENSE_COLLECTION_NAME: "${{ vars.PUBLIC_TYPESENSE_COLLECTION_NAME }}"
+      PUBLIC_TYPESENSE_HOST: "${{ vars.PUBLIC_TYPESENSE_HOST }}"
+      PUBLIC_TYPESENSE_PORT: "${{ vars.PUBLIC_TYPESENSE_PORT }}"
+      PUBLIC_TYPESENSE_PROTOCOL: "${{ vars.PUBLIC_TYPESENSE_PROTOCOL }}"
+      PUBLIC_TYPESENSE_SEARCH_API_KEY: "${{ vars.PUBLIC_TYPESENSE_SEARCH_API_KEY }}"
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install Saxon, ant
-        run: |
-          sudo apt-get update && sudo apt-get install openjdk-11-jre-headless ant -y --no-install-recommends
-          ./src/scripts/shellscripts/dl_saxon.sh
-      - name: Install Ant-Contrib
-        run: |
-          wget https://repo1.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar
-          mv ant-contrib-1.0b3.jar /usr/share/ant/lib
-      - name: Fetch Edition Data
-        run: |
-          ./src/scripts/shellscripts/fetch_data.sh
-      - name: Build the site
-        run: |
-          ant -f ./src/scripts/ant/build.xml
-      # Necessary because `actions/setup-node` does not yet support `corepack`.
-      # @see https://github.com/actions/setup-node/issues/531
+        uses: actions/checkout@v5
+
+      - name: Build bruckner-kopisten site
+        uses: ./.github/actions/bruckner-kopisten
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Use node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
@@ -95,21 +96,11 @@ jobs:
 
       - name: Build app
         run: pnpm run build
-        env:
-          PUBLIC_APP_BASE_URL: "http://localhost:3000"
-          PUBLIC_REDMINE_ID: "${{ vars.SERVICE_ID }}"
-          PUBLIC_TYPESENSE_HOST: "${{ vars.PUBLIC_TYPESENSE_HOST }}"
-          PUBLIC_TYPESENSE_PORT: "${{ vars.PUBLIC_TYPESENSE_PORT }}"
-          PUBLIC_TYPESENSE_PROTOCOL: "${{ vars.PUBLIC_TYPESENSE_PROTOCOL }}"
-          PUBLIC_TYPESENSE_COLLECTION_NAME: "${{ vars.PUBLIC_TYPESENSE_COLLECTION_NAME }}"
-          PUBLIC_TYPESENSE_SEARCH_API_KEY: "${{ vars.PUBLIC_TYPESENSE_SEARCH_API_KEY }}"
 
       - name: Run e2e tests
         run: pnpm run test:e2e
-        env:
-          PUBLIC_APP_BASE_URL: "http://localhost:3000"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: playwright-report
@@ -119,7 +110,7 @@ jobs:
   build-deploy:
     if: ${{ github.event_name == 'push' }}
     needs: [validate]
-    uses: ./.github/workflows/build-deploy.yml
+    uses: ./.github/workflows/build-deploy.yaml
     secrets: inherit
     # https://docs.github.com/en/actions/using-workflows/reusing-workflows#access-and-permissions
     permissions:

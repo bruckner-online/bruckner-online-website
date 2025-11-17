@@ -1,0 +1,13 @@
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - simple-git-hooks
+  - typesense-instantsearch-adapter
+  - unrs-resolver
+
+overrides:
+  jiti: ^2
+
+shellEmulator: true
+
+strictDepBuilds: true

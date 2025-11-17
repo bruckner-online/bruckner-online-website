@@ -8,9 +8,6 @@ import { defineConfig } from "astro/config";
 import icon from "astro-icon";
 import { loadEnv } from "vite";
 
-// import { defaultLocale } from "./src/config/i18n.config";
-// import { createConfig as createMdxConfig } from "./src/config/mdx.config";
-
 const env = loadEnv(import.meta.env.MODE, process.cwd(), "");
 
 export default defineConfig({
@@ -55,19 +52,14 @@ export default defineConfig({
 		}),
 		keystatic(),
 		mdx(),
-		react(),
-		sitemap(),
+		react({
+			include: ["**/content/**", "**/keystatic/**"],
+		}),
 		solidJs({
 			exclude: ["**/content/**", "**/keystatic/**"],
 		}),
+		sitemap(),
 	],
-	// // @ts-expect-error Astro types are incomplete.
-	// markdown: {
-	// 	...(await createMdxConfig(defaultLocale)),
-	// 	gfm: false,
-	// 	smartypants: false,
-	// 	syntaxHighlight: false,
-	// },
 	prefetch: {
 		defaultStrategy: "hover",
 		prefetchAll: true,
@@ -81,10 +73,6 @@ export default defineConfig({
 			destination: "/lexikon",
 			status: 307,
 		},
-	},
-	scopedStyleStrategy: "where",
-	security: {
-		checkOrigin: true,
 	},
 	server: {
 		port: 3000,

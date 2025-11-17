@@ -24,7 +24,7 @@ const { bg = true, shadow = true, languageToggle = false } = Astro.props;
 		</div>
 	</div>
 	<PageSection>
-		{languageToggle && <KopistenLanguageToggle languages={["de", "en"]} client:only="solid" />}
+		{languageToggle && <KopistenLanguageToggle languages={["de", "en"]} client:only="solid-js" />}
 		<div
 			class:list={["prose my-2", { "bg-white": bg }, { "shadow-lg shadow-neutral-500": shadow }]}
 		>

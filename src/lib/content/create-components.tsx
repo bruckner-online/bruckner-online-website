@@ -191,7 +191,6 @@ function create(
 				const src = useObjectUrl(logo);
 
 				return (
-					// @ts-expect-error Type mismatch for ReactNode between react 18 and 19 types.
 					<NotEditable className="flex flex-col gap-y-2">
 						<div>{src ? <img alt="" src={src} /> : null}</div>
 						<div className="flex flex-col gap-y-0.5">

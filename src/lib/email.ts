@@ -29,7 +29,6 @@ export function sendEmail(params: SendEmailParams) {
 	return transporter.sendMail({
 		from,
 		to: env.EMAIL_CONTACT_ADDRESS,
-		bcc: env.EMAIL_CONTACT_ADDRESS_BCC,
 		subject,
 		text,
 		attachments,
