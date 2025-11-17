@@ -1,3 +1,5 @@
+/* @jsxImportSource solid-js */
+
 import { For } from "solid-js";
 
 import editionIndex from "@/edition/edition_index.json";

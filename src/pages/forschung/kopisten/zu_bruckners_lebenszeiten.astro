@@ -16,7 +16,7 @@ const html = readFileSync(`src/edition/meta/Tabelle_4.html`, "utf-8");
 
 <PageLayout locale={locale} title={""}>
 	<KopistenLayout title={""}>
-		<DataTable labels={labels} client:only="solid">
+		<DataTable labels={labels} client:only="solid-js">
 			<div set:html={html} />
 		</DataTable>
 	</KopistenLayout>
