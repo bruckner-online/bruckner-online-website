@@ -1,7 +1,7 @@
 import { join } from "node:path";
 
 import { defineConfig, devices } from "@playwright/test";
-import { isCI } from "ci-info";
+import isCI from "is-in-ci";
 import { config as dotenv } from "dotenv";
 import { expand } from "dotenv-expand";
 
