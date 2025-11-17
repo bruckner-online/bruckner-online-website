@@ -6,7 +6,7 @@ import "@fontsource-variable/open-sans/wght-italic.css";
 import "@/styles/index.css";
 
 import { isNonEmptyString } from "@acdh-oeaw/lib";
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import type { WebSite, WithContext } from "schema-dts";
 
 import Analytics from "@/components/analytics.astro";
@@ -87,7 +87,7 @@ const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 		<link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="32x32" />
 		<link rel="apple-touch-icon" href="/apple-icon.png" type="image/png" sizes="180x180" />
 
-		<ViewTransitions />
+		<ClientRouter />
 
 		<script
 			is:inline

@@ -5,6 +5,9 @@ onlyBuiltDependencies:
   - typesense-instantsearch-adapter
   - unrs-resolver
 
+overrides:
+  jiti: ^2
+
 shellEmulator: true
 
 strictDepBuilds: true

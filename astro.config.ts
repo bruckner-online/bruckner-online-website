@@ -1,8 +1,8 @@
 import mdx from "@astrojs/mdx";
 import node from "@astrojs/node";
 import react from "@astrojs/react";
-import solidJs from "@astrojs/solid-js";
 import sitemap from "@astrojs/sitemap";
+import solidJs from "@astrojs/solid-js";
 import keystatic from "@keystatic/astro";
 import { defineConfig } from "astro/config";
 import icon from "astro-icon";

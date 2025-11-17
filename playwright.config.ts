@@ -1,9 +1,9 @@
 import { join } from "node:path";
 
 import { defineConfig, devices } from "@playwright/test";
-import isCI from "is-in-ci";
 import { config as dotenv } from "dotenv";
 import { expand } from "dotenv-expand";
+import isCI from "is-in-ci";
 
 for (const envFilePath of [".env.test.local", ".env.local", ".env.test", ".env"]) {
 	expand(dotenv({ path: join(process.cwd(), envFilePath) }));
@@ -35,38 +35,6 @@ export default defineConfig({
 			use: { ...devices["Desktop Chrome"] },
 			dependencies: ["setup"],
 		},
-		// {
-		// 	name: "firefox",
-		// 	use: { ...devices["Desktop Firefox"] },
-		// 	dependencies: ["setup"],
-		// },
-		// {
-		// 	name: "webkit",
-		// 	use: { ...devices["Desktop Safari"] },
-		// 	dependencies: ["setup"],
-		// },
-		/** Test against mobile viewports. */
-		// {
-		// 	name: "Mobile Chrome",
-		// 	use: { ...devices["Pixel 5"] },
-		// 	dependencies: ["setup"],
-		// },
-		// {
-		// 	name: "Mobile Safari",
-		// 	use: { ...devices["iPhone 12"] },
-		// 	dependencies: ["setup"],
-		// },
-		/** Test against branded browsers. */
-		// {
-		// 	name: "Microsoft Edge",
-		// 	use: { ...devices["Desktop Edge"], channel: "msedge" },
-		// 	dependencies: ["setup"],
-		// },
-		// {
-		// 	name: "Google Chrome",
-		// 	use: { ...devices["Desktop Chrome"], channel: "chrome" },
-		// 	dependencies: ["setup"],
-		// },
 	],
 	webServer: {
 		command: "pnpm run start",

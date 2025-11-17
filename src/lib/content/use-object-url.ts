@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 export interface UseObjectUrlParams {
-	data: Uint8Array;
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+	data: Uint8Array<any>;
 	extension: string;
 	filename: string;
 }
@@ -15,6 +16,7 @@ export function useObjectUrl(params: UseObjectUrlParams | null) {
 
 	useEffect(() => {
 		if (data == null) {
+			/* eslint-disable-next-line react-hooks/set-state-in-effect */
 			setUrl(null);
 			return undefined;
 		}
@@ -22,6 +24,7 @@ export function useObjectUrl(params: UseObjectUrlParams | null) {
 		const url = URL.createObjectURL(
 			new Blob([data], contentType ? { type: contentType } : undefined),
 		);
+		/* eslint-disable-next-line react-hooks/set-state-in-effect */
 		setUrl(url);
 
 		return () => {
