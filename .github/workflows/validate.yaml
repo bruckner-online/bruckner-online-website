@@ -24,6 +24,19 @@ jobs:
         node-version: [24.x]
         os: [ubuntu-24.04]
 
+    env:
+      EMAIL_CONTACT_ADDRESS: "acdh@example.com"
+      EMAIL_SMTP_PORT: "1025"
+      EMAIL_SMTP_SERVER: "localhost"
+      PUBLIC_APP_BASE_URL: "http://localhost:3000"
+      PUBLIC_IMPRINT_SERVICE_BASE_URL: "${{ vars.PUBLIC_IMPRINT_SERVICE_BASE_URL }}"
+      PUBLIC_REDMINE_ID: "${{ vars.SERVICE_ID }}"
+      PUBLIC_TYPESENSE_COLLECTION_NAME: "${{ vars.PUBLIC_TYPESENSE_COLLECTION_NAME }}"
+      PUBLIC_TYPESENSE_HOST: "${{ vars.PUBLIC_TYPESENSE_HOST }}"
+      PUBLIC_TYPESENSE_PORT: "${{ vars.PUBLIC_TYPESENSE_PORT }}"
+      PUBLIC_TYPESENSE_PROTOCOL: "${{ vars.PUBLIC_TYPESENSE_PROTOCOL }}"
+      PUBLIC_TYPESENSE_SEARCH_API_KEY: "${{ vars.PUBLIC_TYPESENSE_SEARCH_API_KEY }}"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -83,20 +96,9 @@ jobs:
 
       - name: Build app
         run: pnpm run build
-        env:
-          PUBLIC_APP_BASE_URL: "http://localhost:3000"
-          PUBLIC_IMPRINT_SERVICE_BASE_URL: "${{ vars.PUBLIC_IMPRINT_SERVICE_BASE_URL }}"
-          PUBLIC_REDMINE_ID: "${{ vars.SERVICE_ID }}"
-          PUBLIC_TYPESENSE_HOST: "${{ vars.PUBLIC_TYPESENSE_HOST }}"
-          PUBLIC_TYPESENSE_PORT: "${{ vars.PUBLIC_TYPESENSE_PORT }}"
-          PUBLIC_TYPESENSE_PROTOCOL: "${{ vars.PUBLIC_TYPESENSE_PROTOCOL }}"
-          PUBLIC_TYPESENSE_COLLECTION_NAME: "${{ vars.PUBLIC_TYPESENSE_COLLECTION_NAME }}"
-          PUBLIC_TYPESENSE_SEARCH_API_KEY: "${{ vars.PUBLIC_TYPESENSE_SEARCH_API_KEY }}"
 
       - name: Run e2e tests
         run: pnpm run test:e2e
-        env:
-          PUBLIC_APP_BASE_URL: "http://localhost:3000"
 
       - uses: actions/upload-artifact@v5
         if: always()
