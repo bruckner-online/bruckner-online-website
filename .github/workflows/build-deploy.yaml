@@ -72,7 +72,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Build bruckner-kopisten site
-        uses: ./github/actions/bruckner-kopisten
+        uses: ./.github/actions/bruckner-kopisten
 
       - name: Ensure astro build artefacts folder exists
         run: mkdir -p node_modules/.astro
