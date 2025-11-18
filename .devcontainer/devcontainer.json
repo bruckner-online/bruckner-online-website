@@ -1,6 +1,6 @@
 {
 	"name": "Astro",
-	"image": "ghcr.io/acdh-oeaw/devcontainer-frontend:24",
+	"build": { "dockerfile": "Dockerfile" },
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -9,13 +9,12 @@
 				"dbaeumer.vscode-eslint",
 				"editorconfig.editorconfig",
 				"esbenp.prettier-vscode",
+				"github.vscode-github-actions",
 				"mikestead.dotenv",
 				"ms-playwright.playwright",
 				"stylelint.vscode-stylelint",
 				"unifiedjs.vscode-mdx"
 			]
 		}
-	},
-	"postCreateCommand": "./.devcontainer/postCreateSetup.sh",
-	"remoteUser": "root"
+	}
 }
