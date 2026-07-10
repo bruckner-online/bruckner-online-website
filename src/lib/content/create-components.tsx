@@ -2,11 +2,12 @@
 
 import { createUrl, pick } from "@acdh-oeaw/lib";
 import { fields, NotEditable } from "@keystatic/core";
-import { block, mark, wrapper } from "@keystatic/core/content-components";
+import { block, inline, mark, wrapper } from "@keystatic/core/content-components";
 import {
 	Building2Icon,
 	DownloadIcon,
 	ImageIcon,
+	LinkIcon,
 	PencilIcon,
 	PlayIcon,
 	ScanIcon,
@@ -51,7 +52,14 @@ export const videoProviders = [{ label: "YouTube", value: "youtube" }] as const;
 function create(
 	assetPath: `/${string}/`,
 	components?: Array<
-		"AudioPlayer" | "Download" | "Embed" | "Figure" | "Footnote" | "TranskriptionsTool" | "Video"
+		| "AudioPlayer"
+		| "Download"
+		| "Embed"
+		| "Figure"
+		| "Footnote"
+		| "IconLink"
+		| "TranskriptionsTool"
+		| "Video"
 	>,
 ) {
 	const allComponents = {
@@ -152,6 +160,23 @@ function create(
 			icon: <SuperscriptIcon />,
 			className: "underline decoration-dotted align-super text-sm",
 			schema: {},
+		}),
+		IconLink: inline({
+			label: "IconLink",
+			icon: <LinkIcon />,
+			schema: {
+				href: fields.url({
+					label: "URL",
+					validation: { isRequired: true },
+				}),
+				icon: fields.text({
+					label: "Lucide Icon Name",
+				}),
+				label: fields.text({
+					label: "Label",
+					validation: { isRequired: true },
+				}),
+			},
 		}),
 		Organisation: block({
 			label: "Organisation",
