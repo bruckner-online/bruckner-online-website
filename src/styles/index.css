@@ -8,8 +8,8 @@
 	--footer-image-rotation: 18deg;
 }
 
-.mdx-table-wrapper table td:first-child,
-.mdx-table-wrapper table th:first-child {
+div[data-slug="drucke/erstdrucke-digitalisate"] table td:first-child,
+div[data-slug="drucke/erstdrucke-digitalisate"] table th:first-child {
 	@apply w-1 whitespace-nowrap pe-8;
 }
 

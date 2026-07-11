@@ -28,6 +28,7 @@ export async function getStaticPaths() {
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 
 const { page } = Astro.props;
+const { id } = Astro.params;
 
 const documentTitle = page.title;
 const { title, image, vita } = page;
@@ -42,7 +43,7 @@ const { default: Content } = await processMdx(await page.content(), locale);
 		<PageSection variant="full-height">
 			<PageCard image={image}>
 				<PageTitle>{title}</PageTitle>
-				<div class={classes}>
+				<div class={classes} data-slug={id}>
 					<Content />
 					{
 						vita.map(async (vitaEntry, idx) => {
