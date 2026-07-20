@@ -1,15 +1,19 @@
 ---
 interface Props {
 	id: string;
+	presentationPath: string;
 }
 
-const { id } = Astro.props;
+const { id, presentationPath } = Astro.props;
 
 const manifestId = id ?? "WAB001";
 ---
 
-<mirador-viewer id="mirador-viewer" data-imageid={manifestId} style="height: 600px;"
-></mirador-viewer>
+<mirador-viewer
+	id="mirador-viewer"
+	data-presentation-path={presentationPath}
+	data-imageid={manifestId}
+	style="height: 600px;"></mirador-viewer>
 
 <script>
 	// @ts-expect-error No type definitions available for mirador
@@ -22,7 +26,7 @@ const manifestId = id ?? "WAB001";
 				showAddFromURLBox: false,
 				windows: [
 					{
-						loadedManifest: `https://iiifpresentation.acdh.oeaw.ac.at/bruckner/drucke/${this.dataset.imageid}/manifest`,
+						loadedManifest: `https://iiifpresentation.acdh.oeaw.ac.at/${this.dataset.presentationPath}/${this.dataset.imageid}/manifest`,
 					},
 				],
 			});

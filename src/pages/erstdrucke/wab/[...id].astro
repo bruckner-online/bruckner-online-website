@@ -1,0 +1,9 @@
+---
+import MiradorViewer from "@/components/mirador-viewer.astro";
+
+const { id } = Astro.params;
+
+export const prerender = false;
+---
+
+<MiradorViewer id={id!} presentationPath="bruckner/drucke" />
