@@ -146,17 +146,17 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 		}
 
 		[data-carousel-items] {
+			overflow: visible;
 			height: auto;
 			aspect-ratio: auto;
-			overflow: visible;
 		}
 
 		[data-carousel-item] {
 			position: relative;
+			opacity: 100%;
 			visibility: visible;
-			opacity: 1;
-			transform: none;
 			transition: none;
+			transform: none;
 		}
 	</style>
 </noscript>
