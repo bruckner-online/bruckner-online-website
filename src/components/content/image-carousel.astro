@@ -74,7 +74,12 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 			</div>
 		</div>
 
-		<div id={id} aria-live="off" class="relative aspect-[2.125]" data-carousel-items>
+		<div
+			id={id}
+			aria-live="off"
+			class="relative aspect-[2.125] overflow-hidden"
+			data-carousel-items
+		>
 			{
 				slides.map((slide, index) => {
 					const alignments = {
@@ -94,7 +99,7 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 								current: index,
 								total: slides.length,
 							})}
-							class="group relative size-full"
+							class="group invisible absolute size-full translate-x-1/3 opacity-0 transition-all duration-500 data-[active]:visible data-[active]:translate-x-0 data-[active]:opacity-100"
 						>
 							<a
 								class="block size-full -outline-offset-2 focus-visible:outline-white"
@@ -130,35 +135,38 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 	</div>
 </image-carousel>
 
-<script is:inline>
-	/**
-	 * In the initial html, all slides are visible, so they work when javascript is disabled.
-	 * Hide them as soon as javascript loads.
-	 */
-	document.querySelectorAll("[data-carousel-items]").forEach((element) => {
-		element.classList.add("overflow-hidden");
-	});
+<noscript>
+	<!--
+		The markup is rendered in its javascript-enabled state, so it also survives view transitions
+		and bfcache restores. Without javascript, unstack the slides and hide the (inert) controls.
+	-->
+	<style is:inline>
+		[data-carousel] [data-controls] {
+			display: none;
+		}
 
-	document.querySelectorAll("[data-carousel-item]").forEach((element) => {
-		element.classList.remove("relative");
-		element.classList.add(
-			"absolute",
-			"invisible",
-			"translate-x-1/3",
-			"duration-500",
-			"transition-all",
-			"data-[active]:opacity-100",
-			"opacity-0",
-			"data-[active]:visible",
-			"data-[active]:translate-x-0",
-		);
-	});
-</script>
+		[data-carousel-items] {
+			overflow: visible;
+			height: auto;
+			aspect-ratio: auto;
+		}
+
+		[data-carousel-item] {
+			position: relative;
+			opacity: 100%;
+			visibility: visible;
+			transition: none;
+			transform: none;
+		}
+	</style>
+</noscript>
 
 <script>
 	import { assert } from "@acdh-oeaw/lib";
 
 	class ImageCarousel extends HTMLElement {
+		disconnect: (() => void) | null = null;
+
 		connectedCallback() {
 			const state = {
 				paused: true,
@@ -279,6 +287,22 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 			root.addEventListener("focusout", onFocusOut);
 
 			autoplay();
+
+			this.disconnect = () => {
+				pause();
+				previous!.removeEventListener("click", onPreviousSlide);
+				next!.removeEventListener("click", onNextSlide);
+				toggle!.removeEventListener("click", onTogglePlayState);
+				container!.removeEventListener("mouseenter", onMouseEnter);
+				container!.removeEventListener("mouseleave", onMouseLeave);
+				root!.removeEventListener("focusin", onFocusIn);
+				root!.removeEventListener("focusout", onFocusOut);
+			};
+		}
+
+		disconnectedCallback() {
+			this.disconnect?.();
+			this.disconnect = null;
 		}
 	}
 
@@ -286,7 +310,7 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 </script>
 
 <style is:global>
-	iamge-carousel {
+	image-carousel {
 		display: contents;
 	}
 </style>
