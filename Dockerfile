@@ -70,7 +70,9 @@ WORKDIR /app
 USER node
 
 COPY --from=base --chown=node:node /app/node_modules ./node_modules
-COPY --from=build --chown=node:node /app/dist ./
+# note: `dist` must keep its path from the build stage, because the astro image
+# endpoint reads source images from the build-time absolute path to `dist/client`.
+COPY --from=build --chown=node:node /app/dist ./dist
 
 # these content pages need to be available at runtime, because they are not prerendered.
 COPY --chown=node:node ./content/pages/lexikon ./content/pages/lexikon
@@ -86,4 +88,4 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-CMD [ "node", "./server/entry.mjs" ]
+CMD [ "node", "./dist/server/entry.mjs" ]
