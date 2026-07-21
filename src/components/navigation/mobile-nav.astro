@@ -5,6 +5,10 @@ import { mobileNavId } from "@/components/navigation/constants";
 import NavLink from "@/components/navigation/nav-link.astro";
 import type { Navigation } from "@/lib/content/types";
 import navigation from "~/content/navigation.json";
+
+function createSectionId(label: string) {
+	return label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+}
 ---
 
 <div id={mobileNavId} hidden class="px-4 pb-6 lg:hidden" data-mobile-nav>
@@ -74,39 +78,54 @@ import navigation from "~/content/navigation.json";
 												}
 
 												case "section": {
-													return link.value.links.map((link) => {
-														switch (link.discriminant) {
-															case "link": {
-																return (
-																	<li>
-																		<NavLink
-																			class="transition hover:text-[#212529]"
-																			href={link.value.href}
-																		>
-																			{link.value.label}
-																		</NavLink>
-																	</li>
-																);
-															}
+													const sectionId = `${mobileNavId}-section-${createSectionId(link.value.label)}`;
 
-															case "page": {
-																return (
-																	<li>
-																		<NavLink
-																			class="transition hover:text-[#212529]"
-																			href={`/${link.value.reference}`}
-																		>
-																			{link.value.label}
-																		</NavLink>
-																	</li>
-																);
-															}
+													return (
+														<li>
+															<span class="mt-2 block text-xs uppercase text-[#777]" id={sectionId}>
+																{link.value.label}
+															</span>
+															<ul
+																aria-labelledby={sectionId}
+																class="ml-3 mt-1 grid gap-y-1 border-l pl-3"
+																role="group"
+															>
+																{link.value.links.map((link) => {
+																	switch (link.discriminant) {
+																		case "link": {
+																			return (
+																				<li>
+																					<NavLink
+																						class="transition hover:text-[#212529]"
+																						href={link.value.href}
+																					>
+																						{link.value.label}
+																					</NavLink>
+																				</li>
+																			);
+																		}
 
-															default: {
-																return null;
-															}
-														}
-													});
+																		case "page": {
+																			return (
+																				<li>
+																					<NavLink
+																						class="transition hover:text-[#212529]"
+																						href={`/${link.value.reference}`}
+																					>
+																						{link.value.label}
+																					</NavLink>
+																				</li>
+																			);
+																		}
+
+																		default: {
+																			return null;
+																		}
+																	}
+																})}
+															</ul>
+														</li>
+													);
 												}
 
 												default: {
