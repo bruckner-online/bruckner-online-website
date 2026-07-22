@@ -127,7 +127,8 @@
 		"search-results": "{count} Suchergebnisse",
 		"nothing-found": "Nichts gefunden",
 		"error": "Konnte Suche nicht ausführen",
-		"empty-query": "Bitte einen Suchbegriff eingeben"
+		"empty-query": "Bitte einen Suchbegriff eingeben",
+		"pending": "Artikel werden geladen"
 	},
 	"SkipLink": {
 		"skip-to-main-content": "Zum Hauptinhalt springen"

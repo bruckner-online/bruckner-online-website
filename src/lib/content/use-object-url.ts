@@ -24,7 +24,7 @@ export function useObjectUrl(params: UseObjectUrlParams | null) {
 		const url = URL.createObjectURL(
 			new Blob([data], contentType ? { type: contentType } : undefined),
 		);
-		/* eslint-disable-next-line react-hooks/set-state-in-effect */
+
 		setUrl(url);
 
 		return () => {

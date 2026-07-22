@@ -1,19 +1,21 @@
 ---
-import { createUrl, createUrlSearchParams, request } from "@acdh-oeaw/lib";
 import * as v from "valibot";
 
 import LexiconAlphabetLinks from "@/components/lexicon-alphabet-links.astro";
+import LexiconIndex from "@/components/lexicon-index";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import LexiconLayout from "@/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { processMdx } from "@/lib/content/mdx";
 import { reader } from "@/lib/content/reader";
-import { ensureArray } from "@/lib/ensure-array";
-import { type ArticleSearchResponse, baseUrl, pathnames } from "@/lib/lexicon";
+import { createI18n } from "@/lib/i18n";
 
 export const prerender = false;
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { t } = await createI18n(locale);
+const errorMessage = t("SearchResults.nothing-found");
+const pendingMessage = t("SearchResults.pending");
 
 const page = await reader().collections.pages.readOrThrow("lexikon/sachbegriffe");
 
@@ -29,17 +31,6 @@ const { letter, start } = v.parse(schema, {
 	letter: Astro.url.searchParams.get("letter"),
 	start: Astro.url.searchParams.get("start"),
 });
-const url = createUrl({
-	baseUrl,
-	pathname: "/article",
-	searchParams: createUrlSearchParams({
-		category: "Sache",
-		title: letter,
-		startAt: start,
-		max: 500,
-	}),
-});
-const results = (await request(url, { responseType: "json" })) as ArticleSearchResponse;
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
@@ -50,22 +41,14 @@ const results = (await request(url, { responseType: "json" })) as ArticleSearchR
 
 		<LexiconAlphabetLinks current={letter} />
 
-		<div class="grid gap-y-4">
-			<ul class="grid" role="list">
-				{
-					ensureArray(results.results.article).map((article) => {
-						const { id, title } = article;
-
-						return (
-							<li>
-								<a class="underline" href={`${pathnames["Artikel"]}${id}`}>
-									{title}
-								</a>
-							</li>
-						);
-					})
-				}
-			</ul>
-		</div>
+		<LexiconIndex
+			client:only="solid-js"
+			category={"Sache"}
+			errorMessage={errorMessage}
+			pendingMessage={pendingMessage}
+			letter={letter}
+			start={start}
+			max={500}
+		/>
 	</LexiconLayout>
 </PageLayout>
