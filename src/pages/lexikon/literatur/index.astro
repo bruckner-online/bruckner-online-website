@@ -1,21 +1,21 @@
 ---
-import { createUrl, createUrlSearchParams, log, request } from "@acdh-oeaw/lib";
 import * as v from "valibot";
 
 import LexiconAlphabetLinks from "@/components/lexicon-alphabet-links.astro";
+import LexiconLiteratureIndex from "@/components/lexicon-index-literature";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import LexiconLayout from "@/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { processMdx } from "@/lib/content/mdx";
 import { reader } from "@/lib/content/reader";
-import { ensureArray } from "@/lib/ensure-array";
 import { createI18n } from "@/lib/i18n";
-import { baseUrl, type BibliographySearchResult } from "@/lib/lexicon";
 
 export const prerender = false;
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 const { t } = await createI18n(locale);
+const errorMessage = t("SearchResults.nothing-found");
+const pendingMessage = t("SearchResults.pending");
 
 const page = await reader().collections.pages.readOrThrow("lexikon/literatur");
 
@@ -31,26 +31,6 @@ const { letter, start } = v.parse(schema, {
 	letter: Astro.url.searchParams.get("letter"),
 	start: Astro.url.searchParams.get("start"),
 });
-
-async function api(): Promise<
-	{ data: BibliographySearchResult; error: null } | { data: null; error: string }
-> {
-	const url = createUrl({
-		baseUrl,
-		pathname: "/literature",
-		searchParams: createUrlSearchParams({ title: letter, startAt: start, max: 500 }),
-	});
-
-	try {
-		const data = (await request(url, { responseType: "json" })) as BibliographySearchResult;
-		return { data, error: null };
-	} catch (error) {
-		log.error(error);
-		return { data: null, error: t("SearchResults.error") };
-	}
-}
-
-const { data, error } = await api();
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
@@ -61,24 +41,13 @@ const { data, error } = await api();
 
 		<LexiconAlphabetLinks current={letter} />
 
-		{
-			error == null ? (
-				Number(data.results.total) !== 0 ? (
-					<div class="grid gap-y-4">
-						<ol class="grid" role="list">
-							{ensureArray(data.results.item).map((item) => {
-								const { full } = item;
-
-								return <li>{full.bibl["#text"]}</li>;
-							})}
-						</ol>
-					</div>
-				) : (
-					<div>{t("SearchResults.nothing-found")}</div>
-				)
-			) : (
-				<div>{error}</div>
-			)
-		}
+		<LexiconLiteratureIndex
+			client:only="solid-js"
+			errorMessage={errorMessage}
+			pendingMessage={pendingMessage}
+			letter={letter}
+			start={start}
+			max={500}
+		/>
 	</LexiconLayout>
 </PageLayout>

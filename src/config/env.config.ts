@@ -1,5 +1,3 @@
-/* eslint-disable no-restricted-syntax */
-
 import { err, isErr, ok } from "@acdh-oeaw/lib";
 import { createEnv, ValidationError } from "@acdh-oeaw/validate-env/astro";
 import * as v from "valibot";
