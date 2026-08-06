@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 		return (
 			!page.slug.startsWith("lexikon/") &&
 			!page.slug.startsWith("forschung/kopisten/") &&
-			!page.slug.startsWith("werkverzeichnis/wab") &&
+			page.slug !== "werkverzeichnis/wab" &&
 			page.slug !== "kontakt"
 		);
 	});
