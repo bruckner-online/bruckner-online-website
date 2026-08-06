@@ -1,378 +1,378 @@
 {
-	"links": [
-		{
-			"discriminant": "menu",
-			"value": {
-				"label": "Projekt",
-				"links": [
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Mitarbeiter",
-							"reference": "projekt/mitarbeiter"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Beschreibung",
-							"reference": "projekt/projektbeschreibung"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Bruckner-Forschung (ÖAW)",
-							"reference": "projekt/bruckner-forschung-oeaw"
-						}
-					}
-				]
-			}
-		},
-		{
-			"discriminant": "menu",
-			"value": {
-				"label": "Bruckner",
-				"links": [
-					{
-						"discriminant": "section",
-						"value": {
-							"label": "Leben",
-							"links": [
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Kindheit und Jugend (1824-1845)",
-										"reference": "leben/kindheit-und-jugend"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "St. Florian (1845-1855)",
-										"reference": "leben/st-florian"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Linz (1856-1868)",
-										"reference": "leben/linz"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Wien I (1868-1877)",
-										"reference": "leben/wien-i"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Wien II (1878-1889)",
-										"reference": "leben/wien-ii"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Wien III (1890-1896)",
-										"reference": "leben/wien-iii"
-									}
-								}
-							]
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Bibliographie",
-							"reference": "leben/bibliographie"
-						}
-					}
-				]
-			}
-		},
-		{
-			"discriminant": "menu",
-			"value": {
-				"label": "Werkverzeichnis",
-				"links": [
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Vorwort",
-							"reference": "werkverzeichnis/vorwort"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Werkverzeichnis",
-							"reference": "werkverzeichnis/wab"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Gedrucktes Werkverzeichnis",
-							"reference": "werkverzeichnis/gedrucktes-werkverzeichnis"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Werkübersicht",
-							"reference": "werkverzeichnis/werkuebersicht"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Werksystematik",
-							"reference": "werkverzeichnis/werksystematik"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "WAB-Konkordanz",
-							"reference": "werkverzeichnis/wab-konkordanz"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Werkeinträge / Quellenbeschreibungen",
-							"reference": "werkverzeichnis/werkeintraege-quellenbeschreibungen"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Aufbewahrungsorte",
-							"reference": "werkverzeichnis/aufbewahrungsorte"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Abkürzungen",
-							"reference": "werkverzeichnis/abkuerzungen"
-						}
-					}
-				]
-			}
-		},
-		{
-			"discriminant": "menu",
-			"value": {
-				"label": "Drucke",
-				"links": [
-					{
-						"discriminant": "section",
-						"value": {
-							"label": "Erstdrucke (Erstveröffentlichungen)",
-							"links": [
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Erstdrucke",
-										"reference": "drucke/erstdrucke"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Digitalisate",
-										"reference": "drucke/erstdrucke-digitalisate"
-									}
-								}
-							]
-						}
-					},
-					{
-						"discriminant": "section",
-						"value": {
-							"label": "Gesamtausgaben",
-							"links": [
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Anton Bruckner. Sämtliche Werke (AGA)",
-										"reference": "drucke/alte-gesamtausgabe"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Anton Bruckner Gesamtausgabe (NGA)",
-										"reference": "drucke/gesamtausgabe"
-									}
-								},
-								{
-									"discriminant": "link",
-									"value": {
-										"label": "Neue Anton Bruckner Gesamtausgabe",
-										"href": "https://www.mwv.at/content/seite/NeueAntonBrucknerGesamtausgabeab2016/"
-									}
-								},
-								{
-									"discriminant": "link",
-									"value": {
-										"label": "Anton Bruckner Urtext Gesamtausgabe",
-										"href": "https://hermann.eu/home/label/BEW"
-									}
-								}
-							]
-						}
-					}
-				]
-			}
-		},
-		{
-			"discriminant": "menu",
-			"value": {
-				"label": "Forschung",
-				"links": [
-					{
-						"discriminant": "section",
-						"value": {
-							"label": "Kitzler-Studienbuch",
-							"links": [
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Digitale Edition",
-										"reference": "forschung/kitzler-studienbuch"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Projekt",
-										"reference": "forschung/kitzler-studienbuch-projektbeschreibung"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Musikanalyse",
-										"reference": "forschung/kitzler-studienbuch-musikanalyse"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Beschreibung der Codierung",
-										"reference": "forschung/kitzler-studienbuch-codierung"
-									}
-								},
-								{
-									"discriminant": "page",
-									"value": {
-										"label": "Beschreibung des Imageviewers",
-										"reference": "forschung/kitzler-studienbuch-imageviewer"
-									}
-								},
-								{
-									"discriminant": "link",
-									"value": {
-										"label": "Imageviewer",
-										"href": "https://apps-mufo.oeaw.ac.at/studienbuch/"
-									}
-								}
-							]
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Chronologie-Datenbank",
-							"reference": "forschung/chronologie-datenbank"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Transkriptionstool Hanschrift Bruckners",
-							"reference": "forschung/transkriptionstool"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Anton Bruckner Kopisten",
-							"reference": "forschung/kopisten"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Bruckner Forschung (ÖAW)",
-							"reference": "projekt/bruckner-forschung-oeaw"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Bruckner Forschung International",
-							"reference": "forschung/international"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Bruckner Gesellschaft",
-							"reference": "forschung/bruckner-gesellschaft"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Geschichte Dom-Musikarchiv Linz",
-							"reference": "forschung/geschichte-dom-musikarchiv-linz"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Weitere Links",
-							"reference": "forschung/links"
-						}
-					}
-				]
-			}
-		},
-		{
-			"discriminant": "page",
-			"value": {
-				"label": "Lexikon",
-				"reference": "lexikon"
-			}
-		},
-		{
-			"discriminant": "menu",
-			"value": {
-				"label": "Audio",
-				"links": [
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Symphonien",
-							"reference": "audio/symphonien"
-						}
-					},
-					{
-						"discriminant": "page",
-						"value": {
-							"label": "Weitere Audiobeispiele",
-							"reference": "audio/beispiele"
-						}
-					}
-				]
-			}
-		}
-	]
+  "links": [
+    {
+      "discriminant": "menu",
+      "value": {
+        "label": "Projekt",
+        "links": [
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Mitarbeiter",
+              "reference": "projekt/mitarbeiter"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Beschreibung",
+              "reference": "projekt/projektbeschreibung"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Bruckner-Forschung (ÖAW)",
+              "reference": "projekt/bruckner-forschung-oeaw"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "discriminant": "menu",
+      "value": {
+        "label": "Bruckner",
+        "links": [
+          {
+            "discriminant": "section",
+            "value": {
+              "label": "Leben",
+              "links": [
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Kindheit und Jugend (1824-1845)",
+                    "reference": "leben/kindheit-und-jugend"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "St. Florian (1845-1855)",
+                    "reference": "leben/st-florian"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Linz (1856-1868)",
+                    "reference": "leben/linz"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Wien I (1868-1877)",
+                    "reference": "leben/wien-i"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Wien II (1878-1889)",
+                    "reference": "leben/wien-ii"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Wien III (1890-1896)",
+                    "reference": "leben/wien-iii"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Bibliographie",
+              "reference": "leben/bibliographie"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "discriminant": "menu",
+      "value": {
+        "label": "Werkverzeichnis",
+        "links": [
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Vorwort",
+              "reference": "werkverzeichnis/vorwort"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Werkverzeichnis",
+              "reference": "werkverzeichnis/wab"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Gedrucktes Werkverzeichnis",
+              "reference": "werkverzeichnis/gedrucktes-werkverzeichnis"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Werkübersicht",
+              "reference": "werkverzeichnis/werkuebersicht"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Werksystematik",
+              "reference": "werkverzeichnis/werksystematik"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "WAB-Konkordanz",
+              "reference": "werkverzeichnis/konkordanz"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Werkeinträge / Quellenbeschreibungen",
+              "reference": "werkverzeichnis/werkeintraege-quellenbeschreibungen"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Aufbewahrungsorte",
+              "reference": "werkverzeichnis/aufbewahrungsorte"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Abkürzungen",
+              "reference": "werkverzeichnis/abkuerzungen"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "discriminant": "menu",
+      "value": {
+        "label": "Drucke",
+        "links": [
+          {
+            "discriminant": "section",
+            "value": {
+              "label": "Erstdrucke (Erstveröffentlichungen)",
+              "links": [
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Erstdrucke",
+                    "reference": "drucke/erstdrucke"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Digitalisate",
+                    "reference": "drucke/erstdrucke-digitalisate"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "discriminant": "section",
+            "value": {
+              "label": "Gesamtausgaben",
+              "links": [
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Anton Bruckner. Sämtliche Werke (AGA)",
+                    "reference": "drucke/alte-gesamtausgabe"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Anton Bruckner Gesamtausgabe (NGA)",
+                    "reference": "drucke/gesamtausgabe"
+                  }
+                },
+                {
+                  "discriminant": "link",
+                  "value": {
+                    "label": "Neue Anton Bruckner Gesamtausgabe",
+                    "href": "https://www.mwv.at/content/seite/NeueAntonBrucknerGesamtausgabeab2016/"
+                  }
+                },
+                {
+                  "discriminant": "link",
+                  "value": {
+                    "label": "Anton Bruckner Urtext Gesamtausgabe",
+                    "href": "https://hermann.eu/home/label/BEW"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "discriminant": "menu",
+      "value": {
+        "label": "Forschung",
+        "links": [
+          {
+            "discriminant": "section",
+            "value": {
+              "label": "Kitzler-Studienbuch",
+              "links": [
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Digitale Edition",
+                    "reference": "forschung/kitzler-studienbuch"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Projekt",
+                    "reference": "forschung/kitzler-studienbuch-projektbeschreibung"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Musikanalyse",
+                    "reference": "forschung/kitzler-studienbuch-musikanalyse"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Beschreibung der Codierung",
+                    "reference": "forschung/kitzler-studienbuch-codierung"
+                  }
+                },
+                {
+                  "discriminant": "page",
+                  "value": {
+                    "label": "Beschreibung des Imageviewers",
+                    "reference": "forschung/kitzler-studienbuch-imageviewer"
+                  }
+                },
+                {
+                  "discriminant": "link",
+                  "value": {
+                    "label": "Imageviewer",
+                    "href": "https://apps-mufo.oeaw.ac.at/studienbuch/"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Chronologie-Datenbank",
+              "reference": "forschung/chronologie-datenbank"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Transkriptionstool Hanschrift Bruckners",
+              "reference": "forschung/transkriptionstool"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Anton Bruckner Kopisten",
+              "reference": "forschung/kopisten"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Bruckner Forschung (ÖAW)",
+              "reference": "projekt/bruckner-forschung-oeaw"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Bruckner Forschung International",
+              "reference": "forschung/international"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Bruckner Gesellschaft",
+              "reference": "forschung/bruckner-gesellschaft"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Geschichte Dom-Musikarchiv Linz",
+              "reference": "forschung/geschichte-dom-musikarchiv-linz"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Weitere Links",
+              "reference": "forschung/links"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "discriminant": "page",
+      "value": {
+        "label": "Lexikon",
+        "reference": "lexikon"
+      }
+    },
+    {
+      "discriminant": "menu",
+      "value": {
+        "label": "Audio",
+        "links": [
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Symphonien",
+              "reference": "audio/symphonien"
+            }
+          },
+          {
+            "discriminant": "page",
+            "value": {
+              "label": "Weitere Audiobeispiele",
+              "reference": "audio/beispiele"
+            }
+          }
+        ]
+      }
+    }
+  ]
 }
