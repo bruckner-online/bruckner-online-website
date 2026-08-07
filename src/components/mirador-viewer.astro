@@ -37,7 +37,7 @@ switch (source) {
 			const sigla = getSiglaByWabid(wabId);
 			sigla.forEach((s) => {
 				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
-				if (!(manifestUrl !== loadedManifest)) {
+				if (manifestUrl !== loadedManifest) {
 					catalog.push({ manifestId: manifestUrl });
 				}
 			});
