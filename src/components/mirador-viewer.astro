@@ -25,9 +25,11 @@ const getSiglaByWabid = (wabId: string) => {
 };
 
 const loadedManifest = `${IIIFBaseURL}/${presentationPath}/${id}/manifest`;
-const manifests = {
-	[loadedManifest]: {},
-};
+const catalog = [
+	{
+		manifestId: loadedManifest,
+	},
+];
 
 switch (source) {
 	case "hss":
@@ -35,8 +37,8 @@ switch (source) {
 			const sigla = getSiglaByWabid(wabId);
 			sigla.forEach((s) => {
 				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
-				if (!(manifestUrl in manifests)) {
-					manifests[manifestUrl] = {};
+				if (!(manifestUrl !== loadedManifest)) {
+					catalog.push({ manifestId: manifestUrl });
 				}
 			});
 		}
@@ -55,7 +57,7 @@ const windows = [
 	id="mirador-viewer"
 	data-presentation-path={presentationPath}
 	data-windows={JSON.stringify(windows)}
-	data-manifests={JSON.stringify(manifests)}
+	data-catalog={JSON.stringify(catalog)}
 	style="height: 600px;"></mirador-viewer>
 
 <script>
@@ -68,7 +70,7 @@ const windows = [
 				id: "mirador-viewer",
 				preserveManifestOrder: true,
 				showAddFromURLBox: false,
-				manifests: JSON.parse(this.dataset.windows!),
+				catalog: JSON.parse(this.dataset.catalog!),
 				windows: JSON.parse(this.dataset.windows!),
 			});
 		}
