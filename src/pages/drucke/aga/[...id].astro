@@ -6,4 +6,10 @@ const { id } = Astro.params;
 export const prerender = false;
 ---
 
-<MiradorViewer id={id!} presentationPath="bruckner/drucke" />
+<MiradorViewer
+	viewType="ImageView"
+	sidePanel={true}
+	source="aga"
+	id={id!}
+	presentationPath="bruckner/drucke"
+/>
