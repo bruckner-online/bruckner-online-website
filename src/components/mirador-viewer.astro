@@ -1,18 +1,61 @@
 ---
+import siglumWabMapping from "~/src/data/siglum_wab_mapping.json";
+
 interface Props {
 	id: string;
 	presentationPath: string;
+	sidePanel: boolean;
+	viewType: "ImageView" | "ThumbnailsView";
+	source: "hss" | "ed" | "aga";
+	wabId?: string;
 }
 
-const { id, presentationPath } = Astro.props;
+const IIIFBaseURL = "https://iiifpresentation.acdh.oeaw.ac.at";
 
-const manifestId = id ?? "WAB001";
+const { id, presentationPath, sidePanel, viewType, source, wabId } = Astro.props;
+
+const getSiglaByWabid = (wabId: string) => {
+	return siglumWabMapping
+		.filter((x) => {
+			return x.WAB.split(" ").includes(wabId);
+		})
+		.map((x) => {
+			return x.Signatur;
+		});
+};
+
+const loadedManifest = `${IIIFBaseURL}/${presentationPath}/${id}/manifest`;
+const manifests = {
+	[loadedManifest]: {},
+};
+
+switch (source) {
+	case "hss":
+		if (wabId) {
+			const sigla = getSiglaByWabid(wabId);
+			sigla.forEach((s) => {
+				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
+				if (!(manifestUrl in manifests)) {
+					manifests[manifestUrl] = {};
+				}
+			});
+		}
+}
+
+const windows = [
+	{
+		loadedManifest,
+		sidePanel,
+		viewType,
+	},
+];
 ---
 
 <mirador-viewer
 	id="mirador-viewer"
 	data-presentation-path={presentationPath}
-	data-imageid={manifestId}
+	data-windows={JSON.stringify(windows)}
+	data-manifests={JSON.stringify(manifests)}
 	style="height: 600px;"></mirador-viewer>
 
 <script>
@@ -23,12 +66,10 @@ const manifestId = id ?? "WAB001";
 		connectedCallback() {
 			Mirador.viewer({
 				id: "mirador-viewer",
+				preserveManifestOrder: true,
 				showAddFromURLBox: false,
-				windows: [
-					{
-						loadedManifest: `https://iiifpresentation.acdh.oeaw.ac.at/${this.dataset.presentationPath}/${this.dataset.imageid}/manifest`,
-					},
-				],
+				manifests: JSON.parse(this.dataset.windows!),
+				windows: JSON.parse(this.dataset.windows!),
 			});
 		}
 	}
