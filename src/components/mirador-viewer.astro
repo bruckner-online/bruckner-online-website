@@ -2,7 +2,7 @@
 import siglumWabMapping from "~/src/data/siglum_wab_mapping.json";
 
 interface Props {
-	id: string;
+	siglum?: string;
 	presentationPath: string;
 	sidePanel: boolean;
 	viewType: "ImageView" | "ThumbnailsView";
@@ -12,41 +12,47 @@ interface Props {
 
 const IIIFBaseURL = "https://iiifpresentation.acdh.oeaw.ac.at";
 
-const { id, presentationPath, sidePanel, viewType, source, wabId } = Astro.props;
+const { siglum, presentationPath, sidePanel, viewType, source, wabId } = Astro.props;
 
-const getSiglaByWabid = (wabId: string) => {
+const getSigla = (wabId?: string) => {
 	return siglumWabMapping
 		.filter((x) => {
-			return x.WAB.split(" ").includes(wabId);
+			return !wabId || x.WAB.split(" ").includes(wabId);
 		})
 		.map((x) => {
 			return x.Signatur;
 		});
 };
 
-const loadedManifest = `${IIIFBaseURL}/${presentationPath}/${id}/manifest`;
-const catalog = [
-	{
-		manifestId: loadedManifest,
-	},
-];
+let loadedManifest;
+const catalog = [];
 
 switch (source) {
 	case "hss":
-		if (wabId) {
-			const sigla = getSiglaByWabid(wabId);
+		if (!siglum && !wabId) {
+			const sigla = getSigla();
 			sigla.forEach((s) => {
 				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
-				if (manifestUrl !== loadedManifest) {
-					catalog.push({ manifestId: manifestUrl });
-				}
+				catalog.push({ manifestId: manifestUrl });
+			});
+		}
+		if (siglum && !wabId) {
+			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${siglum}/manifest`;
+			catalog.push({
+				manifestId: loadedManifest,
+			});
+		}
+		if (wabId && !siglum) {
+			const sigla = getSigla(wabId);
+			sigla.forEach((s) => {
+				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
+				catalog.push({ manifestId: manifestUrl });
 			});
 		}
 }
 
 const windows = [
 	{
-		loadedManifest,
 		sidePanel,
 		viewType,
 	},
