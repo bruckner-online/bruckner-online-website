@@ -1,8 +1,8 @@
 ---
 import MiradorViewer from "@/components/mirador-viewer.astro";
 
-const siglum = Astro.url.searchParams.get("siglum") || "";
-const wabId = Astro.url.searchParams.get("wab") || "";
+const siglum = Astro.url.searchParams.get("siglum");
+const wabId = Astro.url.searchParams.get("wab");
 
 export const prerender = false;
 ---

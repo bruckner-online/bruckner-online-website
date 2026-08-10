@@ -2,12 +2,12 @@
 import siglumWabMapping from "~/src/data/siglum_wab_mapping.json";
 
 interface Props {
-	siglum?: string;
+	siglum?: string | null;
 	presentationPath: string;
 	sidePanel: boolean;
 	viewType: "ImageView" | "ThumbnailsView";
 	source: "hss" | "ed" | "aga";
-	wabId?: string;
+	wabId?: string | null;
 }
 
 const IIIFBaseURL = "https://iiifpresentation.acdh.oeaw.ac.at";
@@ -31,6 +31,7 @@ switch (source) {
 	case "hss":
 		if (!siglum && !wabId) {
 			const sigla = getSigla();
+			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${sigla[0]}/manifest`;
 			sigla.forEach((s) => {
 				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
 				catalog.push({ manifestId: manifestUrl });
@@ -44,6 +45,7 @@ switch (source) {
 		}
 		if (wabId && !siglum) {
 			const sigla = getSigla(wabId);
+			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${sigla[0]}/manifest`;
 			sigla.forEach((s) => {
 				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
 				catalog.push({ manifestId: manifestUrl });
@@ -51,12 +53,7 @@ switch (source) {
 		}
 }
 
-const windows = [
-	{
-		sidePanel,
-		viewType,
-	},
-];
+const windows = [{ loadedManifest, sidePanel, viewType }];
 ---
 
 <mirador-viewer
