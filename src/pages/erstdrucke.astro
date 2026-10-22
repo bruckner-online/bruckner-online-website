@@ -1,7 +1,7 @@
 ---
 import MiradorViewer from "@/components/mirador-viewer.astro";
 
-const { id } = Astro.params;
+const wabId = Astro.url.searchParams.get("wabId");
 
 export const prerender = false;
 ---
@@ -10,6 +10,6 @@ export const prerender = false;
 	sidePanel={false}
 	viewType="ImageView"
 	source="ed"
-	siglum={id!}
+	wabId={wabId}
 	presentationPath="bruckner/drucke"
 />

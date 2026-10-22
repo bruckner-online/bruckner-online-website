@@ -1,7 +1,7 @@
 ---
 import MiradorViewer from "@/components/mirador-viewer.astro";
 
-const { id } = Astro.params;
+const aga = Astro.url.searchParams.get("aga");
 
 export const prerender = false;
 ---
@@ -10,6 +10,6 @@ export const prerender = false;
 	viewType="ImageView"
 	sidePanel={true}
 	source="aga"
-	siglum={id!}
+	aga={aga}
 	presentationPath="bruckner/drucke"
 />

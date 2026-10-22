@@ -2,6 +2,7 @@
 import siglumWabMapping from "~/src/data/siglum_wab_mapping.json";
 
 interface Props {
+	aga?: string | null;
 	siglum?: string | null;
 	presentationPath: string;
 	sidePanel: boolean;
@@ -12,7 +13,7 @@ interface Props {
 
 const IIIFBaseURL = "https://iiifpresentation.acdh.oeaw.ac.at";
 
-const { siglum, presentationPath, sidePanel, viewType, source, wabId } = Astro.props;
+const { aga, siglum, presentationPath, sidePanel, viewType, source, wabId } = Astro.props;
 
 const getSigla = (wabId?: string) => {
 	return siglumWabMapping
@@ -51,6 +52,17 @@ switch (source) {
 				catalog.push({ manifestId: manifestUrl });
 			});
 		}
+		break;
+	case "ed":
+		if (wabId) {
+			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${wabId}/manifest`;
+		}
+		break;
+	case "aga":
+		if (aga) {
+			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${aga}/manifest`;
+		}
+		break;
 }
 
 const windows = [{ loadedManifest, sidePanel, viewType }];
