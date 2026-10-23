@@ -18,3 +18,7 @@ apply fixes. Oxlint configuration lives in `.oxlintrc.json`; the Oxc VS Code ext
 editor integration. Oxlint checks JavaScript and TypeScript, including scripts in Astro files, but
 does not lint Astro templates. The former ESLint Astro, Solid, and Playwright plugin checks and
 React prop sorting are not included.
+
+Lefthook runs these tools on staged files before each commit and stages their fixes. Hook
+configuration lives in `.lefthook.json`. Hooks are installed during project setup; run `pnpm setup`
+to reinstall them.

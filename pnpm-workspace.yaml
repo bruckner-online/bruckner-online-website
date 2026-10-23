@@ -1,7 +1,7 @@
 allowBuilds:
   esbuild: true
   sharp: true
-  simple-git-hooks: true
+  lefthook: true
   typesense-instantsearch-adapter: true
   unrs-resolver: true
 
