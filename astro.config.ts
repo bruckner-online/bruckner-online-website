@@ -15,6 +15,7 @@ export default defineConfig({
 		mode: "standalone",
 	}),
 	base: env.PUBLIC_APP_BASE_PATH,
+	compressHTML: true,
 	integrations: [
 		icon({
 			/** @see https://www.astroicon.dev/reference/configuration/#include */
@@ -53,7 +54,7 @@ export default defineConfig({
 		keystatic(),
 		mdx(),
 		react({
-			include: ["**/content/**", "**/keystatic/**"],
+			include: [/\/(content|keystatic)\/.*\.[jt]sx?$/],
 		}),
 		solidJs({
 			exclude: ["**/content/**", "**/keystatic/**"],
