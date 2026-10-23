@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-assignment -- Astro component modules are not resolved by the type-aware backend. */
 import type { MDXComponents } from "mdx/types";
 
 import AudioPlayer from "@/components/content/audio-player.astro";
@@ -23,7 +24,7 @@ export function useMDXComponents(): MDXComponents {
 		FootnoteReference,
 		FootnotesSection,
 		IconLink,
-		img: Img as any,
+		img: Img,
 		Organisation,
 		TranskriptionsTool,
 		Video,

@@ -81,8 +81,9 @@ test("should add json+ld metadata", async ({ createIndexPage }) => {
 	const { indexPage, i18n } = await createIndexPage();
 	await indexPage.goto();
 
-	const metadata = await indexPage.page.locator('script[type="application/ld+json"]').textContent();
-	expect(metadata).toBe(
+	const metadata = indexPage.page.locator('script[type="application/ld+json"]');
+	await expect(metadata).toHaveJSProperty(
+		"textContent",
 		JSON.stringify({
 			"@context": "https://schema.org",
 			"@type": "WebSite",

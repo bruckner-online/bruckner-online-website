@@ -1,5 +1,0 @@
-{
-	"$schema": "./node_modules/knip/schema.json",
-	"entry": ["content/**/*.mdx", "e2e/tests/global.setup.ts"],
-	"ignoreDependencies": ["@iconify-json/lucide"]
-}

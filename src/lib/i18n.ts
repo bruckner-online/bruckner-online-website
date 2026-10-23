@@ -10,6 +10,7 @@ export async function createI18n(locale = defaultLocale) {
 	return {
 		/** @see https://github.com/lukeed/rosetta/blob/master/src/index.js */
 		t<T extends Paths<IntlMessages>>(
+			// oxlint-disable-next-line typescript/no-invalid-void-type -- This callback must not depend on a receiver.
 			this: void,
 			key: T,
 			params: Record<string, unknown> = {},

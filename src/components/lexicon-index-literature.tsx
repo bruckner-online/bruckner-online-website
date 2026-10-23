@@ -17,19 +17,21 @@ export default function LexiconLiteratureIndex(props: LexiconLiteratureIndexProp
 	const [index, setIndex] = createSignal<BibliographySearchResult | null>(null);
 	const [error, setError] = createSignal("");
 
-	const url = createUrl({
-		baseUrl,
-		pathname: "/literature",
-		searchParams: createUrlSearchParams({
-			title: props.letter,
-			startAt: props.start,
-			max: props.max,
-		}),
-	});
+	const url = () => {
+		return createUrl({
+			baseUrl,
+			pathname: "/literature",
+			searchParams: createUrlSearchParams({
+				title: props.letter,
+				startAt: props.start,
+				max: props.max,
+			}),
+		});
+	};
 
 	async function loadIndex() {
 		try {
-			const data = (await request(url, { responseType: "json" })) as BibliographySearchResult;
+			const data = (await request(url(), { responseType: "json" })) as BibliographySearchResult;
 			setIndex(data);
 		} catch (error) {
 			log.error(error);

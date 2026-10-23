@@ -8,8 +8,10 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
 );
 
 export function getImageImport(path: string) {
-	/** Upstream type issue. */
-	if (!path.startsWith("/")) return path as any;
+	if (!path.startsWith("/")) {
+		// oxlint-disable-next-line typescript/no-unsafe-return, typescript/no-explicit-any -- Astro Image props reject the string/image union.
+		return path as any;
+	}
 
 	const publicPath = join("/public", path);
 	const image = images[publicPath];

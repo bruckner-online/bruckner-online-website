@@ -1,5 +1,6 @@
-import { log } from "@acdh-oeaw/lib";
 import { readFileSync } from "fs";
+
+import { log } from "@acdh-oeaw/lib";
 import { Errors } from "typesense";
 
 import { createTypesenseClient } from "@/lib/typesense/typesense-client";

@@ -27,7 +27,9 @@ export function escape(value: string) {
 export function safeJsonLdReplacer(_key: string, value: JsonValue): JsonValue | undefined {
 	switch (typeof value) {
 		case "object": {
-			if (value === null) return undefined;
+			if (value === null) {
+				return undefined;
+			}
 			return value;
 		}
 
@@ -41,6 +43,9 @@ export function safeJsonLdReplacer(_key: string, value: JsonValue): JsonValue | 
 			return escape(value);
 		}
 
+		case "function":
+		case "symbol":
+		case "undefined":
 		default: {
 			return undefined;
 		}

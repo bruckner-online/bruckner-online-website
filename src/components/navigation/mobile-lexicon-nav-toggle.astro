@@ -39,7 +39,9 @@ const label = t("MobileLexiconNavToggle.label");
 			trigger.setAttribute("aria-expanded", "false");
 
 			trigger.addEventListener("click", (event) => {
-				if (nav == null) return;
+				if (nav == null) {
+					return;
+				}
 
 				const trigger = event.currentTarget as HTMLButtonElement;
 

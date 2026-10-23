@@ -1,13 +1,12 @@
 /* @jsxImportSource solid-js */
 
-import * as L from "leaflet";
-
 import "leaflet.markercluster";
 
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
+import * as L from "leaflet";
 import { type Accessor, createEffect, onMount } from "solid-js";
 
 interface LeafletMapProps {

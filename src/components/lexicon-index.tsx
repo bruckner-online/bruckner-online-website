@@ -17,20 +17,22 @@ interface LexiconIndexProps {
 export default function LexiconIndex(props: LexiconIndexProps) {
 	const [index, setIndex] = createSignal<ArticleSearchResponse | null>(null);
 	const [error, setError] = createSignal("");
-	const searchParams = { title: props.letter, startAt: props.start, max: props.max };
-	if (props.category) {
-		Object.assign(searchParams, { category: props.category });
-	}
+	function getUrl() {
+		const searchParams = { title: props.letter, startAt: props.start, max: props.max };
+		if (props.category) {
+			Object.assign(searchParams, { category: props.category });
+		}
 
-	const url = createUrl({
-		baseUrl,
-		pathname: "/article",
-		searchParams: createUrlSearchParams(searchParams),
-	});
+		return createUrl({
+			baseUrl,
+			pathname: "/article",
+			searchParams: createUrlSearchParams(searchParams),
+		});
+	}
 
 	async function loadIndex() {
 		try {
-			const data = (await request(url, { responseType: "json" })) as ArticleSearchResponse;
+			const data = (await request(getUrl(), { responseType: "json" })) as ArticleSearchResponse;
 			setIndex(data);
 		} catch (error) {
 			log.error(error);

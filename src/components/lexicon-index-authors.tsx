@@ -17,19 +17,21 @@ export default function LexiconAuthorsIndex(props: LexiconAuthorsIndexProps) {
 	const [index, setIndex] = createSignal<AuthorSearchResponse | null>(null);
 	const [error, setError] = createSignal("");
 
-	const url = createUrl({
-		baseUrl,
-		pathname: "/authors",
-		searchParams: createUrlSearchParams({
-			title: props.letter,
-			startAt: props.start,
-			max: props.max,
-		}),
-	});
+	const url = () => {
+		return createUrl({
+			baseUrl,
+			pathname: "/authors",
+			searchParams: createUrlSearchParams({
+				title: props.letter,
+				startAt: props.start,
+				max: props.max,
+			}),
+		});
+	};
 
 	async function loadIndex() {
 		try {
-			const data = (await request(url, { responseType: "json" })) as AuthorSearchResponse;
+			const data = (await request(url(), { responseType: "json" })) as AuthorSearchResponse;
 			setIndex(data);
 		} catch (error) {
 			log.error(error);

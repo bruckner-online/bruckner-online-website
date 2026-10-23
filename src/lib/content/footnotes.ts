@@ -14,7 +14,9 @@ export function withMdxFootnotes() {
 		const footnotes: Array<MdxJsxTextElementHast> = [];
 
 		visit(tree, "mdxJsxTextElement", (node, index, parent) => {
-			if (node.name !== "Footnote") return undefined;
+			if (node.name !== "Footnote") {
+				return undefined;
+			}
 
 			assert(parent);
 			assert(index);

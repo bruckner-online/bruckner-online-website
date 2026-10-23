@@ -16,21 +16,24 @@ or host Java installation is required.
 Run `pnpm lint:check` to check code with Oxlint and styles with Stylelint, or `pnpm lint:fix` to
 apply fixes. Oxlint configuration lives in `.oxlintrc.json`; the Oxc VS Code extension provides
 editor integration. Oxlint checks JavaScript and TypeScript, including scripts in Astro files, but
-does not lint Astro templates. The former ESLint Astro, Solid, and Playwright plugin checks and
-React prop sorting are not included.
+does not lint Astro templates. React prop sorting is not included.
 
-Oxlint also runs type-aware checks via `oxlint-tsgolint`, including unhandled and misused promises.
-Keep `pnpm types:check` for Astro-specific type checking.
+Oxlint runs explicit rules in `.oxlintrc.json`, including strict type-aware checks via
+`oxlint-tsgolint` and native React rules. Solid, Playwright, RegExp, and Tailwind checks run through
+Oxlint's JavaScript plugin support. Keep `pnpm types:check` for Astro-specific type checking. Oxfmt
+handles import ordering. Unused lint suppressions are reported as errors.
+
+Tailwind v4 uses the Vite plugin and CSS configuration in `src/styles/index.css`. The theme
+preserves the former preset's design tokens and document defaults. Explicit sources cover CMS
+content and gitignored `src/edition/` HTML; inline sources preserve the former safelist. Tailwind
+linting covers JavaScript/TypeScript strings and JSX; Oxlint does not analyze Astro templates or
+generated HTML. The `tables-striped` style hook and third-party widget class prefixes are exempt
+from unknown-class reports. The production browser targets follow Tailwind v4's minimum supported
+versions.
 
 Lefthook runs these tools on staged files before each commit and stages their fixes. Hook
 configuration lives in `.lefthook.json`. Hooks are installed during project setup; run `pnpm setup`
 to reinstall them.
-
-Run `pnpm audit:unused` for a manual Knip audit of unused files, exports, and dependencies.
-`knip.json` includes dynamically loaded MDX content and the Playwright setup entry point. The Lucide
-icon package is excluded from unused dependency reports because Astro Icon loads it by name from the
-integration configuration. Knip is not part of CI or commit hooks while its existing findings are
-reviewed; it exits with a nonzero status when it finds unused code.
 
 Install the Chromium browser and operating system dependencies with `pnpm test:e2e:install`. CI runs
 the Chromium tests with both GitHub annotations and an HTML report uploaded as an artifact, without

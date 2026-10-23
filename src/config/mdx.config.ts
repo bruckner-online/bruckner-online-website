@@ -23,7 +23,9 @@ const typography: Record<Locale, TypographicOptions> = {
 };
 
 export async function createConfig(locale: Locale) {
-	if (cache.has(locale)) return cache.get(locale)!;
+	if (cache.has(locale)) {
+		return cache.get(locale)!;
+	}
 
 	const { t } = await createI18n(locale);
 

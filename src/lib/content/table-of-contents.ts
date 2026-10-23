@@ -74,7 +74,9 @@ export const withMdxTableOfContents = function withMdxTableOfContents() {
 	const name = "tableOfContents";
 
 	return function transformer(tree: Root, vfile: VFile) {
-		if (vfile.data.toc == null) return;
+		if (vfile.data.toc == null) {
+			return;
+		}
 
 		tree.children.unshift({
 			type: "mdxjsEsm",
@@ -107,7 +109,9 @@ export const withMdxTableOfContents = function withMdxTableOfContents() {
 		});
 
 		visit(tree, "mdxJsxFlowElement", (element) => {
-			if (element.name !== "TableOfContents") return;
+			if (element.name !== "TableOfContents") {
+				return;
+			}
 
 			element.attributes.push({
 				type: "mdxJsxAttribute",

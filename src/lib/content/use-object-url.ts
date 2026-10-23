@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export interface UseObjectUrlParams {
-	data: Uint8Array<any>;
+	data: Uint8Array;
 	extension: string;
 	filename: string;
 }
@@ -21,7 +21,7 @@ export function useObjectUrl(params: UseObjectUrlParams | null) {
 		}
 
 		const url = URL.createObjectURL(
-			new Blob([data], contentType ? { type: contentType } : undefined),
+			new Blob([new Uint8Array(data)], contentType ? { type: contentType } : undefined),
 		);
 
 		setUrl(url);

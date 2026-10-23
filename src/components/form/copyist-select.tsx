@@ -16,7 +16,7 @@ export default function CopyistSelect(props: CopyistSelectProps) {
 			name={props.name}
 			class="w-full rounded-md bg-white p-2.5"
 			onChange={(e) => {
-				return (e.currentTarget as HTMLSelectElement).form?.submit();
+				return e.currentTarget.form?.submit();
 			}}
 		>
 			<option disabled selected hidden>

@@ -20,10 +20,14 @@ export function DataTable(props: DataTableProps) {
 	let tabulatorInstance: SimpleDataTable | undefined;
 
 	onMount(() => {
-		if (!containerRef) return;
+		if (!containerRef) {
+			return;
+		}
 		{
 			const tableElement = containerRef.querySelector("table");
-			if (!tableElement) return;
+			if (!tableElement) {
+				return;
+			}
 			if (props.setCoordinates) {
 				filterCoordinates(tableElement);
 			}

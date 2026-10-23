@@ -141,7 +141,9 @@ const { class: className, label } = Astro.props;
 			}
 
 			function onClickOutside(event: MouseEvent) {
-				if (current == null) return;
+				if (current == null) {
+					return;
+				}
 
 				const element = event.target as Node | null;
 				if (!current.menu.contains(element)) {
@@ -150,7 +152,9 @@ const { class: className, label } = Astro.props;
 			}
 
 			function onEscapeKey(event: KeyboardEvent) {
-				if (current == null) return;
+				if (current == null) {
+					return;
+				}
 
 				if (event.key === "Escape") {
 					closeMenu(current);
@@ -158,7 +162,9 @@ const { class: className, label } = Astro.props;
 			}
 
 			function onBlur(event: FocusEvent) {
-				if (current == null) return;
+				if (current == null) {
+					return;
+				}
 
 				const element = event.relatedTarget as Node | null;
 				if (!root!.contains(element)) {

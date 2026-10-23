@@ -4,13 +4,15 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import solidJs from "@astrojs/solid-js";
 import keystatic from "@keystatic/astro";
-import { defineConfig } from "astro/config";
+import tailwindcss from "@tailwindcss/vite";
 import icon from "astro-icon";
+import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 
 const env = loadEnv(import.meta.env.MODE, process.cwd(), "");
 
 export default defineConfig({
+	vite: { plugins: [tailwindcss()] },
 	adapter: node({
 		mode: "standalone",
 	}),

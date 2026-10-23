@@ -6,5 +6,16 @@
 	"sortPackageJson": {
 		"sortScripts": true
 	},
-	"useTabs": true
+	"useTabs": true,
+	"sortImports": {
+		"groups": [
+			["side_effect"],
+			["side_effect_style"],
+			["style"],
+			["builtin"],
+			["external"],
+			["internal", "subpath"],
+			["unknown"]
+		]
+	}
 }

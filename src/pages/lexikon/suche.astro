@@ -38,7 +38,9 @@ async function api(): Promise<
 	{ data: null; error: string } | { data: SearchResponse; error: null }
 > {
 	/** Endpoint does not accept empty search term. */
-	if (q.length === 0) return { data: null, error: t("SearchResults.empty-query") };
+	if (q.length === 0) {
+		return { data: null, error: t("SearchResults.empty-query") };
+	}
 
 	const url = createUrl({
 		baseUrl,

@@ -2,31 +2,621 @@
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
 	"plugins": ["typescript", "unicorn", "oxc", "import"],
 	"categories": {
-		"correctness": "error"
+		"correctness": "off",
+		"suspicious": "off",
+		"pedantic": "off",
+		"style": "off",
+		"restriction": "off",
+		"perf": "off",
+		"nursery": "off"
 	},
 	"env": {
 		"browser": true,
 		"node": true
 	},
+	"jsPlugins": [
+		{
+			"name": "regexp",
+			"specifier": "eslint-plugin-regexp"
+		},
+		{
+			"name": "better-tailwindcss",
+			"specifier": "eslint-plugin-better-tailwindcss"
+		}
+	],
 	"rules": {
 		"arrow-body-style": ["error", "always"],
+		"constructor-super": "deny",
+		"for-direction": "deny",
+		"getter-return": "deny",
+		"no-async-promise-executor": "deny",
+		"no-caller": "deny",
+		"no-class-assign": "deny",
+		"no-compare-neg-zero": "deny",
+		"no-cond-assign": "deny",
+		"no-const-assign": "deny",
+		"no-constant-binary-expression": "deny",
+		"no-constant-condition": "deny",
+		"no-control-regex": "error",
+		"no-debugger": "deny",
+		"no-delete-var": "deny",
+		"no-dupe-class-members": "deny",
+		"no-dupe-else-if": "deny",
+		"no-dupe-keys": "deny",
+		"no-duplicate-case": "deny",
+		"no-empty-character-class": "off",
+		"no-empty-pattern": "deny",
+		"no-empty-static-block": "deny",
+		"no-eval": "deny",
+		"no-ex-assign": "deny",
+		"no-extra-boolean-cast": "deny",
+		"no-func-assign": "deny",
+		"no-global-assign": "deny",
+		"no-import-assign": "deny",
+		"no-invalid-regexp": "off",
+		"no-irregular-whitespace": "deny",
+		"no-iterator": "deny",
+		"no-loss-of-precision": "deny",
+		"no-misleading-character-class": "error",
+		"no-new-native-nonconstructor": "deny",
+		"no-nonoctal-decimal-escape": "deny",
+		"no-obj-calls": "deny",
+		"no-self-assign": "deny",
+		"no-setter-return": "deny",
+		"no-shadow-restricted-names": "deny",
+		"no-sparse-arrays": "deny",
+		"no-this-before-super": "deny",
+		"no-unassigned-vars": "deny",
+		"no-unreachable": "deny",
+		"no-unsafe-finally": "deny",
+		"no-unsafe-negation": "deny",
+		"no-unsafe-optional-chaining": "deny",
+		"no-unused-expressions": "error",
+		"no-unused-labels": "deny",
+		"no-unused-private-class-members": "deny",
+		"no-unused-vars": [
+			"error",
+			{
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_"
+			}
+		],
+		"no-useless-backreference": "off",
+		"no-useless-catch": "deny",
+		"no-useless-escape": "deny",
+		"no-useless-rename": "deny",
+		"no-with": "deny",
+		"require-yield": "deny",
+		"use-isnan": "deny",
+		"valid-typeof": "deny",
+		"import/default": "off",
+		"import/namespace": "off",
+		"oxc/bad-array-method-on-arguments": "deny",
+		"oxc/bad-char-at-comparison": "deny",
+		"oxc/bad-comparison-sequence": "deny",
+		"oxc/bad-match-all-arg": "deny",
+		"oxc/bad-min-max-func": "deny",
+		"oxc/bad-object-literal-comparison": "deny",
+		"oxc/bad-replace-all-arg": "deny",
+		"oxc/const-comparisons": "deny",
+		"oxc/double-comparisons": "deny",
+		"oxc/erasing-op": "deny",
+		"oxc/missing-throw": "deny",
+		"oxc/number-arg-out-of-range": "deny",
+		"oxc/only-used-in-recursion": "deny",
+		"oxc/uninvoked-array-callback": "deny",
+		"typescript/await-thenable": "error",
+		"typescript/no-array-delete": "error",
+		"typescript/no-base-to-string": "error",
+		"typescript/no-duplicate-enum-values": "error",
+		"typescript/no-duplicate-type-constituents": "error",
+		"typescript/no-extra-non-null-assertion": "error",
 		"typescript/no-floating-promises": "error",
-		"typescript/no-misused-promises": "error"
+		"typescript/no-for-in-array": "error",
+		"typescript/no-implied-eval": "error",
+		"typescript/no-meaningless-void-operator": "error",
+		"typescript/no-misused-new": "error",
+		"typescript/no-misused-promises": "error",
+		"typescript/no-misused-spread": "error",
+		"typescript/no-non-null-asserted-optional-chain": "error",
+		"typescript/no-redundant-type-constituents": "error",
+		"typescript/no-this-alias": "error",
+		"typescript/no-unnecessary-parameter-property-assignment": "deny",
+		"typescript/no-unsafe-declaration-merging": "error",
+		"typescript/no-unsafe-unary-minus": "error",
+		"typescript/no-useless-default-assignment": "deny",
+		"typescript/no-useless-empty-export": "deny",
+		"typescript/no-wrapper-object-types": "error",
+		"typescript/prefer-as-const": "error",
+		"typescript/prefer-namespace-keyword": "error",
+		"typescript/require-array-sort-compare": "deny",
+		"typescript/restrict-template-expressions": [
+			"error",
+			{
+				"allowAny": false,
+				"allowBoolean": false,
+				"allowNever": false,
+				"allowNullish": false,
+				"allowNumber": false,
+				"allowRegExp": false
+			}
+		],
+		"typescript/triple-slash-reference": "error",
+		"typescript/unbound-method": "error",
+		"unicorn/no-await-in-promise-methods": "deny",
+		"unicorn/no-empty-file": "deny",
+		"unicorn/no-invalid-fetch-options": "deny",
+		"unicorn/no-invalid-remove-event-listener": "deny",
+		"unicorn/no-new-array": "deny",
+		"unicorn/no-single-promise-in-promise-methods": "deny",
+		"unicorn/no-thenable": "deny",
+		"unicorn/no-unnecessary-await": "deny",
+		"unicorn/no-useless-fallback-in-spread": "deny",
+		"unicorn/no-useless-length-check": "deny",
+		"unicorn/no-useless-spread": "deny",
+		"unicorn/prefer-set-size": "deny",
+		"unicorn/prefer-string-starts-ends-with": "deny",
+		"typescript/ban-ts-comment": [
+			"error",
+			{
+				"minimumDescriptionLength": 10
+			}
+		],
+		"no-array-constructor": "error",
+		"typescript/no-confusing-void-expression": "error",
+		"typescript/no-deprecated": "error",
+		"typescript/no-dynamic-delete": "error",
+		"typescript/no-empty-object-type": [
+			"error",
+			{
+				"allowInterfaces": "always"
+			}
+		],
+		"typescript/no-explicit-any": "error",
+		"typescript/no-extraneous-class": "error",
+		"no-implied-eval": "off",
+		"typescript/no-invalid-void-type": "error",
+		"typescript/no-mixed-enums": "error",
+		"typescript/no-namespace": [
+			"error",
+			{
+				"allowDeclarations": true
+			}
+		],
+		"typescript/no-non-null-asserted-nullish-coalescing": "error",
+		"typescript/no-non-null-assertion": "off",
+		"typescript/no-require-imports": "error",
+		"typescript/no-unnecessary-boolean-literal-compare": "error",
+		"typescript/no-unnecessary-condition": "error",
+		"typescript/no-unnecessary-template-expression": "error",
+		"typescript/no-unnecessary-type-arguments": "error",
+		"typescript/no-unnecessary-type-assertion": "error",
+		"typescript/no-unnecessary-type-constraint": "error",
+		"typescript/no-unnecessary-type-conversion": "error",
+		"typescript/no-unnecessary-type-parameters": "error",
+		"typescript/no-unsafe-argument": "error",
+		"typescript/no-unsafe-assignment": "error",
+		"typescript/no-unsafe-call": "error",
+		"typescript/no-unsafe-enum-comparison": "error",
+		"typescript/no-unsafe-function-type": "error",
+		"typescript/no-unsafe-member-access": "error",
+		"typescript/no-unsafe-return": "error",
+		"no-useless-constructor": "error",
+		"no-throw-literal": "error",
+		"typescript/only-throw-error": "error",
+		"typescript/prefer-literal-enum-member": "error",
+		"prefer-promise-reject-errors": "off",
+		"typescript/prefer-promise-reject-errors": "error",
+		"typescript/prefer-reduce-type-parameter": "error",
+		"typescript/prefer-return-this-type": "error",
+		"typescript/related-getter-setter-pairs": "error",
+		"require-await": "off",
+		"typescript/require-await": "error",
+		"typescript/restrict-plus-operands": [
+			"error",
+			{
+				"allowAny": false,
+				"allowBoolean": false,
+				"allowNullish": false,
+				"allowNumberAndString": false,
+				"allowRegExp": false
+			}
+		],
+		"typescript/return-await": ["error", "error-handling-correctness-only"],
+		"typescript/unified-signatures": "error",
+		"typescript/use-unknown-in-catch-callback-variable": "error",
+		"typescript/adjacent-overload-signatures": "error",
+		"typescript/array-type": [
+			"error",
+			{
+				"default": "generic"
+			}
+		],
+		"typescript/ban-tslint-comment": "error",
+		"typescript/class-literal-property-style": "error",
+		"typescript/consistent-generic-constructors": "error",
+		"typescript/consistent-indexed-object-style": "error",
+		"typescript/consistent-type-assertions": "error",
+		"typescript/consistent-type-definitions": "error",
+		"typescript/dot-notation": "error",
+		"typescript/no-confusing-non-null-assertion": "error",
+		"no-empty-function": "error",
+		"typescript/no-inferrable-types": "error",
+		"typescript/non-nullable-type-assertion-style": "error",
+		"typescript/prefer-find": "error",
+		"typescript/prefer-for-of": "error",
+		"typescript/prefer-function-type": "error",
+		"typescript/prefer-includes": "error",
+		"typescript/prefer-nullish-coalescing": "error",
+		"typescript/prefer-optional-chain": "error",
+		"typescript/prefer-regexp-exec": "error",
+		"typescript/prefer-string-starts-ends-with": "error",
+		"eqeqeq": [
+			"error",
+			"always",
+			{
+				"null": "ignore"
+			}
+		],
+		"no-console": [
+			"warn",
+			{
+				"allow": ["warn", "error"]
+			}
+		],
+		"no-implicit-coercion": "error",
+		"no-param-reassign": "error",
+		"no-restricted-globals": [
+			"error",
+			{
+				"name": "isNaN",
+				"message": "Use Number.isNaN instead."
+			}
+		],
+		"prefer-const": "error",
+		"prefer-template": "error",
+		"typescript/consistent-type-exports": [
+			"error",
+			{
+				"fixMixedExportsWithInlineTypeSpecifier": true
+			}
+		],
+		"typescript/consistent-type-imports": [
+			"error",
+			{
+				"fixStyle": "inline-type-imports"
+			}
+		],
+		"typescript/no-import-type-side-effects": "error",
+		"typescript/switch-exhaustiveness-check": "error",
+		"import/first": "error",
+		"import/newline-after-import": "error",
+		"import/no-anonymous-default-export": "error",
+		"import/no-duplicates": [
+			"error",
+			{
+				"preferInline": true
+			}
+		],
+		"import/named": "off",
+		"typescript/no-var-requires": "off",
+		"curly": ["error", "all"],
+		"prefer-arrow-callback": [
+			"error",
+			{
+				"allowNamedFunctions": true
+			}
+		],
+		"no-regex-spaces": "error",
+		"prefer-regex-literals": "error",
+		"regexp/confusing-quantifier": "warn",
+		"regexp/control-character-escape": "error",
+		"regexp/match-any": "error",
+		"regexp/negation": "error",
+		"regexp/no-contradiction-with-assertion": "error",
+		"regexp/no-dupe-characters-character-class": "error",
+		"regexp/no-dupe-disjunctions": "error",
+		"regexp/no-empty-alternative": "warn",
+		"regexp/no-empty-capturing-group": "error",
+		"regexp/no-empty-character-class": "error",
+		"regexp/no-empty-group": "error",
+		"regexp/no-empty-lookarounds-assertion": "error",
+		"regexp/no-empty-string-literal": "error",
+		"regexp/no-escape-backspace": "error",
+		"regexp/no-extra-lookaround-assertions": "error",
+		"regexp/no-invalid-regexp": "error",
+		"regexp/no-invisible-character": "error",
+		"regexp/no-lazy-ends": "warn",
+		"regexp/no-legacy-features": "error",
+		"regexp/no-misleading-capturing-group": "error",
+		"regexp/no-misleading-unicode-character": "error",
+		"regexp/no-missing-g-flag": "error",
+		"regexp/no-non-standard-flag": "error",
+		"regexp/no-obscure-range": "error",
+		"regexp/no-optional-assertion": "error",
+		"regexp/no-potentially-useless-backreference": "warn",
+		"regexp/no-super-linear-backtracking": "error",
+		"regexp/no-trivially-nested-assertion": "error",
+		"regexp/no-trivially-nested-quantifier": "error",
+		"regexp/no-unused-capturing-group": "error",
+		"regexp/no-useless-assertions": "error",
+		"regexp/no-useless-backreference": "error",
+		"regexp/no-useless-character-class": "error",
+		"regexp/no-useless-dollar-replacements": "error",
+		"regexp/no-useless-escape": "error",
+		"regexp/no-useless-flag": "warn",
+		"regexp/no-useless-lazy": "error",
+		"regexp/no-useless-non-capturing-group": "error",
+		"regexp/no-useless-quantifier": "error",
+		"regexp/no-useless-range": "error",
+		"regexp/no-useless-set-operand": "error",
+		"regexp/no-useless-string-literal": "error",
+		"regexp/no-useless-two-nums-quantifier": "error",
+		"regexp/no-zero-quantifier": "error",
+		"regexp/optimal-lookaround-quantifier": "warn",
+		"regexp/optimal-quantifier-concatenation": "error",
+		"regexp/prefer-character-class": "error",
+		"regexp/prefer-d": "error",
+		"regexp/prefer-plus-quantifier": "error",
+		"regexp/prefer-predefined-assertion": "error",
+		"regexp/prefer-question-quantifier": "error",
+		"regexp/prefer-range": "error",
+		"regexp/prefer-set-operation": "error",
+		"regexp/prefer-star-quantifier": "error",
+		"regexp/prefer-unicode-codepoint-escapes": "error",
+		"regexp/prefer-w": "error",
+		"regexp/simplify-set-operations": "error",
+		"regexp/sort-flags": "error",
+		"regexp/strict": "error",
+		"regexp/use-ignore-case": "error",
+		"better-tailwindcss/no-conflicting-classes": "error",
+		"better-tailwindcss/no-duplicate-classes": "error",
+		"better-tailwindcss/no-unknown-classes": [
+			"error",
+			{
+				"ignore": ["^datatable-", "^leaflet-", "^mirador-", "^ais-", "^tables-striped$"]
+			}
+		],
+		"better-tailwindcss/no-deprecated-classes": "error",
+		"no-case-declarations": "error",
+		"no-fallthrough": "error",
+		"no-prototype-builtins": "error",
+		"no-var": "error",
+		"prefer-rest-params": "error",
+		"prefer-spread": "error"
 	},
 	"overrides": [
 		{
 			"files": [
-				"keystatic.config.ts",
 				"keystatic.config.tsx",
-				"**/content/**/*.ts",
-				"**/content/**/*.tsx",
-				"**/keystatic/**/*.ts",
-				"**/keystatic/**/*.tsx"
+				"**/content/**/*.{ts,tsx}",
+				"**/keystatic/**/*.{ts,tsx}",
+				"src/components/logo.tsx"
 			],
-			"plugins": ["react", "jsx-a11y"]
+			"plugins": ["react", "jsx-a11y"],
+			"rules": {
+				"jsx-a11y/alt-text": "error",
+				"jsx-a11y/anchor-has-content": "error",
+				"jsx-a11y/anchor-is-valid": "error",
+				"jsx-a11y/aria-activedescendant-has-tabindex": "error",
+				"jsx-a11y/aria-props": "error",
+				"jsx-a11y/aria-proptypes": "error",
+				"jsx-a11y/aria-role": "error",
+				"jsx-a11y/aria-unsupported-elements": "error",
+				"jsx-a11y/autocomplete-valid": "error",
+				"jsx-a11y/click-events-have-key-events": "error",
+				"jsx-a11y/control-has-associated-label": "error",
+				"jsx-a11y/heading-has-content": "error",
+				"jsx-a11y/html-has-lang": "error",
+				"jsx-a11y/iframe-has-title": "error",
+				"jsx-a11y/img-redundant-alt": "error",
+				"jsx-a11y/interactive-supports-focus": "error",
+				"jsx-a11y/label-has-associated-control": "error",
+				"jsx-a11y/lang": "error",
+				"jsx-a11y/media-has-caption": "error",
+				"jsx-a11y/mouse-events-have-key-events": "error",
+				"jsx-a11y/no-access-key": "error",
+				"jsx-a11y/no-aria-hidden-on-focusable": "error",
+				"jsx-a11y/no-autofocus": [
+					"error",
+					{
+						"ignoreNonDOM": true
+					}
+				],
+				"jsx-a11y/no-distracting-elements": "error",
+				"jsx-a11y/no-interactive-element-to-noninteractive-role": "error",
+				"jsx-a11y/no-noninteractive-element-interactions": "error",
+				"jsx-a11y/no-noninteractive-element-to-interactive-role": "error",
+				"jsx-a11y/no-noninteractive-tabindex": "error",
+				"jsx-a11y/no-redundant-roles": [
+					"error",
+					{
+						"ul": ["list"],
+						"ol": ["list"]
+					}
+				],
+				"jsx-a11y/no-static-element-interactions": "error",
+				"jsx-a11y/prefer-tag-over-role": "off",
+				"jsx-a11y/role-has-required-aria-props": "error",
+				"jsx-a11y/role-supports-aria-props": "error",
+				"jsx-a11y/scope": "error",
+				"jsx-a11y/tabindex-no-positive": "error",
+				"react/error-boundaries": "error",
+				"react/exhaustive-deps": "error",
+				"react/forward-ref-uses-ref": "error",
+				"react/globals": "error",
+				"react/immutability": "error",
+				"react/incompatible-library": "error",
+				"react/jsx-key": "error",
+				"react/jsx-no-duplicate-props": "error",
+				"react/jsx-no-undef": "error",
+				"react/jsx-props-no-spread-multi": "error",
+				"react/no-children-prop": "error",
+				"react/no-danger-with-children": "error",
+				"react/no-did-mount-set-state": "error",
+				"react/no-did-update-set-state": "error",
+				"react/no-direct-mutation-state": "error",
+				"react/no-find-dom-node": "error",
+				"react/no-is-mounted": "error",
+				"react/no-render-return-value": "error",
+				"react/no-string-refs": "error",
+				"react/no-this-in-sfc": "error",
+				"react/no-unsafe": "error",
+				"react/no-will-update-set-state": "error",
+				"react/preserve-manual-memoization": "error",
+				"react/purity": "error",
+				"react/refs": "error",
+				"react/set-state-in-effect": "error",
+				"react/set-state-in-render": "error",
+				"react/static-components": "error",
+				"react/use-memo": "error",
+				"react/void-dom-elements-no-children": "error",
+				"react/void-use-memo": "error",
+				"react/rules-of-hooks": "error",
+				"react/jsx-boolean-value": ["error", "always"],
+				"react/jsx-no-useless-fragment": "error"
+			}
+		},
+		{
+			"files": ["src/components/**/*.{ts,tsx}", "src/ui/**/*.{ts,tsx}"],
+			"plugins": ["jsx-a11y"],
+			"jsPlugins": [
+				{
+					"name": "solid",
+					"specifier": "eslint-plugin-solid"
+				}
+			],
+			"rules": {
+				"solid/jsx-no-duplicate-props": 2,
+				"solid/jsx-no-undef": [
+					2,
+					{
+						"typescriptEnabled": true
+					}
+				],
+				"solid/no-unknown-namespaces": 0,
+				"solid/no-innerhtml": 2,
+				"solid/jsx-no-script-url": 2,
+				"solid/components-return-once": 1,
+				"solid/no-destructure": 2,
+				"solid/prefer-for": 2,
+				"solid/reactivity": 1,
+				"solid/event-handlers": 1,
+				"solid/imports": 1,
+				"solid/style-prop": 1,
+				"solid/no-react-deps": 1,
+				"solid/no-react-specific-props": 1,
+				"solid/self-closing-comp": 1,
+				"solid/no-array-handlers": 0,
+				"solid/prefer-show": 0,
+				"solid/no-proxy-apis": 0,
+				"solid/prefer-classlist": 0,
+				"jsx-a11y/alt-text": "error",
+				"jsx-a11y/anchor-has-content": "error",
+				"jsx-a11y/anchor-is-valid": "error",
+				"jsx-a11y/aria-activedescendant-has-tabindex": "error",
+				"jsx-a11y/aria-props": "error",
+				"jsx-a11y/aria-proptypes": "error",
+				"jsx-a11y/aria-role": "error",
+				"jsx-a11y/aria-unsupported-elements": "error",
+				"jsx-a11y/autocomplete-valid": "error",
+				"jsx-a11y/click-events-have-key-events": "error",
+				"jsx-a11y/control-has-associated-label": "error",
+				"jsx-a11y/heading-has-content": "error",
+				"jsx-a11y/html-has-lang": "error",
+				"jsx-a11y/iframe-has-title": "error",
+				"jsx-a11y/img-redundant-alt": "error",
+				"jsx-a11y/interactive-supports-focus": "error",
+				"jsx-a11y/label-has-associated-control": "error",
+				"jsx-a11y/lang": "error",
+				"jsx-a11y/media-has-caption": "error",
+				"jsx-a11y/mouse-events-have-key-events": "error",
+				"jsx-a11y/no-access-key": "error",
+				"jsx-a11y/no-aria-hidden-on-focusable": "error",
+				"jsx-a11y/no-autofocus": [
+					"error",
+					{
+						"ignoreNonDOM": true
+					}
+				],
+				"jsx-a11y/no-distracting-elements": "error",
+				"jsx-a11y/no-interactive-element-to-noninteractive-role": "error",
+				"jsx-a11y/no-noninteractive-element-interactions": "error",
+				"jsx-a11y/no-noninteractive-element-to-interactive-role": "error",
+				"jsx-a11y/no-noninteractive-tabindex": "error",
+				"jsx-a11y/no-redundant-roles": [
+					"error",
+					{
+						"ul": ["list"],
+						"ol": ["list"]
+					}
+				],
+				"jsx-a11y/no-static-element-interactions": "error",
+				"jsx-a11y/prefer-tag-over-role": "off",
+				"jsx-a11y/role-has-required-aria-props": "error",
+				"jsx-a11y/role-supports-aria-props": "error",
+				"jsx-a11y/scope": "error",
+				"jsx-a11y/tabindex-no-positive": "error"
+			},
+			"excludeFiles": ["**/content/**", "**/keystatic/**", "src/components/logo.tsx"]
+		},
+		{
+			"files": ["e2e/**/*.{ts,tsx}"],
+			"jsPlugins": [
+				{
+					"name": "playwright",
+					"specifier": "eslint-plugin-playwright"
+				}
+			],
+			"rules": {
+				"no-empty-pattern": "off",
+				"playwright/consistent-spacing-between-blocks": "warn",
+				"playwright/expect-expect": "warn",
+				"playwright/max-nested-describe": "warn",
+				"playwright/missing-playwright-await": "error",
+				"playwright/no-conditional-expect": "warn",
+				"playwright/no-conditional-in-test": "warn",
+				"playwright/no-duplicate-hooks": "warn",
+				"playwright/no-duplicate-slow": "warn",
+				"playwright/no-element-handle": "warn",
+				"playwright/no-eval": "warn",
+				"playwright/no-focused-test": "error",
+				"playwright/no-force-option": "warn",
+				"playwright/no-identical-title": "warn",
+				"playwright/no-nested-step": "warn",
+				"playwright/no-networkidle": "error",
+				"playwright/no-page-pause": "warn",
+				"playwright/no-skipped-test": "warn",
+				"playwright/no-standalone-expect": "error",
+				"playwright/no-unnecessary-assertions": "error",
+				"playwright/no-unsafe-references": "error",
+				"playwright/no-unused-locators": "error",
+				"playwright/no-useless-await": "warn",
+				"playwright/no-useless-not": "warn",
+				"playwright/no-wait-for-navigation": "error",
+				"playwright/no-wait-for-selector": "warn",
+				"playwright/no-wait-for-timeout": "warn",
+				"playwright/prefer-hooks-in-order": "warn",
+				"playwright/prefer-hooks-on-top": "warn",
+				"playwright/prefer-locator": "warn",
+				"playwright/prefer-to-have-count": "warn",
+				"playwright/prefer-to-have-length": "warn",
+				"playwright/prefer-web-first-assertions": "error",
+				"playwright/valid-describe-callback": "error",
+				"playwright/valid-expect": "error",
+				"playwright/valid-expect-in-promise": "error",
+				"playwright/valid-test-tags": "error",
+				"playwright/valid-title": "error"
+			}
 		}
 	],
 	"options": {
-		"typeAware": true
+		"typeAware": true,
+		"reportUnusedDisableDirectives": "error"
+	},
+	"settings": {
+		"better-tailwindcss": {
+			"entryPoint": "./src/styles/index.css"
+		}
 	}
 }

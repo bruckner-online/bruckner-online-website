@@ -4,7 +4,6 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"audit:unused": "knip",
 		"build": "astro build",
 		"dev": "astro dev",
 		"edition:build": "bash src/scripts/shellscripts/build-edition.sh",
@@ -83,12 +82,13 @@
 	},
 	"devDependencies": {
 		"@acdh-oeaw/stylelint-config": "^2.3.2",
-		"@acdh-oeaw/tailwindcss-preset": "^0.0.22",
 		"@acdh-oeaw/tsconfig": "^1.5.1",
 		"@astrojs/check": "^0.9.12",
 		"@astrojs/compiler-rs": "^0.5.2",
 		"@astrojs/ts-plugin": "^1.10.12",
 		"@playwright/test": "^1.56.1",
+		"@tailwindcss/typography": "^0.5.20",
+		"@tailwindcss/vite": "^4.3.3",
 		"@types/estree": "^1.0.8",
 		"@types/hast": "^3.0.4",
 		"@types/leaflet.markercluster": "^1.5.6",
@@ -98,24 +98,25 @@
 		"@types/nodemailer": "^7.0.3",
 		"@types/react": "^19.2.5",
 		"@types/react-dom": "^19.2.3",
-		"autoprefixer": "^10.4.22",
 		"axe-core": "^4.11.0",
 		"axe-playwright": "^2.2.2",
 		"dotenv": "^17.2.3",
 		"dotenv-cli": "^11.0.0",
 		"dotenv-expand": "^12.0.3",
+		"eslint-plugin-better-tailwindcss": "^4.10.0",
+		"eslint-plugin-playwright": "^2.12.1",
+		"eslint-plugin-regexp": "^3.3.1",
+		"eslint-plugin-solid": "0.14.5",
 		"is-in-ci": "^2.0.0",
-		"knip": "^6.42.1",
 		"lefthook": "^2.2.2",
 		"mdast-util-mdx-jsx": "^3.2.0",
 		"npm-run-all2": "^8.0.4",
 		"oxfmt": "^0.74.0",
 		"oxlint": "^1.89.0",
 		"oxlint-tsgolint": "^7.0.2004",
-		"postcss": "^8.5.6",
 		"schema-dts": "^1.1.5",
 		"stylelint": "^16.25.0",
-		"tailwindcss": "^3.4.17",
+		"tailwindcss": "^4.3.3",
 		"tsx": "^4.20.6",
 		"type-fest": "^5.2.0",
 		"typescript": "^5.9.3"
@@ -127,9 +128,11 @@
 			"last 1 safari version"
 		],
 		"production": [
-			">=0.75%",
-			"not dead",
-			"not op_mini all"
+			"chrome >= 111",
+			"edge >= 111",
+			"firefox >= 128",
+			"safari >= 16.4",
+			"ios_saf >= 16.4"
 		]
 	},
 	"stylelint": {
@@ -138,11 +141,5 @@
 	"engines": {
 		"node": "^24"
 	},
-	"packageManager": "pnpm@12.15.0",
-	"postcss": {
-		"plugins": {
-			"tailwindcss": {},
-			"autoprefixer": {}
-		}
-	}
+	"packageManager": "pnpm@12.15.0"
 }

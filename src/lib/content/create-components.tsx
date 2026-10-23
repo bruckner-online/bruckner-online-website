@@ -293,7 +293,9 @@ function create(
 		}),
 	};
 
-	if (components == null) return allComponents;
+	if (components == null) {
+		return allComponents;
+	}
 
 	return pick(allComponents, components);
 }

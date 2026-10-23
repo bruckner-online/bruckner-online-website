@@ -1,6 +1,6 @@
 ---
-import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
 
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import { generateUniqueId } from "@/lib/generate-unique-id";
@@ -231,7 +231,9 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 					state.intent = "pause";
 				}
 				state.paused = true;
-				if (timer) clearInterval(timer);
+				if (timer) {
+					clearInterval(timer);
+				}
 				timer = null;
 				root!.dataset.state = "paused";
 			}
