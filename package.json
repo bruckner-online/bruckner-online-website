@@ -6,6 +6,7 @@
 	"scripts": {
 		"build": "astro build",
 		"dev": "astro dev",
+		"edition:build": "bash src/scripts/shellscripts/build-edition.sh",
 		"format:check": "oxfmt --check .",
 		"format:fix": "oxfmt --write .",
 		"lint:check": "run-p --continue-on-error \"lint:*:check\"",

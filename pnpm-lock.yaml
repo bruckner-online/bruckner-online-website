@@ -224,7 +224,7 @@ importers:
         specifier: ^5.44.0
         version: 5.44.0
       astro:
-        specifier: ^7
+        specifier: ^7.4.2
         version: 7.4.2(@types/node@24.10.1)(idb-keyval@6.2.2)(jiti@2.6.1)(tsx@4.20.6)(yaml@2.8.1)
       astro-icon:
         specifier: ^1.1.5
@@ -314,7 +314,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8
+        specifier: ^8.3.5
         version: 8.3.5(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)(yaml@2.8.1)
     devDependencies:
       '@acdh-oeaw/eslint-config':

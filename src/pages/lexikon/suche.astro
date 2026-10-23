@@ -86,8 +86,8 @@ const { data, error } = await api();
 											{ensureArray(kwic.p).map((hit) => {
 												return (
 													<div>
-														<span>{hit.span[0]["#text"]}</span>
-														<mark class="bg-transparent font-medium">{hit.span[1]["#text"]}</mark>
+														<span>{hit.span[0]["#text"]}</span>{" "}
+														<mark class="bg-transparent font-medium">{hit.span[1]["#text"]}</mark>{" "}
 														<span>{hit.span[2]["#text"]}</span>
 													</div>
 												);
