@@ -16,23 +16,21 @@ const alphabet = alpha.map((x) => {
 ---
 
 <div class="flex flex-wrap">
-	{
-		alphabet.map((letter) => {
-			const isCurrent = letter === current;
+	{alphabet.map((letter) => {
+		const isCurrent = letter === current;
 
-			return (
-				<a
-					aria-current={isCurrent ? "page" : undefined}
-					class:list={[
-						"border rounded w-8 height-8 inline-flex items-center justify-center transition hover:bg-brand-red hover:text-white",
-						isCurrent ? "bg-brand-red text-white" : undefined,
-					]}
-					data-astro-reload
-					href={`?${String(createUrlSearchParams({ letter, start: 1 }))}`}
-				>
-					{letter.toUpperCase()}
-				</a>
-			);
-		})
-	}
+		return (
+			<a
+				aria-current={isCurrent ? "page" : undefined}
+				class:list={[
+					"border rounded w-8 height-8 inline-flex items-center justify-center transition hover:bg-brand-red hover:text-white",
+					isCurrent ? "bg-brand-red text-white" : undefined,
+				]}
+				data-astro-reload
+				href={`?${String(createUrlSearchParams({ letter, start: 1 }))}`}
+			>
+				{letter.toUpperCase()}
+			</a>
+		);
+	})}
 </div>

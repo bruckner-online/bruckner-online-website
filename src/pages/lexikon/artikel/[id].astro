@@ -43,15 +43,13 @@ const { data, error } = await api();
 
 <PageLayout locale={locale} title={documentTitle}>
 	<LexiconLayout title={title}>
-		{
-			error == null ? (
-				<>
-					<div class="prose" set:html={data} />
-					<Citation id={id} />
-				</>
-			) : (
-				<div>{error}</div>
-			)
-		}
+		{error == null ? (
+			<>
+				<div class="prose" set:html={data} />
+				<Citation id={id} />
+			</>
+		) : (
+			<div>{error}</div>
+		)}
 	</LexiconLayout>
 </PageLayout>

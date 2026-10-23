@@ -35,28 +35,26 @@ const { hero, links, quote } = page;
 
 		<PageSection>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-				{
-					links.map((link, index) => {
-						const colors = ["bg-brand-orange", "bg-brand-red", "bg-brand-blue"];
-						const bg = colors[index % 3];
+				{links.map((link, index) => {
+					const colors = ["bg-brand-orange", "bg-brand-red", "bg-brand-blue"];
+					const bg = colors[index % 3];
 
-						return (
-							<a
-								class:list={[
-									bg,
-									"grid grid-cols-[auto_1fr] content-start gap-x-4 text-sm px-6 py-4 text-white transition hover:-translate-y-1",
-								]}
-								href={`/${link.page}`}
-							>
-								<div class="row-span-2 inline-flex items-start pt-4">
-									<Icon aria-hidden="true" class="size-6 shrink-0" name="lucide:database" />
-								</div>
-								<strong class="uppercase">{link.title}</strong>
-								<div>{link.summary}</div>
-							</a>
-						);
-					})
-				}
+					return (
+						<a
+							class:list={[
+								bg,
+								"grid grid-cols-[auto_1fr] content-start gap-x-4 text-sm px-6 py-4 text-white transition hover:-translate-y-1",
+							]}
+							href={`/${link.page}`}
+						>
+							<div class="row-span-2 inline-flex items-start pt-4">
+								<Icon aria-hidden="true" class="size-6 shrink-0" name="lucide:database" />
+							</div>
+							<strong class="uppercase">{link.title}</strong>
+							<div>{link.summary}</div>
+						</a>
+					);
+				})}
 			</div>
 		</PageSection>
 	</MainContent>

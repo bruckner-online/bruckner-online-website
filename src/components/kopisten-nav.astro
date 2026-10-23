@@ -88,45 +88,43 @@ const links: Array<
 
 <Nav class="mb-4 pb-2" label={t("KopistenNav.nav")}>
 	<ul class="-mx-4 flex gap-x-2 font-medium text-[#555]" role="list">
-		{
-			links.map((link) => {
-				switch (link.kind) {
-					case "link": {
-						return (
-							<li>
-								<NavMenuLink href={link.href} reload={link.reload}>
-									{link.label}
-								</NavMenuLink>
-							</li>
-						);
-					}
-
-					case "menu": {
-						return (
-							<li>
-								<NavMenu>
-									<NavMenuTrigger>{link.label}</NavMenuTrigger>
-									<NavMenuPopover>
-										<ul role="list">
-											{link.children.map((link) => {
-												return (
-													<li>
-														<NavMenuItem href={link.href}>{link.label}</NavMenuItem>
-													</li>
-												);
-											})}
-										</ul>
-									</NavMenuPopover>
-								</NavMenu>
-							</li>
-						);
-					}
-
-					default: {
-						return null;
-					}
+		{links.map((link) => {
+			switch (link.kind) {
+				case "link": {
+					return (
+						<li>
+							<NavMenuLink href={link.href} reload={link.reload}>
+								{link.label}
+							</NavMenuLink>
+						</li>
+					);
 				}
-			})
-		}
+
+				case "menu": {
+					return (
+						<li>
+							<NavMenu>
+								<NavMenuTrigger>{link.label}</NavMenuTrigger>
+								<NavMenuPopover>
+									<ul role="list">
+										{link.children.map((link) => {
+											return (
+												<li>
+													<NavMenuItem href={link.href}>{link.label}</NavMenuItem>
+												</li>
+											);
+										})}
+									</ul>
+								</NavMenuPopover>
+							</NavMenu>
+						</li>
+					);
+				}
+
+				default: {
+					return null;
+				}
+			}
+		})}
 	</ul>
 </Nav>

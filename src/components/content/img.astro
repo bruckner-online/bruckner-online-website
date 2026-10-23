@@ -9,12 +9,10 @@ interface Props extends HTMLAttributes<"img"> {}
 const { alt = "", src, width, height, ...rest } = Astro.props;
 ---
 
-{
-	src != null ? (
-		src.startsWith("/") ? (
-			<Image {...rest} alt={alt} src={getImageImport(src)} />
-		) : (
-			<img {...rest} alt={alt} height={height} src={src} width={width} />
-		)
-	) : null
-}
+{src != null ? (
+	src.startsWith("/") ? (
+		<Image {...rest} alt={alt} src={getImageImport(src)} />
+	) : (
+		<img {...rest} alt={alt} height={height} src={src} width={width} />
+	)
+) : null}

@@ -37,13 +37,11 @@ if (kopist_2) {
 						<CopyistSelect name="kopist_1" selectedValue={kopist_1} client:load />
 					</div>
 					<div class="p-4">
-						{
-							!kopist_1 ? (
-								<p>Kopist auswählen und vergleichen</p>
-							) : (
-								<Fragment set:html={html_kopist_1} />
-							)
-						}
+						{!kopist_1 ? (
+							<p>Kopist auswählen und vergleichen</p>
+						) : (
+							<Fragment set:html={html_kopist_1} />
+						)}
 					</div>
 				</div>
 				<div class="flex-1 bg-white shadow-lg shadow-neutral-500">
@@ -51,13 +49,11 @@ if (kopist_2) {
 						<CopyistSelect name="kopist_2" selectedValue={kopist_2} client:load />
 					</div>
 					<div class="p-4">
-						{
-							!kopist_2 ? (
-								<p>Kopist auswählen und vergleichen</p>
-							) : (
-								<Fragment set:html={html_kopist_2} />
-							)
-						}
+						{!kopist_2 ? (
+							<p>Kopist auswählen und vergleichen</p>
+						) : (
+							<Fragment set:html={html_kopist_2} />
+						)}
 					</div>
 				</div>
 			</div>

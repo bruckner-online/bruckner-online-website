@@ -3,8 +3,10 @@ import { createTransport, type SendMailOptions } from "nodemailer";
 
 import { env } from "@/config/env.config";
 
-interface SendEmailParams
-	extends Pick<SendMailOptions, "attachments" | "from" | "subject" | "text"> {}
+interface SendEmailParams extends Pick<
+	SendMailOptions,
+	"attachments" | "from" | "subject" | "text"
+> {}
 
 export function sendEmail(params: SendEmailParams) {
 	const { attachments, from, subject, text } = params;

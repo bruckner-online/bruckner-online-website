@@ -22,6 +22,7 @@ const href = String(
 		allowfullscreen
 		class="aspect-video w-full overflow-hidden rounded-md"
 		src={href}
-		title={caption ?? "Video"}></iframe>
+		title={caption ?? "Video"}
+	></iframe>
 	{caption ? <figcaption>{caption}</figcaption> : null}
 </figure>

@@ -57,30 +57,28 @@ const title = t("ArticlesByAuthor.title", { author: id }) ?? page.title;
 
 <PageLayout locale={locale} title={title}>
 	<LexiconLayout title={title}>
-		{
-			error == null ? (
-				Number(data.results.total) !== 0 ? (
-					<div class="grid gap-y-4">
-						<ol class="grid" role="list">
-							{ensureArray(data.results.article).map((article) => {
-								const { id, title } = article;
+		{error == null ? (
+			Number(data.results.total) !== 0 ? (
+				<div class="grid gap-y-4">
+					<ol class="grid" role="list">
+						{ensureArray(data.results.article).map((article) => {
+							const { id, title } = article;
 
-								return (
-									<li>
-										<a class="underline" href={`${pathnames["Artikel"]}${id}`}>
-											{title}
-										</a>
-									</li>
-								);
-							})}
-						</ol>
-					</div>
-				) : (
-					<div>{t("SearchResults.nothing-found")}</div>
-				)
+							return (
+								<li>
+									<a class="underline" href={`${pathnames["Artikel"]}${id}`}>
+										{title}
+									</a>
+								</li>
+							);
+						})}
+					</ol>
+				</div>
 			) : (
-				<div>{error}</div>
+				<div>{t("SearchResults.nothing-found")}</div>
 			)
-		}
+		) : (
+			<div>{error}</div>
+		)}
 	</LexiconLayout>
 </PageLayout>

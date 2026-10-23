@@ -17,16 +17,14 @@ const links = [
 
 <div id={mobileLexiconNavId} hidden class="px-4 pb-6 lg:hidden" data-mobile-lexicon-nav>
 	<ul class="grid gap-y-2 text-[#555]" role="list">
-		{
-			links.map((item) => {
-				return (
-					<li>
-						<NavLink class="transition hover:text-[#212529]" href={item.href}>
-							{item.label}
-						</NavLink>
-					</li>
-				);
-			})
-		}
+		{links.map((item) => {
+			return (
+				<li>
+					<NavLink class="transition hover:text-[#212529]" href={item.href}>
+						{item.label}
+					</NavLink>
+				</li>
+			);
+		})}
 	</ul>
 </div>

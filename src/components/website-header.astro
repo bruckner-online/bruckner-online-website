@@ -24,9 +24,7 @@ const { pathname } = Astro.url;
 ---
 
 <header class="border-b border-brand-red bg-white text-[#333]">
-	<div
-		class="mx-auto flex w-full max-w-screen-lg items-center justify-between p-4 text-md font-medium"
-	>
+	<div class="mx-auto flex w-full max-w-screen-lg items-center justify-between p-4 text-md font-medium">
 		<Nav class="flex-1" label={t("WebsiteHeader.navigation-primary")}>
 			<NavMenuLink class="-ml-4 shrink-0" href="/">
 				<Image alt="" class="block h-16 w-auto" fetchpriority="high" loading="eager" src={logo} />
@@ -34,121 +32,119 @@ const { pathname } = Astro.url;
 			</NavMenuLink>
 
 			<ul class="hidden flex-1 flex-wrap items-center justify-end gap-x-4 lg:flex" role="list">
-				{
-					(navigation as Navigation).links.map((item) => {
-						switch (item.discriminant) {
-							case "link": {
-								return (
-									<li class="lg:border-t-4 lg:pt-4">
-										<NavMenuLink href={item.value.href}>{item.value.label}</NavMenuLink>
-									</li>
-								);
-							}
-
-							case "page": {
-								return (
-									<li class="lg:border-t-4 lg:pt-4">
-										<NavMenuLink
-											href={`/${item.value.reference}`}
-											class={pathname.includes(item.value.reference) ? "text-brand-red" : undefined}
-										>
-											{item.value.label}
-										</NavMenuLink>
-									</li>
-								);
-							}
-
-							case "menu": {
-								return (
-									<li class="lg:border-t-4 lg:pt-4">
-										<NavMenu>
-											<NavMenuTrigger>{item.value.label}</NavMenuTrigger>
-											<NavMenuPopover>
-												<ul role="list" class="divide-y">
-													{item.value.links.map((link) => {
-														switch (link.discriminant) {
-															case "link": {
-																return (
-																	<li>
-																		<NavMenuItem href={link.value.href}>
-																			{link.value.label}
-																		</NavMenuItem>
-																	</li>
-																);
-															}
-
-															case "page": {
-																return (
-																	<li>
-																		<NavMenuItem href={`/${link.value.reference}`}>
-																			{link.value.label}
-																		</NavMenuItem>
-																	</li>
-																);
-															}
-
-															case "section": {
-																return (
-																	<NavMenuSection title={link.value.label}>
-																		<ul role="list" class="divide-y">
-																			{link.value.links.map((link) => {
-																				switch (link.discriminant) {
-																					case "link": {
-																						return (
-																							<li class="px-4">
-																								<NavMenuItem href={link.value.href}>
-																									{link.value.label}
-																								</NavMenuItem>
-																							</li>
-																						);
-																					}
-
-																					case "page": {
-																						return (
-																							<li class="px-4">
-																								<NavMenuItem href={`/${link.value.reference}`}>
-																									{link.value.label}
-																								</NavMenuItem>
-																							</li>
-																						);
-																					}
-
-																					case "separator": {
-																						return <hr />;
-																					}
-
-																					default: {
-																						return null;
-																					}
-																				}
-																			})}
-																		</ul>
-																	</NavMenuSection>
-																);
-															}
-
-															case "separator": {
-																return <hr />;
-															}
-
-															default: {
-																return null;
-															}
-														}
-													})}
-												</ul>
-											</NavMenuPopover>
-										</NavMenu>
-									</li>
-								);
-							}
-
-							default: {
-								return null;
-							}
+				{(navigation as Navigation).links.map((item) => {
+					switch (item.discriminant) {
+						case "link": {
+							return (
+								<li class="lg:border-t-4 lg:pt-4">
+									<NavMenuLink href={item.value.href}>{item.value.label}</NavMenuLink>
+								</li>
+							);
 						}
-					})
-				}
+
+						case "page": {
+							return (
+								<li class="lg:border-t-4 lg:pt-4">
+									<NavMenuLink
+										href={`/${item.value.reference}`}
+										class={pathname.includes(item.value.reference) ? "text-brand-red" : undefined}
+									>
+										{item.value.label}
+									</NavMenuLink>
+								</li>
+							);
+						}
+
+						case "menu": {
+							return (
+								<li class="lg:border-t-4 lg:pt-4">
+									<NavMenu>
+										<NavMenuTrigger>{item.value.label}</NavMenuTrigger>
+										<NavMenuPopover>
+											<ul role="list" class="divide-y">
+												{item.value.links.map((link) => {
+													switch (link.discriminant) {
+														case "link": {
+															return (
+																<li>
+																	<NavMenuItem href={link.value.href}>
+																		{link.value.label}
+																	</NavMenuItem>
+																</li>
+															);
+														}
+
+														case "page": {
+															return (
+																<li>
+																	<NavMenuItem href={`/${link.value.reference}`}>
+																		{link.value.label}
+																	</NavMenuItem>
+																</li>
+															);
+														}
+
+														case "section": {
+															return (
+																<NavMenuSection title={link.value.label}>
+																	<ul role="list" class="divide-y">
+																		{link.value.links.map((link) => {
+																			switch (link.discriminant) {
+																				case "link": {
+																					return (
+																						<li class="px-4">
+																							<NavMenuItem href={link.value.href}>
+																								{link.value.label}
+																							</NavMenuItem>
+																						</li>
+																					);
+																				}
+
+																				case "page": {
+																					return (
+																						<li class="px-4">
+																							<NavMenuItem href={`/${link.value.reference}`}>
+																								{link.value.label}
+																							</NavMenuItem>
+																						</li>
+																					);
+																				}
+
+																				case "separator": {
+																					return <hr />;
+																				}
+
+																				default: {
+																					return null;
+																				}
+																			}
+																		})}
+																	</ul>
+																</NavMenuSection>
+															);
+														}
+
+														case "separator": {
+															return <hr />;
+														}
+
+														default: {
+															return null;
+														}
+													}
+												})}
+											</ul>
+										</NavMenuPopover>
+									</NavMenu>
+								</li>
+							);
+						}
+
+						default: {
+							return null;
+						}
+					}
+				})}
 			</ul>
 
 			<div class="ml-auto lg:hidden">

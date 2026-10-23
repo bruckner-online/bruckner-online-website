@@ -11,17 +11,15 @@ const { image } = Astro.props;
 ---
 
 <div class="prose my-2 bg-white shadow-lg shadow-neutral-500">
-	{
-		image != null ? (
-			<Image
-				alt=""
-				class="h-auto w-full px-4 pt-8"
-				fetchpriority="high"
-				loading="eager"
-				src={getImageImport(image)}
-			/>
-		) : null
-	}
+	{image != null ? (
+		<Image
+			alt=""
+			class="h-auto w-full px-4 pt-8"
+			fetchpriority="high"
+			loading="eager"
+			src={getImageImport(image)}
+		/>
+	) : null}
 	<div class="grid gap-y-4 px-8 pb-12 pt-6 text-neutral-500">
 		<slot />
 	</div>

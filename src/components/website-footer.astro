@@ -8,9 +8,7 @@ const { t } = await createI18n(Astro.currentLocale as Locale | undefined);
 
 <footer class="bg-[#3a3a3a] text-[#aaa]">
 	<div class="mx-auto grid w-full max-w-screen-lg gap-y-6 px-4 py-12 text-sm">
-		<div
-			class="relative grid grid-cols-[75px_1fr] items-start gap-x-8 gap-y-6 md:grid-cols-[75px_1fr_1fr_0.5fr]"
-		>
+		<div class="relative grid grid-cols-[75px_1fr] items-start gap-x-8 gap-y-6 md:grid-cols-[75px_1fr_1fr_0.5fr]">
 			<div class="grid gap-y-4">
 				<a class="inline-flex py-1 focus-visible:outline-white" href="https://www.oeaw.ac.at/">
 					<img alt="" class="h-16 w-auto" loading="lazy" src="/assets/images/oeaw-logo-dark.png" />
@@ -89,8 +87,7 @@ const { t } = await createI18n(Astro.currentLocale as Locale | undefined);
 	</div>
 
 	<div class="flex justify-center gap-x-2 bg-[#2a2a2a] py-2 text-center text-sm text-[#aaa]">
-		<span>&copy; Copyright OEAW</span>
-		|
+		<span>&copy; Copyright OEAW</span>|
 		<Link
 			class="underline decoration-dotted underline-offset-4 hover:no-underline focus-visible:outline-white"
 			href="/impressum"

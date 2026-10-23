@@ -45,23 +45,21 @@ const { default: Content } = await processMdx(await page.content(), locale);
 				<PageTitle>{title}</PageTitle>
 				<div class={classes} data-slug={id}>
 					<Content />
-					{
-						vita.map(async (vitaEntry, idx) => {
-							const { period, description } = vitaEntry;
-							const { default: Description } = await processMdx(await description, locale);
-							return (
-								<>
-									<div class="flex flex-col md:flex-row">
-										<div class="w-44">{period}</div>
-										<div class="flex-1">
-											<Description />
-										</div>
+					{vita.map(async (vitaEntry, idx) => {
+						const { period, description } = vitaEntry;
+						const { default: Description } = await processMdx(await description, locale);
+						return (
+							<>
+								<div class="flex flex-col md:flex-row">
+									<div class="w-44">{period}</div>
+									<div class="flex-1">
+										<Description />
 									</div>
-									{idx < vita.length - 1 && <hr class="mb-3 mt-2 border" />}
-								</>
-							);
-						})
-					}
+								</div>
+								{idx < vita.length - 1 && <hr class="mb-3 mt-2 border" />}
+							</>
+						);
+					})}
 				</div>
 			</PageCard>
 		</PageSection>

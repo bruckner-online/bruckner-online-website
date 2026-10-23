@@ -8,7 +8,9 @@ const { title } = Astro.props;
 
 <li>
 	<ul role="group" aria-labelledby={title}>
-		<span class="rounded inline-flex w-full px-4 py-2.5 text-xs uppercase" id={title}>{title}</span>
+		<span class="rounded inline-flex w-full px-4 py-2.5 text-xs uppercase" id={title}>
+			{title}
+		</span>
 		<slot />
 	</ul>
 </li>

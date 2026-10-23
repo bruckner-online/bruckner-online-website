@@ -85,11 +85,13 @@ if (Astro.request.method === "POST") {
 					<div
 						aria-live="polite"
 						aria-atomic="true"
-						class={status.kind === "error"
-							? "text-negative-600"
-							: status.kind === "success"
-								? "text-positive-600"
-								: undefined}
+						class={
+							status.kind === "error"
+								? "text-negative-600"
+								: status.kind === "success"
+									? "text-positive-600"
+									: undefined
+						}
 					>
 						{status.kind !== "initial" ? status.message : null}
 					</div>

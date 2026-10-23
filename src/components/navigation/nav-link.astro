@@ -12,14 +12,12 @@ const pathname = href != null ? (typeof href === "string" ? href : href.pathname
 const isCurrent = pathname === Astro.url.pathname || pathname === currentPage;
 ---
 
-{
-	reload ? (
-		<a {...rest} aria-current={isCurrent ? "page" : undefined} data-astro-reload href={href}>
-			<slot />
-		</a>
-	) : (
-		<a {...rest} aria-current={isCurrent ? "page" : undefined} href={href}>
-			<slot />
-		</a>
-	)
-}
+{reload ? (
+	<a {...rest} aria-current={isCurrent ? "page" : undefined} data-astro-reload href={href}>
+		<slot />
+	</a>
+) : (
+	<a {...rest} aria-current={isCurrent ? "page" : undefined} href={href}>
+		<slot />
+	</a>
+)}

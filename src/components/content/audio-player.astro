@@ -10,22 +10,20 @@ const { tracks } = Astro.props;
 
 <audio-player class="not-prose group grid gap-y-2" data-state="pause">
 	<ul class="grid gap-y-1" role="list">
-		{
-			tracks.map((track) => {
-				return (
-					<li class="grid">
-						<audio-track
-							class="select-none rounded-md border px-4 py-1 transition hover:bg-neutral-100 data-[current]:bg-neutral-100"
-							data-title={track.title}
-							data-href={track.file}
-							tabIndex={0}
-						>
-							{track.title}
-						</audio-track>
-					</li>
-				);
-			})
-		}
+		{tracks.map((track) => {
+			return (
+				<li class="grid">
+					<audio-track
+						class="select-none rounded-md border px-4 py-1 transition hover:bg-neutral-100 data-[current]:bg-neutral-100"
+						data-title={track.title}
+						data-href={track.file}
+						tabIndex={0}
+					>
+						{track.title}
+					</audio-track>
+				</li>
+			);
+		})}
 	</ul>
 	<div class="flex items-center gap-x-4">
 		<button data-control>

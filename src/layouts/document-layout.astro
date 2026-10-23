@@ -75,14 +75,12 @@ const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 		<meta property="og:type" content="website" />
 
 		<meta name="twitter:card" content="summary_large_image" />
-		{
-			"twitter" in metadata && isNonEmptyString(metadata.twitter) ? (
-				<>
-					<meta name="twitter:site" content={metadata.twitter} />
-					<meta name="twitter:creator" content={metadata.twitter} />
-				</>
-			) : null
-		}
+		{"twitter" in metadata && isNonEmptyString(metadata.twitter) ? (
+			<>
+				<meta name="twitter:site" content={metadata.twitter} />
+				<meta name="twitter:creator" content={metadata.twitter} />
+			</>
+		) : null}
 
 		<link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="32x32" />
 		<link rel="apple-touch-icon" href="/apple-icon.png" type="image/png" sizes="180x180" />
@@ -94,14 +92,11 @@ const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 			set:html={JSON.stringify(jsonLd, safeJsonLdReplacer)}
 			type="application/ld+json"
 		/>
-
 		{matomoBaseUrl && matomoId ? <Analytics baseUrl={matomoBaseUrl} id={matomoId} /> : null}
 
-		{
-			googleSiteVerification != null ? (
-				<meta name="google-site-verification" content={googleSiteVerification} />
-			) : null
-		}
+		{googleSiteVerification != null ? (
+			<meta name="google-site-verification" content={googleSiteVerification} />
+		) : null}
 	</head>
 
 	<body>

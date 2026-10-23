@@ -3,19 +3,15 @@
 	"private": true,
 	"license": "MIT",
 	"type": "module",
-	"engines": {
-		"node": "^24"
-	},
-	"packageManager": "pnpm@10.22.0",
 	"scripts": {
 		"build": "astro build",
 		"dev": "astro dev",
-		"format:check": "prettier . \"!./content/**\" --cache --check --ignore-path ./.gitignore",
-		"format:fix": "pnpm run format:check --write",
+		"format:check": "oxfmt --check .",
+		"format:fix": "oxfmt --write .",
 		"lint:check": "run-p --continue-on-error \"lint:*:check\"",
-		"lint:fix": "run-p --continue-on-error \"lint:*:fix\"",
 		"lint:code:check": "eslint . --cache",
 		"lint:code:fix": "pnpm run lint:code:check --fix",
+		"lint:fix": "run-p --continue-on-error \"lint:*:fix\"",
 		"lint:styles:check": "stylelint \"./**/*.@(astro|css)\" --cache --ignore-path ./.gitignore",
 		"lint:styles:fix": "pnpm run lint:styles:check --fix",
 		"preinstall": "npx only-allow pnpm",
@@ -91,11 +87,11 @@
 		"@acdh-oeaw/eslint-config-react": "^3.0.2",
 		"@acdh-oeaw/eslint-config-solid": "^2.0.12",
 		"@acdh-oeaw/eslint-config-tailwindcss": "^3.0.2",
-		"@acdh-oeaw/prettier-config": "^2.0.1",
 		"@acdh-oeaw/stylelint-config": "^2.3.2",
 		"@acdh-oeaw/tailwindcss-preset": "^0.0.22",
 		"@acdh-oeaw/tsconfig": "^1.5.1",
 		"@astrojs/check": "^0.9.5",
+		"@astrojs/compiler-rs": "^0.5.2",
 		"@astrojs/ts-plugin": "^1.10.5",
 		"@playwright/test": "^1.56.1",
 		"@types/estree": "^1.0.8",
@@ -120,9 +116,8 @@
 		"lint-staged": "^16.2.6",
 		"mdast-util-mdx-jsx": "^3.2.0",
 		"npm-run-all2": "^8.0.4",
+		"oxfmt": "^0.74.0",
 		"postcss": "^8.5.6",
-		"prettier": "^3.6.2",
-		"prettier-plugin-astro": "^0.14.1",
 		"schema-dts": "^1.1.5",
 		"simple-git-hooks": "^2.13.1",
 		"stylelint": "^16.25.0",
@@ -130,6 +125,25 @@
 		"tsx": "^4.20.6",
 		"type-fest": "^5.2.0",
 		"typescript": "^5.9.3"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "pnpm exec lint-staged"
+	},
+	"lint-staged": {
+		"*.astro": [
+			"eslint --cache --fix",
+			"stylelint --cache --fix",
+			"oxfmt --write"
+		],
+		"*.css": [
+			"stylelint --cache --fix",
+			"oxfmt --write"
+		],
+		"*.@(js|ts|tsx)": [
+			"eslint --cache --fix",
+			"oxfmt --write"
+		],
+		"*.!(astro|css|js|ts|tsx),!./content/**": "oxfmt --write --no-error-on-unmatched-pattern"
 	},
 	"browserslist": {
 		"development": [
@@ -143,32 +157,17 @@
 			"not op_mini all"
 		]
 	},
-	"lint-staged": {
-		"*.astro": [
-			"eslint --cache --fix",
-			"stylelint --cache --fix",
-			"prettier --cache --write"
-		],
-		"*.css": [
-			"stylelint --cache --fix",
-			"prettier --cache --write"
-		],
-		"*.@(js|ts|tsx)": [
-			"eslint --cache --fix",
-			"prettier --cache --write"
-		],
-		"*.!(astro|css|js|ts|tsx),!./content/**": "prettier --cache --ignore-unknown --write"
+	"stylelint": {
+		"extends": "@acdh-oeaw/stylelint-config"
 	},
+	"engines": {
+		"node": "^24"
+	},
+	"packageManager": "pnpm@10.22.0",
 	"postcss": {
 		"plugins": {
 			"tailwindcss": {},
 			"autoprefixer": {}
 		}
-	},
-	"simple-git-hooks": {
-		"pre-commit": "pnpm exec lint-staged"
-	},
-	"stylelint": {
-		"extends": "@acdh-oeaw/stylelint-config"
 	}
 }

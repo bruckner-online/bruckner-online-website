@@ -37,22 +37,20 @@ const links = [
 
 <nav class="mb-4 pb-2" aria-label={t("LexiconNav.nav")}>
 	<ul class="-mx-4 hidden list-none gap-x-2 font-medium text-[#555] lg:flex" role="list">
-		{
-			links.map((link) => {
-				return (
-					<li>
-						<NavMenuLink
-							class="text-neutral-800 aria-[current]:text-brand-red"
-							currentPage={currentPage}
-							href={link.href}
-							reload={link.reload}
-						>
-							{link.label}
-						</NavMenuLink>
-					</li>
-				);
-			})
-		}
+		{links.map((link) => {
+			return (
+				<li>
+					<NavMenuLink
+						class="text-neutral-800 aria-[current]:text-brand-red"
+						currentPage={currentPage}
+						href={link.href}
+						reload={link.reload}
+					>
+						{link.label}
+					</NavMenuLink>
+				</li>
+			);
+		})}
 	</ul>
 	<div class="ml-auto lg:hidden">
 		<MobileLexiconNavToggle />

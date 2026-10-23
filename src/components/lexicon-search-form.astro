@@ -35,14 +35,16 @@ const { t } = await createI18n(locale);
 	<label>
 		<div class="sr-only">{t("LexiconSearchForm.field")}</div>
 		<select class="h-full rounded-md border px-4 py-2" name="field">
-			<option selected={field === "all"} value="all">{t("LexiconSearchForm.all-fields")}</option>
-			<option selected={field === "title"} value="title">{t("LexiconSearchForm.headings")}</option>
+			<option selected={field === "all"} value="all">
+				{t("LexiconSearchForm.all-fields")}
+			</option>
+			<option selected={field === "title"} value="title">
+				{t("LexiconSearchForm.headings")}
+			</option>
 		</select>
 	</label>
 
 	<input name="start" type="hidden" value="1" />
 
-	<SubmitButton>
-		{t("LexiconSearchForm.search")}
-	</SubmitButton>
+	<SubmitButton>{t("LexiconSearchForm.search")}</SubmitButton>
 </form>

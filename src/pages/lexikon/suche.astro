@@ -66,46 +66,44 @@ const { data, error } = await api();
 
 		<LexiconSearchForm q={q} field={field} />
 
-		{
-			error == null ? (
-				Number(data.results.total) !== 0 ? (
-					<div class="grid gap-y-4">
-						<h2>{t("SearchResults.search-results", { count: data.results.total })}</h2>
-						<ol class="grid" role="list">
-							{ensureArray(data.results.article).map((article) => {
-								const { id, title, kwic } = article;
+		{error == null ? (
+			Number(data.results.total) !== 0 ? (
+				<div class="grid gap-y-4">
+					<h2>{t("SearchResults.search-results", { count: data.results.total })}</h2>
+					<ol class="grid" role="list">
+						{ensureArray(data.results.article).map((article) => {
+							const { id, title, kwic } = article;
 
-								return (
-									<li>
-										<article class="grid gap-y-1">
-											<h3 class="my-1 !text-md">
-												<a class="underline" href={`${pathnames["Artikel"]}${id}`}>
-													{title}
-												</a>
-											</h3>
-											<div class="text-neutral-600">
-												{ensureArray(kwic.p).map((hit) => {
-													return (
-														<div>
-															<span>{hit.span[0]["#text"]}</span>
-															<mark class="bg-transparent font-medium">{hit.span[1]["#text"]}</mark>
-															<span>{hit.span[2]["#text"]}</span>
-														</div>
-													);
-												})}
-											</div>
-										</article>
-									</li>
-								);
-							})}
-						</ol>
-					</div>
-				) : (
-					<div>{t("SearchResults.nothing-found")}</div>
-				)
+							return (
+								<li>
+									<article class="grid gap-y-1">
+										<h3 class="my-1 !text-md">
+											<a class="underline" href={`${pathnames["Artikel"]}${id}`}>
+												{title}
+											</a>
+										</h3>
+										<div class="text-neutral-600">
+											{ensureArray(kwic.p).map((hit) => {
+												return (
+													<div>
+														<span>{hit.span[0]["#text"]}</span>
+														<mark class="bg-transparent font-medium">{hit.span[1]["#text"]}</mark>
+														<span>{hit.span[2]["#text"]}</span>
+													</div>
+												);
+											})}
+										</div>
+									</article>
+								</li>
+							);
+						})}
+					</ol>
+				</div>
 			) : (
-				<div>{error}</div>
+				<div>{t("SearchResults.nothing-found")}</div>
 			)
-		}
+		) : (
+			<div>{error}</div>
+		)}
 	</LexiconLayout>
 </PageLayout>
