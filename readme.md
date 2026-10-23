@@ -12,3 +12,9 @@ This builds a cached Docker image containing Java, Ant, and Saxon, downloads the
 data, and generates `src/edition/` as your current user. It replaces `src/data/editions/` and
 `src/data/meta/`. These data directories and the generated edition are gitignored. No devcontainer
 or host Java installation is required.
+
+Run `pnpm lint:check` to check code with Oxlint and styles with Stylelint, or `pnpm lint:fix` to
+apply fixes. Oxlint configuration lives in `.oxlintrc.json`; the Oxc VS Code extension provides
+editor integration. Oxlint checks JavaScript and TypeScript, including scripts in Astro files, but
+does not lint Astro templates. The former ESLint Astro, Solid, and Playwright plugin checks and
+React prop sorting are not included.

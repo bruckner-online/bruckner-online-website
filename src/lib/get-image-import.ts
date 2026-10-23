@@ -9,7 +9,6 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
 
 export function getImageImport(path: string) {
 	/** Upstream type issue. */
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
 	if (!path.startsWith("/")) return path as any;
 
 	const publicPath = join("/public", path);

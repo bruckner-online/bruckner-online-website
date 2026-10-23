@@ -73,7 +73,7 @@ const windows = [{ loadedManifest, sidePanel, viewType }];
 	data-presentation-path={presentationPath}
 	data-windows={JSON.stringify(windows)}
 	data-catalog={JSON.stringify(catalog)}
-	style="height: 600px;"
+	style="height: 600px; /* stylelint-disable-line no-invalid-position-declaration -- Valid inline style reserves space before CSS loads. */"
 ></mirador-viewer>
 
 <script>

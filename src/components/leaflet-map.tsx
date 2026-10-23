@@ -1,6 +1,5 @@
 /* @jsxImportSource solid-js */
 
-// eslint-disable-next-line simple-import-sort/imports
 import * as L from "leaflet";
 
 import "leaflet.markercluster";

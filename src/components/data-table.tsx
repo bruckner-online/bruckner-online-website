@@ -14,6 +14,8 @@ interface DataTableProps {
 }
 
 export function DataTable(props: DataTableProps) {
+	// Solid assigns this variable through the JSX ref attribute.
+	// oxlint-disable-next-line no-unassigned-vars
 	let containerRef: HTMLDivElement | undefined;
 	let tabulatorInstance: SimpleDataTable | undefined;
 

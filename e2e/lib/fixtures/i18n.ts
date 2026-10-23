@@ -16,16 +16,13 @@ export async function createI18n(_page: Page, locale = defaultLocale): Promise<I
 	 */
 	// return createIntl(locale);
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const _messages = await import(`@/messages/${locale}.json`, { with: { type: "json" } });
 	const metadata = await import(`~/content/metadata.json`, { with: { type: "json" } });
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 	const messages = { metadata: metadata.default, ..._messages.default } as IntlMessages;
 
 	return {
 		/** @see https://github.com/lukeed/rosetta/blob/master/src/index.js */
 		t<T extends Paths<IntlMessages>>(
-			// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 			this: void,
 			key: T,
 			params: Record<string, unknown> = {},

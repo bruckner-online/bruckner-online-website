@@ -2,7 +2,6 @@
 	"recommendations": [
 		"astro-build.astro-vscode",
 		"bradlc.vscode-tailwindcss",
-		"dbaeumer.vscode-eslint",
 		"editorconfig.editorconfig",
 		"github.vscode-github-actions",
 		"mikestead.dotenv",

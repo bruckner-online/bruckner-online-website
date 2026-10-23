@@ -1,0 +1,27 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "unicorn", "oxc", "import"],
+	"categories": {
+		"correctness": "error"
+	},
+	"env": {
+		"browser": true,
+		"node": true
+	},
+	"rules": {
+		"arrow-body-style": ["error", "always"]
+	},
+	"overrides": [
+		{
+			"files": [
+				"keystatic.config.ts",
+				"keystatic.config.tsx",
+				"**/content/**/*.ts",
+				"**/content/**/*.tsx",
+				"**/keystatic/**/*.ts",
+				"**/keystatic/**/*.tsx"
+			],
+			"plugins": ["react", "jsx-a11y"]
+		}
+	]
+}

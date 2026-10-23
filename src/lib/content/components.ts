@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import type { MDXComponents } from "mdx/types";
 
 import AudioPlayer from "@/components/content/audio-player.astro";
@@ -25,7 +23,6 @@ export function useMDXComponents(): MDXComponents {
 		FootnoteReference,
 		FootnotesSection,
 		IconLink,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		img: Img as any,
 		Organisation,
 		TranskriptionsTool,

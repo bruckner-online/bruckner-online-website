@@ -10,7 +10,6 @@ export async function createI18n(locale = defaultLocale) {
 	return {
 		/** @see https://github.com/lukeed/rosetta/blob/master/src/index.js */
 		t<T extends Paths<IntlMessages>>(
-			// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 			this: void,
 			key: T,
 			params: Record<string, unknown> = {},

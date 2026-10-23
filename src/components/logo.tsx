@@ -10,7 +10,6 @@ export function Logo(props: LogoProps): ReactNode {
 	return (
 		<svg
 			aria-hidden={true}
-			// eslint-disable-next-line
 			className={props.className}
 			height={16}
 			viewBox="311.787 344.453 90.517 100"

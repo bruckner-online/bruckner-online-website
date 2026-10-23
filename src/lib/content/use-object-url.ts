@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 export interface UseObjectUrlParams {
-	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	data: Uint8Array<any>;
 	extension: string;
 	filename: string;
@@ -16,7 +15,7 @@ export function useObjectUrl(params: UseObjectUrlParams | null) {
 
 	useEffect(() => {
 		if (data == null) {
-			/* eslint-disable-next-line react-hooks/set-state-in-effect */
+			// oxlint-disable-next-line react/set-state-in-effect
 			setUrl(null);
 			return undefined;
 		}
