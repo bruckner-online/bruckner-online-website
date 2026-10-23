@@ -9,7 +9,9 @@
 		"node": true
 	},
 	"rules": {
-		"arrow-body-style": ["error", "always"]
+		"arrow-body-style": ["error", "always"],
+		"typescript/no-floating-promises": "error",
+		"typescript/no-misused-promises": "error"
 	},
 	"overrides": [
 		{
@@ -23,5 +25,8 @@
 			],
 			"plugins": ["react", "jsx-a11y"]
 		}
-	]
+	],
+	"options": {
+		"typeAware": true
+	}
 }

@@ -20,7 +20,7 @@ export default defineConfig({
 	retries: isCI ? 2 : 0,
 	maxFailures: 10,
 	workers: isCI ? 1 : undefined,
-	reporter: isCI ? "github" : "html",
+	reporter: isCI ? [["github"], ["html", { open: "never" }]] : "html",
 	use: {
 		baseURL: baseUrl,
 		trace: "on-first-retry",
