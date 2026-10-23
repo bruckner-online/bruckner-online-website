@@ -1,9 +1,11 @@
-onlyBuiltDependencies:
-  - esbuild
-  - sharp
-  - simple-git-hooks
-  - typesense-instantsearch-adapter
-  - unrs-resolver
+allowBuilds:
+  esbuild: true
+  sharp: true
+  simple-git-hooks: true
+  typesense-instantsearch-adapter: true
+  unrs-resolver: true
+
+engineStrict: true
 
 overrides:
   jiti: ^2
