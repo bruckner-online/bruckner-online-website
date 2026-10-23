@@ -1,5 +1,5 @@
 {
-	"name": "@acdh-oeaw/bruckner-online-website",
+	"name": "@bruckner-online/bruckner-online-website",
 	"private": true,
 	"license": "MIT",
 	"type": "module",
