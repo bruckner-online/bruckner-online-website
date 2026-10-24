@@ -8,4 +8,4 @@ RUN apt-get update \
     && curl -fL --retry 3 https://repo.maven.apache.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar -o /usr/share/ant/lib/ant-contrib-1.0b3.jar
 
 WORKDIR /workspace
-ENTRYPOINT ["bash", "src/scripts/edition/build.sh"]
+ENTRYPOINT ["bash", "src/scripts/edition/entrypoint.sh"]

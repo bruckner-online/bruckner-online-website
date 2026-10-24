@@ -6,4 +6,4 @@ runs:
   steps:
     - name: Build Kopisten edition with Docker
       shell: bash
-      run: bash src/scripts/shellscripts/build-edition.sh
+      run: bash src/scripts/edition/build.sh
