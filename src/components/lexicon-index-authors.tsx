@@ -1,9 +1,8 @@
 /* @jsxImportSource solid-js */
-import { createUrl, createUrlSearchParams, log, request } from "@acdh-oeaw/lib";
+import { log } from "@acdh-oeaw/lib";
 import { createSignal, For, onMount } from "solid-js";
 
-import { ensureArray } from "@/lib/ensure-array";
-import { type AuthorSearchResponse, baseUrl } from "@/lib/lexicon";
+import { type AuthorSearchResponse, lexicon } from "@/lib/lexicon";
 
 interface LexiconAuthorsIndexProps {
 	errorMessage: string;
@@ -17,25 +16,17 @@ export default function LexiconAuthorsIndex(props: LexiconAuthorsIndexProps) {
 	const [index, setIndex] = createSignal<AuthorSearchResponse | null>(null);
 	const [error, setError] = createSignal("");
 
-	const url = () => {
-		return createUrl({
-			baseUrl,
-			pathname: "/authors",
-			searchParams: createUrlSearchParams({
-				title: props.letter,
-				startAt: props.start,
-				max: props.max,
-			}),
-		});
-	};
-
 	async function loadIndex() {
 		try {
-			const data = (await request(url(), { responseType: "json" })) as AuthorSearchResponse;
+			const data = await lexicon.listAuthors({
+				letter: props.letter,
+				start: props.start,
+				max: props.max,
+			});
 			setIndex(data);
 		} catch (error) {
 			log.error(error);
-			setError(error instanceof Error ? error.message : props.errorMessage);
+			setError(props.errorMessage);
 		}
 	}
 
@@ -53,28 +44,17 @@ export default function LexiconAuthorsIndex(props: LexiconAuthorsIndexProps) {
 				<div class="grid gap-y-4">
 					<ol class="grid" role="list">
 						<For
-							each={ensureArray(index()?.results.item).sort((a, b) => {
-								const aSortLabel =
-									a?.person.persName.find((item) => {
-										return item.type === "sortName";
-									})?.["#text"] ?? "";
-								const bSortLabel =
-									b?.person.persName.find((item) => {
-										return item.type === "sortName";
-									})?.["#text"] ?? "";
-								return aSortLabel.localeCompare(bSortLabel);
+							each={index()?.items.toSorted((a, b) => {
+								return a.sortName.localeCompare(b.sortName);
 							})}
 						>
 							{(author) => {
-								const { id: _id, person } = author!;
+								const { name } = author;
 
 								return (
 									<li>
-										<a
-											class="underline"
-											href={`/lexikon/autorinnen/${person.persName[1]["#text"]}`}
-										>
-											{person.persName[1]["#text"]}
+										<a class="underline" href={`/lexikon/autorinnen/${name}`}>
+											{name}
 										</a>
 									</li>
 								);

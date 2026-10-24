@@ -1,9 +1,8 @@
 /* @jsxImportSource solid-js */
-import { createUrl, createUrlSearchParams, log, request } from "@acdh-oeaw/lib";
+import { log } from "@acdh-oeaw/lib";
 import { createSignal, For, onMount } from "solid-js";
 
-import { ensureArray } from "@/lib/ensure-array";
-import { baseUrl, type BibliographySearchResult } from "@/lib/lexicon";
+import { lexicon, type BibliographySearchResult } from "@/lib/lexicon";
 
 interface LexiconLiteratureIndexProps {
 	errorMessage: string;
@@ -17,25 +16,17 @@ export default function LexiconLiteratureIndex(props: LexiconLiteratureIndexProp
 	const [index, setIndex] = createSignal<BibliographySearchResult | null>(null);
 	const [error, setError] = createSignal("");
 
-	const url = () => {
-		return createUrl({
-			baseUrl,
-			pathname: "/literature",
-			searchParams: createUrlSearchParams({
-				title: props.letter,
-				startAt: props.start,
-				max: props.max,
-			}),
-		});
-	};
-
 	async function loadIndex() {
 		try {
-			const data = (await request(url(), { responseType: "json" })) as BibliographySearchResult;
+			const data = await lexicon.listLiterature({
+				letter: props.letter,
+				start: props.start,
+				max: props.max,
+			});
 			setIndex(data);
 		} catch (error) {
 			log.error(error);
-			setError(error instanceof Error ? error.message : props.errorMessage);
+			setError(props.errorMessage);
 		}
 	}
 
@@ -52,11 +43,9 @@ export default function LexiconLiteratureIndex(props: LexiconLiteratureIndexProp
 			{index() && (
 				<div class="grid gap-y-4">
 					<ol class="grid" role="list">
-						<For each={ensureArray(index()?.results.item)}>
+						<For each={index()?.items}>
 							{(item) => {
-								const { full } = item!;
-
-								return <li>{full.bibl["#text"]}</li>;
+								return <li>{item}</li>;
 							}}
 						</For>
 					</ol>

@@ -135,7 +135,7 @@ for (const routeName of ["artikel", "autorinnen", "literatur"]) {
 				json: { error: "Invalid request" },
 			});
 		}
-		await expect(main.getByText("Bad Request", { exact: true })).toBeVisible();
+		await expect(main.getByText(t("SearchResults.error"), { exact: true })).toBeVisible();
 		await expect(main.getByRole("status")).toHaveCount(0);
 	});
 }
