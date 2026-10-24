@@ -4,6 +4,7 @@ import * as v from "valibot";
 import LexiconAlphabetLinks from "@/components/lexicon-alphabet-links.astro";
 import LexiconIndex from "@/components/lexicon-index";
 import LexiconAuthorsIndex from "@/components/lexicon-index-authors";
+import LexiconLiteratureIndex from "@/components/lexicon-index-literature";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import LexiconLayout from "@/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
@@ -15,7 +16,7 @@ import type { Category } from "@/lib/lexicon";
 interface Props {
 	contentPath: string;
 	category?: Category;
-	kind?: "articles" | "authors";
+	kind?: "articles" | "authors" | "literature";
 }
 
 const { contentPath, category, kind = "articles" } = Astro.props;
@@ -50,6 +51,15 @@ const { letter, start } = v.parse(schema, {
 		<LexiconAlphabetLinks current={letter} />
 		{kind === "authors" ? (
 			<LexiconAuthorsIndex
+				client:only="solid-js"
+				errorMessage={errorMessage}
+				pendingMessage={pendingMessage}
+				letter={letter}
+				start={start}
+				max={500}
+			/>
+		) : kind === "literature" ? (
+			<LexiconLiteratureIndex
 				client:only="solid-js"
 				errorMessage={errorMessage}
 				pendingMessage={pendingMessage}
