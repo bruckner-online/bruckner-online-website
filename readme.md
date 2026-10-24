@@ -1,40 +1,100 @@
-# bruckner online website
+# Bruckner online
 
-website for the "bruckner online" project. deployed at <https://www.bruckner-online.at>.
+Website for the Bruckner online project, deployed at <https://www.bruckner-online.at>.
 
-Generate the Kopisten edition data locally with Docker running:
+## Getting started
+
+Requirements: Node.js 24, pnpm (the version specified in `package.json`), and Docker for generating
+Kopisten edition data.
+
+```sh
+pnpm install
+cp .env.local.example .env.local
+```
+
+Configure `.env.local` with the required email and Typesense settings. The example includes defaults
+for the local application URL and imprint service.
+
+Generate the edition data, then start the development server:
+
+```sh
+pnpm edition:build
+pnpm dev
+```
+
+The website runs at <http://localhost:3000>.
+
+## Kopisten edition data
+
+With Docker running, generate or refresh the edition:
 
 ```sh
 pnpm edition:build
 ```
 
-This builds a cached Docker image containing Java, Ant, and Saxon, downloads the latest Kopisten XML
-data, and generates `src/edition/` as your current user. It replaces `src/data/editions/` and
-`src/data/meta/`. These data directories and the generated edition are gitignored. No devcontainer
-or host Java installation is required.
+This downloads the latest XML data from
+[bruckner-kopisten-data](https://github.com/acdh-oeaw/bruckner-kopisten-data) and generates
+`src/edition/`. It replaces `src/data/editions/` and `src/data/meta/`. All three generated
+directories are gitignored. Java, Ant, and Saxon run inside Docker; no host installation is
+required.
 
-Run `pnpm lint:check` to check code with Oxlint and styles with Stylelint, or `pnpm lint:fix` to
-apply fixes. Oxlint configuration lives in `.oxlintrc.json`; the Oxc VS Code extension provides
-editor integration. Oxlint checks JavaScript and TypeScript, including scripts in Astro files, but
-does not lint Astro templates. React prop sorting is not included.
+## Bibliography search
 
-Oxlint runs explicit rules in `.oxlintrc.json`, including strict type-aware checks via
-`oxlint-tsgolint` and native React rules. Solid, Playwright, RegExp, and Tailwind checks run through
-Oxlint's JavaScript plugin support. Keep `pnpm types:check` for Astro-specific type checking. Oxfmt
-handles import ordering. Unused lint suppressions are reported as errors.
+The bibliography is indexed in Typesense from `src/data/bibliography_db_export_202506121637.json`.
+Configure these variables in `.env.local`:
 
-Tailwind v4 uses the Vite plugin and CSS configuration in `src/styles/index.css`. The theme
-preserves the former preset's design tokens and document defaults. Explicit sources cover CMS
-content and gitignored `src/edition/` HTML; inline sources preserve the former safelist. Tailwind
-linting covers JavaScript/TypeScript strings and JSX; Oxlint does not analyze Astro templates or
-generated HTML. The `tables-striped` style hook and third-party widget class prefixes are exempt
-from unknown-class reports. The production browser targets follow Tailwind v4's minimum supported
-versions.
+- `PUBLIC_TYPESENSE_HOST`
+- `PUBLIC_TYPESENSE_PORT`
+- `PUBLIC_TYPESENSE_PROTOCOL` (`http` or `https`)
+- `PUBLIC_TYPESENSE_COLLECTION_NAME` (the search alias)
+- `PUBLIC_TYPESENSE_SEARCH_API_KEY` (for frontend searches)
+- `TYPESENSE_ADMIN_API_KEY` (for indexing)
 
-Lefthook runs these tools on staged files before each commit and stages their fixes. Hook
-configuration lives in `.lefthook.json`. Hooks are installed during project setup; run `pnpm setup`
-to reinstall them.
+Populate or refresh the index:
 
-Install the Chromium browser and operating system dependencies with `pnpm test:e2e:install`. CI runs
-the Chromium tests with both GitHub annotations and an HTML report uploaded as an artifact, without
-caching browser binaries.
+```sh
+pnpm typesense:populate
+```
+
+The importer validates the configuration and source data, creates a unique collection, and switches
+the search alias only after every document imports successfully. Existing collections are retained
+for recovery.
+
+### Migrating an existing collection
+
+If `PUBLIC_TYPESENSE_COLLECTION_NAME` currently names a physical collection, choose a new alias
+name, populate it, then rebuild and deploy the frontend with that name. Ensure the search key
+permits searches through the new alias. The old collection remains available throughout migration.
+Subsequent imports use the same alias name.
+
+Remove obsolete collections manually after confirming that no alias or frontend uses them. If
+publishing fails with a network error, inspect the alias before retrying: the switch may have
+succeeded on the server.
+
+## Production build
+
+Generate the edition data and configure the environment before building:
+
+```sh
+pnpm build
+pnpm start
+```
+
+## Validation
+
+Run formatting, lint, and type checks:
+
+```sh
+pnpm format:check
+pnpm lint:check
+pnpm types:check
+```
+
+End-to-end tests run against the production build. Install the browser dependencies once, then build
+and run the tests:
+
+```sh
+pnpm test:e2e:install
+pnpm build
+pnpm test:e2e
+```
