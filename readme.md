@@ -38,6 +38,8 @@ This downloads the latest XML data from
 directories are gitignored. Java, Ant, and Saxon run inside Docker; no host installation is
 required.
 
+CI uses the same Docker builder for validation and deployment builds.
+
 ## Bibliography search
 
 The bibliography is indexed in Typesense from `src/data/bibliography_db_export_202506121637.json`.
