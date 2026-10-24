@@ -25,6 +25,7 @@
 		"test:e2e:install": "playwright install --with-deps chromium",
 		"test:e2e:ui": "playwright test --ui",
 		"test:e2e:update-snapshots": "playwright test --update-snapshots",
+		"test:unit": "tsx --test tests/*.test.ts",
 		"types:check": "astro check",
 		"typesense:populate": "dotenv -c -- tsx ./src/scripts/populate-typesense.ts"
 	},
