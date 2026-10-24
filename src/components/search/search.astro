@@ -23,7 +23,16 @@
 
 	const { t } = await createI18n(defaultLocale);
 
-	const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
+	// CommonJS interop can wrap the adapter constructor in a default export.
+	const Adapter =
+		typeof TypesenseInstantSearchAdapter === "function"
+			? TypesenseInstantSearchAdapter
+			: (
+					TypesenseInstantSearchAdapter as unknown as {
+						default: typeof TypesenseInstantSearchAdapter;
+					}
+				).default;
+	const typesenseInstantsearchAdapter = new Adapter({
 		server: {
 			apiKey: import.meta.env.PUBLIC_TYPESENSE_SEARCH_API_KEY,
 			nodes: [
@@ -70,8 +79,6 @@
 		yearsFilterPanel({
 			container: "#year-range",
 			attribute: "year",
-			min: 0,
-			max: 2019,
 			cssClasses: {
 				form: "flex gap-2 items-center",
 				input: "rounded-sm border px-3 py-1",
