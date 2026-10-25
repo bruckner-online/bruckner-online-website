@@ -47,6 +47,7 @@
 			<classpath location="${basedir}/../saxon/saxon9he.jar"/>
 	</xslt>
 	<xslt style="${basedir}/scripts/xslt/editions.xsl"  basedir="${basedir}/data/editions" destdir="${target}" includes="*.xml">
+            <param name="artifact-date" expression="${artifact-date}"/>
 			<factory name="net.sf.saxon.TransformerFactoryImpl"/>
 			<classpath location="${basedir}/../saxon/saxon9he.jar"/>
 	</xslt>

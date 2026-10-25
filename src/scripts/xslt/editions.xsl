@@ -11,6 +11,7 @@
     <!--<xsl:import href="partials/tei-facsimile.xsl"/>-->
     <xsl:import href="partials/tei-ref.xsl"/>
     <xsl:import href="partials/tei-table-edition.xsl"/>
+		<xsl:param name="artifact-date" as="xs:date" required="yes"/>
 		<xsl:variable name="languages" as="map(*)">
             <xsl:map>
                 <xsl:map-entry key="'de'" select="'de'"/>
@@ -295,7 +296,7 @@
                                                 <xsl:text>), </xsl:text><xsl:value-of select="map:get($labels?citation-access-date-prefix,$lang)"/><xsl:text> </xsl:text>
                                                 <span>
                                                   <xsl:value-of
-                                                  select="format-date(current-date(), '[D].[M].[Y]')"
+                                                  select="format-date($artifact-date, '[D].[M].[Y]')"
                                                   />
                                                 </span>
                                                 <xsl:text>.</xsl:text>

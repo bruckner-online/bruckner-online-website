@@ -6,7 +6,7 @@
     xmlns:t="http://www.tei-c.org/ns/1.0" xmlns:teix="http://www.tei-c.org/ns/Examples"
     xmlns:html="http://www.w3.org/1999/xhtml" xmlns:m="http://www.w3.org/1998/Math/MathML"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xi="http://www.w3.org/2001/XInclude"
-    exclude-result-prefixes="#all" version="2.0">
+    exclude-result-prefixes="#all" version="3.0">
     <xsl:output encoding="UTF-8" indent="yes"/>
 
     <xsl:function name="m:sort-by-name">
@@ -23,7 +23,7 @@
     </xsl:template>
     <xsl:template match="t:TEI" exclude-result-prefixes="#all">
         <xsl:variable name="Person"
-            select="collection('../../data/editions?select=*.xml;recurse=yes')/t:TEI/t:text/t:body/t:div"/>
+            select="(for $uri in sort(uri-collection('../../data/editions?select=*.xml;recurse=yes')) return doc($uri))/t:TEI/t:text/t:body/t:div"/>
         <TEI xmlns="http://www.tei-c.org/ns/1.0">
             <teiHeader>
                 <fileDesc>

@@ -84,6 +84,7 @@ COPY --chown=node:node ./content/pages/werkverzeichnis/wab.mdx ./content/pages/w
 
 # these html snippets need to be available at runtime. TODO: different folder structure
 COPY --chown=node:node ./src/edition/facs ./src/edition/facs
+COPY --chown=node:node ./src/edition/provenance.json ./src/edition/provenance.json
 
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0

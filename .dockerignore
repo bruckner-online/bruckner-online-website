@@ -63,3 +63,7 @@ playwright.config.ts
 
 # astro assets cache
 !/node_modules/.astro/
+
+# Kopisten staging and build lock
+.edition-stage-*/
+.edition-build.lock

@@ -41,3 +41,8 @@ saxon/
 src/edition/
 src/data/editions/
 src/data/meta/
+
+# Kopisten staging and build lock
+/.edition-stage-*/
+/.edition-build.lock
+/src/scripts/edition/__pycache__/

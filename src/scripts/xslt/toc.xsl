@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0" exclude-result-prefixes="#all">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" version="3.0" exclude-result-prefixes="#all">
     <xsl:output encoding="UTF-8" media-type="text/html" method="xhtml" version="1.0" indent="yes"
         omit-xml-declaration="yes"/>
 
@@ -37,7 +37,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <xsl:for-each select="collection('../../data/editions')//tei:TEI">
+                    <xsl:for-each select="(for $uri in sort(uri-collection('../../data/editions?select=*.xml')) return doc($uri))//tei:TEI">
                         <xsl:variable name="full_path">
                             <xsl:value-of select="document-uri(/)"/>
                         </xsl:variable>
