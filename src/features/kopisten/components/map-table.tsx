@@ -2,7 +2,7 @@
 
 import { createSignal } from "solid-js";
 
-import { DataTable } from "@/components/data-table";
+import { DataTable } from "@/features/kopisten/components/data-table";
 
 import { LeafletMap } from "./leaflet-map";
 

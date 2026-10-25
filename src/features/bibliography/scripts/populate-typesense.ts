@@ -5,7 +5,7 @@ import { log } from "@acdh-oeaw/lib";
 import { Client, Errors } from "typesense";
 import * as v from "valibot";
 
-import { collectionSchema } from "@/lib/typesense/typesense-schema";
+import { collectionSchema } from "@/features/bibliography/typesense-schema";
 
 async function main(): Promise<void> {
 	const nonEmptyString = v.pipe(v.string(), v.trim(), v.nonEmpty());
@@ -40,7 +40,12 @@ async function main(): Promise<void> {
 			),
 			v.minLength(1),
 		),
-		JSON.parse(readFileSync("./src/data/bibliography_db_export_202506121637.json", "utf8")),
+		JSON.parse(
+			readFileSync(
+				new URL("../data/bibliography_db_export_202506121637.json", import.meta.url),
+				"utf8",
+			),
+		),
 	);
 	const importedAt = Date.now();
 	const documents = items.map(({ Autor, Jahr, Bib_Zitat }) => {

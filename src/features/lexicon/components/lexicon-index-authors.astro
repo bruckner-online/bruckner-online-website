@@ -1,7 +1,7 @@
 ---
 import { log } from "@acdh-oeaw/lib";
 
-import { lexicon, pathnames, type Category } from "@/lib/lexicon";
+import { lexicon, pathnames } from "@/features/lexicon/client";
 
 interface Props {
 	errorMessage: string;
@@ -9,11 +9,10 @@ interface Props {
 	letter: string;
 	start: number;
 	max: number;
-	category?: Category;
 }
 
 const { errorMessage, emptyMessage, ...query } = Astro.props;
-const result = await lexicon.listArticles(query);
+const result = await lexicon.listAuthors(query);
 if (result.status === "error") {
 	log.error(result.error);
 }
@@ -26,13 +25,15 @@ if (result.status === "error") {
 ) : (
 	<div class="grid gap-y-4">
 		<ol class="grid" role="list">
-			{result.value.items.map(({ id, title }) => (
-				<li>
-					<a class="underline" href={`${pathnames.Artikel}${id}`}>
-						{title}
-					</a>
-				</li>
-			))}
+			{result.value.items
+				.toSorted((a, b) => a.sortName.localeCompare(b.sortName))
+				.map(({ name }) => (
+					<li>
+						<a class="underline" href={`${pathnames.Autor}${name}`}>
+							{name}
+						</a>
+					</li>
+				))}
 		</ol>
 	</div>
 )}

@@ -1,8 +1,8 @@
 ---
 import { Icon } from "astro-icon/components";
 
-import { mobileLexiconNavId } from "@/components/navigation/constants";
 import type { Locale } from "@/config/i18n.config";
+import { mobileLexiconNavId } from "@/features/lexicon/components/navigation/constants";
 import { createI18n } from "@/lib/i18n";
 
 const { t } = await createI18n(Astro.currentLocale as Locale | undefined);

@@ -1,13 +1,13 @@
 ---
 import { assert, log } from "@acdh-oeaw/lib";
 
-import Citation from "@/components/citation.astro";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
-import LexiconLayout from "@/layouts/lexicon-layout.astro";
+import { lexicon } from "@/features/lexicon/client";
+import Citation from "@/features/lexicon/components/citation.astro";
+import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { reader } from "@/lib/content/reader";
 import { createI18n } from "@/lib/i18n";
-import { lexicon } from "@/lib/lexicon";
 
 export const prerender = false;
 

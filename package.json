@@ -27,7 +27,7 @@
 		"test:e2e:update-snapshots": "playwright test --update-snapshots",
 		"test:unit": "tsx --test tests/*.test.ts",
 		"types:check": "astro check",
-		"typesense:populate": "dotenv -c -- tsx ./src/scripts/populate-typesense.ts"
+		"typesense:populate": "dotenv -c -- tsx ./src/features/bibliography/scripts/populate-typesense.ts"
 	},
 	"dependencies": {
 		"@acdh-oeaw/lib": "^0.3.5",
