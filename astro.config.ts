@@ -62,10 +62,6 @@ export default defineConfig({
 		}),
 		sitemap(),
 	],
-	prefetch: {
-		defaultStrategy: "hover",
-		prefetchAll: true,
-	},
 	redirects: {
 		"/admin": {
 			destination: "/keystatic",

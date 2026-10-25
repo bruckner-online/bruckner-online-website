@@ -11,8 +11,19 @@ export function createAnalyticsScript(baseUrl: string, id: number): void {
 	const u = baseUrl;
 	_paq.push(["setTrackerUrl", `${u}matomo.php`]);
 	_paq.push(["setSiteId", id]);
-	_paq.push(["trackPageView"]);
-	_paq.push(["enableLinkTracking"]);
+	/**
+	 * Speculation rules can prerender pages which are never visited, so wait until a page is shown.
+	 * Use `window._paq`, because `matomo.js` replaces the queue once it has loaded.
+	 */
+	function track() {
+		window._paq?.push(["trackPageView"]);
+		window._paq?.push(["enableLinkTracking"]);
+	}
+	if ("prerendering" in document && document.prerendering) {
+		document.addEventListener("prerenderingchange", track, { once: true });
+	} else {
+		track();
+	}
 	const d = document,
 		g = d.createElement("script"),
 		s = d.getElementsByTagName("script")[0];

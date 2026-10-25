@@ -39,6 +39,42 @@ const jsonLd: WithContext<WebSite> = {
 	description: metadata.description,
 };
 
+/** Pages with `prerender = false`, which are rendered on request. */
+const onDemandPathnames = [
+	"/aga",
+	"/erstdrucke",
+	"/forschung/kopisten/handschriftenvergleich",
+	"/handschriften",
+	"/kontakt",
+	"/lexikon/artikel",
+	"/lexikon/autorinnen",
+	"/lexikon/literatur",
+	"/lexikon/orte",
+	"/lexikon/personen",
+	"/lexikon/sachbegriffe",
+	"/lexikon/suche",
+	"/lexikon/werke",
+	"/werkverzeichnis/wab",
+].map((pathname) => {
+	return { pathname: `${pathname}{/*}?` };
+});
+
+/**
+ * Prerender pages built ahead of time when a link is hovered. Pages rendered on request are only
+ * prefetched, which skips rendering subresources and running scripts for pages never visited.
+ */
+const speculationRules = {
+	prerender: [
+		{
+			where: {
+				and: [{ href_matches: "/*" }, { not: { href_matches: onDemandPathnames } }],
+			},
+			eagerness: "moderate",
+		},
+	],
+	prefetch: [{ where: { href_matches: onDemandPathnames }, eagerness: "moderate" }],
+};
+
 const matomoBaseUrl = env.PUBLIC_MATOMO_BASE_URL;
 const matomoId = env.PUBLIC_MATOMO_ID;
 const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
@@ -88,6 +124,7 @@ const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 			set:html={JSON.stringify(jsonLd, safeJsonLdReplacer)}
 			type="application/ld+json"
 		/>
+		<script is:inline set:html={JSON.stringify(speculationRules)} type="speculationrules" />
 		{matomoBaseUrl && matomoId ? <Analytics baseUrl={matomoBaseUrl} id={matomoId} /> : null}
 
 		{googleSiteVerification != null ? (
