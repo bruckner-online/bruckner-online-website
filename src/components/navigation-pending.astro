@@ -1,0 +1,97 @@
+<script>
+	const attribute = "data-navigation-pending";
+	/** Avoid flashing the indicator for navigations which complete quickly, e.g. to prerendered pages. */
+	const delay = 200;
+	/** Navigations can end without the page noticing, e.g. when a link downloads a file. */
+	const timeout = 20_000;
+
+	let pending: { element: Element; timers: Array<ReturnType<typeof setTimeout>> } | undefined;
+
+	function clear() {
+		if (pending == null) {
+			return;
+		}
+		pending.timers.forEach(clearTimeout);
+		pending.element.removeAttribute(attribute);
+		pending = undefined;
+	}
+
+	function start(event: Event, element: Element) {
+		clear();
+		const timers = [
+			setTimeout(() => {
+				// Another listener can prevent navigation after our listener has run.
+				if (event.defaultPrevented) {
+					clear();
+					return;
+				}
+				element.setAttribute(attribute, "");
+			}, delay),
+			setTimeout(clear, timeout),
+		];
+		pending = { element, timers };
+	}
+
+	document.addEventListener("click", (event) => {
+		if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+			return;
+		}
+		const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
+		if (
+			!(link instanceof HTMLAnchorElement) ||
+			link.hasAttribute("download") ||
+			(link.target !== "" && link.target !== "_self")
+		) {
+			return;
+		}
+		const url = new URL(link.href);
+		if (url.origin !== location.origin) {
+			return;
+		}
+		if (url.hash !== "" && url.pathname === location.pathname && url.search === location.search) {
+			return;
+		}
+		start(event, link);
+	});
+
+	document.addEventListener("submit", (event) => {
+		const form = event.target as HTMLFormElement;
+		if (form.method === "dialog" || (form.target !== "" && form.target !== "_self")) {
+			return;
+		}
+		start(event, event.submitter ?? form);
+	});
+
+	/** Pages restored from the back/forward cache keep their state. */
+	window.addEventListener("pageshow", clear);
+	/** Escape stops loading in most browsers. */
+	document.addEventListener("keydown", (event) => {
+		if (event.key === "Escape") {
+			clear();
+		}
+	});
+</script>
+
+<style is:global>
+	[data-navigation-pending] {
+		cursor: progress;
+		animation: navigation-pending 0.8s ease-in-out infinite alternate;
+	}
+
+	html:has([data-navigation-pending]) {
+		cursor: progress;
+	}
+
+	@keyframes navigation-pending {
+		to {
+			opacity: 40%;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		[data-navigation-pending] {
+			opacity: 60%;
+			animation: none;
+		}
+	}
+</style>

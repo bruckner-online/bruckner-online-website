@@ -47,6 +47,15 @@ globalThis.fetch = (input, init) => {
 		};
 	} else if (url.pathname === "/literature") {
 		results = { total: "1", item: { full: { bibl: { "#text": `Test citation ${marker}` } } } };
+	} else if (url.pathname === "/query") {
+		results = {
+			total: "1",
+			article: {
+				id: "test-article",
+				title: `Test search result ${marker}`,
+				kwic: { p: { span: [{ "#text": "before" }, { "#text": "match" }, { "#text": "after" }] } },
+			},
+		};
 	} else {
 		return Promise.resolve(new Response("Unexpected Lexikon endpoint", { status: 404 }));
 	}

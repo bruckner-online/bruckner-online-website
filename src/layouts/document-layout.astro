@@ -8,6 +8,7 @@ import { isNonEmptyString } from "@acdh-oeaw/lib";
 import type { WebSite, WithContext } from "schema-dts";
 
 import Analytics from "@/components/analytics.astro";
+import NavigationPending from "@/components/navigation-pending.astro";
 import { env } from "@/config/env.config";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import { createI18n } from "@/lib/i18n";
@@ -133,6 +134,7 @@ const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 	</head>
 
 	<body>
+		<NavigationPending />
 		<slot />
 	</body>
 </html>
