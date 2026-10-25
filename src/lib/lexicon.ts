@@ -56,11 +56,15 @@ const literature = v.pipe(
 		return item.full.bibl["#text"];
 	}),
 );
+// Empty XML snippet spans omit the text property in the API response.
+const snippetText = v.object({ "#text": v.optional(v.string(), "") });
 const searchArticle = v.pipe(
 	v.object({
 		id: v.string(),
 		title: v.string(),
-		kwic: v.object({ p: list(v.object({ span: v.tuple([text, text, text]) })) }),
+		kwic: v.object({
+			p: list(v.object({ span: v.tuple([snippetText, snippetText, snippetText]) })),
+		}),
 	}),
 	v.transform(({ id, title, kwic }) => {
 		return {

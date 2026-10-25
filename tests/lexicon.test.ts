@@ -203,3 +203,38 @@ void test("malformed nested responses return validation errors", async () => {
 	assert.equal(result.status, "error");
 	assert.equal(result.error.kind, "invalid-response");
 });
+
+void test("search accepts omitted text in empty snippet spans", async () => {
+	const client = fixture({
+		results: {
+			total: "1",
+			article: {
+				id: "d1e4915",
+				title: "Bruckner-Gesellschaften",
+				kwic: {
+					p: [
+						{
+							span: [
+								{ class: "previous" },
+								{ class: "hi", "#text": "Bruckner" },
+								{ class: "following", "#text": "-Gesellschaften" },
+							],
+						},
+						{
+							span: [
+								{ class: "previous", "#text": "Anton " },
+								{ class: "hi", "#text": "Bruckner" },
+								{ class: "following" },
+							],
+						},
+					],
+				},
+			},
+		},
+	});
+	const result = await success(client.search({ q: "Bruckner", field: "title", start: 1, max: 10 }));
+	assert.deepEqual(result.items[0]?.snippets, [
+		{ before: "", match: "Bruckner", after: "-Gesellschaften" },
+		{ before: "Anton ", match: "Bruckner", after: "" },
+	]);
+});
