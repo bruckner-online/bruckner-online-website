@@ -1,9 +1,8 @@
 /* @jsxImportSource solid-js */
-import { createUrl, createUrlSearchParams, log, request } from "@acdh-oeaw/lib";
+import { log } from "@acdh-oeaw/lib";
 import { createSignal, For, onMount } from "solid-js";
 
-import { ensureArray } from "@/lib/ensure-array";
-import { type ArticleSearchResponse, baseUrl, pathnames } from "@/lib/lexicon";
+import { type ArticleSearchResponse, lexicon, pathnames } from "@/lib/lexicon";
 
 interface LexiconIndexProps {
 	errorMessage: string;
@@ -17,26 +16,19 @@ interface LexiconIndexProps {
 export default function LexiconIndex(props: LexiconIndexProps) {
 	const [index, setIndex] = createSignal<ArticleSearchResponse | null>(null);
 	const [error, setError] = createSignal("");
-	function getUrl() {
-		const searchParams = { title: props.letter, startAt: props.start, max: props.max };
-		if (props.category) {
-			Object.assign(searchParams, { category: props.category });
-		}
-
-		return createUrl({
-			baseUrl,
-			pathname: "/article",
-			searchParams: createUrlSearchParams(searchParams),
-		});
-	}
 
 	async function loadIndex() {
-		try {
-			const data = (await request(getUrl(), { responseType: "json" })) as ArticleSearchResponse;
-			setIndex(data);
-		} catch (error) {
-			log.error(error);
-			setError(error instanceof Error ? error.message : props.errorMessage);
+		const result = await lexicon.listArticles({
+			letter: props.letter,
+			start: props.start,
+			max: props.max,
+			category: props.category,
+		});
+		if (result.status === "ok") {
+			setIndex(result.value);
+		} else {
+			log.error(result.error);
+			setError(props.errorMessage);
 		}
 	}
 
@@ -53,9 +45,9 @@ export default function LexiconIndex(props: LexiconIndexProps) {
 			{index() && (
 				<div class="grid gap-y-4">
 					<ol class="grid" role="list">
-						<For each={ensureArray(index()?.results.article)}>
+						<For each={index()?.items}>
 							{(article) => {
-								const { id, title } = article!;
+								const { id, title } = article;
 
 								return (
 									<li>

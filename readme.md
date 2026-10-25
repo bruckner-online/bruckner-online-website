@@ -2,6 +2,18 @@
 
 Website for the Bruckner online project, deployed at <https://www.bruckner-online.at>.
 
+## Research services and data sources
+
+The website brings together several research services and datasets:
+
+| Section                        | Service or data source                                                                     | Integration                                                                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lexikon                        | [Bruckner-Lexikon API](https://api-brucknerlex.acdh.oeaw.ac.at)                            | Fetches lexicon articles and indexes from the external API.                                                                                     |
+| Werkverzeichnis                | [Werkverzeichnis Anton Bruckner (WAB)](https://apps-mufo.oeaw.ac.at/dcm/wab/navigation.xq) | Embeds the external catalogue, with links to individual work records.                                                                           |
+| Manuscripts and first editions | [IIIF Presentation service](https://iiifpresentation.acdh.oeaw.ac.at)                      | Displays digitised sources in Mirador using manifests under `bruckner` (manuscripts) and `bruckner/drucke` (first editions).                    |
+| Kopisten                       | [bruckner-kopisten-data](https://github.com/acdh-oeaw/bruckner-kopisten-data)              | Downloads XML data and generates the edition locally using Java, Ant, and Saxon in Docker. See [Kopisten edition data](#kopisten-edition-data). |
+| Bibliography                   | Local JSON database export and a configured Typesense instance                             | Imports the export into Typesense for frontend search. See [Bibliography search](#bibliography-search).                                         |
+
 ## Getting started
 
 Requirements: Node.js 24, pnpm (the version specified in `package.json`), and Docker for generating
@@ -90,6 +102,12 @@ Run formatting, lint, and type checks:
 pnpm format:check
 pnpm lint:check
 pnpm types:check
+```
+
+Lexikon integration tests use fixture responses and do not require external services:
+
+```sh
+pnpm test:unit
 ```
 
 End-to-end tests run against the production build. Install the browser dependencies once, then build

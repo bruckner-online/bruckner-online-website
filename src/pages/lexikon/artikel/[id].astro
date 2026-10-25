@@ -1,5 +1,5 @@
 ---
-import { assert, createUrl, log, request } from "@acdh-oeaw/lib";
+import { assert, log } from "@acdh-oeaw/lib";
 
 import Citation from "@/components/citation.astro";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
@@ -7,7 +7,7 @@ import LexiconLayout from "@/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { reader } from "@/lib/content/reader";
 import { createI18n } from "@/lib/i18n";
-import { baseUrl } from "@/lib/lexicon";
+import { lexicon } from "@/lib/lexicon";
 
 export const prerender = false;
 
@@ -22,34 +22,21 @@ const page = await reader().collections.pages.readOrThrow("lexikon/artikel");
 const documentTitle = page.title;
 const { title } = page;
 
-async function api(): Promise<{ data: null; error: string } | { data: string; error: null }> {
-	const url = createUrl({
-		baseUrl,
-
-		pathname: `/article/${id!}`,
-	});
-
-	try {
-		const data = (await request(url, { responseType: "text" })) as string;
-		return { data, error: null };
-	} catch (error) {
-		log.error(error);
-		return { data: null, error: t("SearchResults.error") };
-	}
+const result = await lexicon.getArticle(id);
+if (result.status === "error") {
+	log.error(result.error);
 }
-
-const { data, error } = await api();
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
 	<LexiconLayout title={title}>
-		{error == null ? (
+		{result.status === "ok" ? (
 			<>
-				<div class="prose" set:html={data} />
+				<div class="prose" set:html={result.value} />
 				<Citation id={id} />
 			</>
 		) : (
-			<div>{error}</div>
+			<div>{t("SearchResults.error")}</div>
 		)}
 	</LexiconLayout>
 </PageLayout>

@@ -23,7 +23,7 @@ const { contentPath, category, kind = "articles" } = Astro.props;
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 const { t } = await createI18n(locale);
-const errorMessage = t("SearchResults.nothing-found");
+const errorMessage = t("SearchResults.error");
 const pendingMessage = t("SearchResults.pending");
 
 const page = await reader().collections.pages.readOrThrow(contentPath);

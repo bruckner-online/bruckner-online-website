@@ -1,5 +1,5 @@
 ---
-import { createUrl, createUrlSearchParams, log, request } from "@acdh-oeaw/lib";
+import { log } from "@acdh-oeaw/lib";
 import * as v from "valibot";
 
 import LexiconSearchForm from "@/components/lexicon-search-form.astro";
@@ -8,9 +8,8 @@ import LexiconLayout from "@/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { processMdx } from "@/lib/content/mdx";
 import { reader } from "@/lib/content/reader";
-import { ensureArray } from "@/lib/ensure-array";
 import { createI18n } from "@/lib/i18n";
-import { baseUrl, pathnames, type SearchResponse } from "@/lib/lexicon";
+import { lexicon, pathnames } from "@/lib/lexicon";
 
 export const prerender = false;
 
@@ -34,30 +33,11 @@ const { q, field, start } = v.parse(schema, {
 	start: Astro.url.searchParams.get("start"),
 });
 
-async function api(): Promise<
-	{ data: null; error: string } | { data: SearchResponse; error: null }
-> {
-	/** Endpoint does not accept empty search term. */
-	if (q.length === 0) {
-		return { data: null, error: t("SearchResults.empty-query") };
-	}
-
-	const url = createUrl({
-		baseUrl,
-		pathname: "/query",
-		searchParams: createUrlSearchParams({ q, field, startAt: start, max: 500 }),
-	});
-
-	try {
-		const data = (await request(url, { responseType: "json" })) as SearchResponse;
-		return { data, error: null };
-	} catch (error) {
-		log.error(error);
-		return { data: null, error: t("SearchResults.error") };
-	}
+// The upstream endpoint does not accept an empty query.
+const result = q.length === 0 ? null : await lexicon.search({ q, field, start, max: 500 });
+if (result?.status === "error") {
+	log.error(result.error);
 }
-
-const { data, error } = await api();
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
@@ -68,13 +48,13 @@ const { data, error } = await api();
 
 		<LexiconSearchForm q={q} field={field} />
 
-		{error == null ? (
-			Number(data.results.total) !== 0 ? (
+		{result?.status === "ok" ? (
+			Number(result.value.total) !== 0 ? (
 				<div class="grid gap-y-4">
-					<h2>{t("SearchResults.search-results", { count: data.results.total })}</h2>
+					<h2>{t("SearchResults.search-results", { count: result.value.total })}</h2>
 					<ol class="grid" role="list">
-						{ensureArray(data.results.article).map((article) => {
-							const { id, title, kwic } = article;
+						{result.value.items.map((article) => {
+							const { id, title, snippets } = article;
 
 							return (
 								<li>
@@ -85,12 +65,12 @@ const { data, error } = await api();
 											</a>
 										</h3>
 										<div class="text-neutral-600">
-											{ensureArray(kwic.p).map((hit) => {
+											{snippets.map((hit) => {
 												return (
 													<div>
-														<span>{hit.span[0]["#text"]}</span>{" "}
-														<mark class="bg-transparent font-medium">{hit.span[1]["#text"]}</mark>{" "}
-														<span>{hit.span[2]["#text"]}</span>
+														<span>{hit.before}</span>{" "}
+														<mark class="bg-transparent font-medium">{hit.match}</mark>{" "}
+														<span>{hit.after}</span>
 													</div>
 												);
 											})}
@@ -105,7 +85,7 @@ const { data, error } = await api();
 				<div>{t("SearchResults.nothing-found")}</div>
 			)
 		) : (
-			<div>{error}</div>
+			<div>{result === null ? t("SearchResults.empty-query") : t("SearchResults.error")}</div>
 		)}
 	</LexiconLayout>
 </PageLayout>
