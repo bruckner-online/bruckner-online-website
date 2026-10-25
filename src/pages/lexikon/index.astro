@@ -1,9 +1,9 @@
 ---
 import { Icon } from "astro-icon/components";
 
-import LexiconSearchForm from "@/components/lexicon-search-form.astro";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
-import LexiconLayout from "@/layouts/lexicon-layout.astro";
+import LexiconSearchForm from "@/features/lexicon/components/lexicon-search-form.astro";
+import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { processMdx } from "@/lib/content/mdx";
 import { reader } from "@/lib/content/reader";

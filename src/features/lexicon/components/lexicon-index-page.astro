@@ -1,17 +1,17 @@
 ---
 import * as v from "valibot";
 
-import LexiconAlphabetLinks from "@/components/lexicon-alphabet-links.astro";
-import LexiconAuthorsIndex from "@/components/lexicon-index-authors.astro";
-import LexiconLiteratureIndex from "@/components/lexicon-index-literature.astro";
-import LexiconIndex from "@/components/lexicon-index.astro";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
-import LexiconLayout from "@/layouts/lexicon-layout.astro";
+import type { Category } from "@/features/lexicon/client";
+import LexiconAlphabetLinks from "@/features/lexicon/components/lexicon-alphabet-links.astro";
+import LexiconAuthorsIndex from "@/features/lexicon/components/lexicon-index-authors.astro";
+import LexiconLiteratureIndex from "@/features/lexicon/components/lexicon-index-literature.astro";
+import LexiconIndex from "@/features/lexicon/components/lexicon-index.astro";
+import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { processMdx } from "@/lib/content/mdx";
 import { reader } from "@/lib/content/reader";
 import { createI18n } from "@/lib/i18n";
-import type { Category } from "@/lib/lexicon";
 
 interface Props {
 	contentPath: string;

@@ -1,10 +1,10 @@
 ---
 import { readFileSync } from "fs";
 
-import CopyistSelect from "@/components/form/copyist-select";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
-import KopistenLayout from "@/layouts/kopisten-layout.astro";
-import PageLayout from "@/layouts/kopisten-page-layout.astro";
+import CopyistSelect from "@/features/kopisten/components/copyist-select";
+import KopistenLayout from "@/features/kopisten/layouts/kopisten-layout.astro";
+import PageLayout from "@/features/kopisten/layouts/kopisten-page-layout.astro";
 import { createI18n } from "@/lib/i18n";
 
 export const prerender = false;

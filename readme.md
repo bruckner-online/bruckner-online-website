@@ -14,6 +14,26 @@ The website brings together several research services and datasets:
 | Kopisten                       | [bruckner-kopisten-data](https://github.com/acdh-oeaw/bruckner-kopisten-data)              | Downloads XML data and generates the edition locally using Java, Ant, and Saxon in Docker. See [Kopisten edition data](#kopisten-edition-data). |
 | Bibliography                   | Local JSON database export and a configured Typesense instance                             | Imports the export into Typesense for frontend search. See [Bibliography search](#bibliography-search).                                         |
 
+## Source layout
+
+Astro routes live in `src/pages/`. Research implementations are grouped in `src/features/`:
+
+| Feature             | Contents                                                                                      |
+| ------------------- | --------------------------------------------------------------------------------------------- |
+| `lexicon`           | API client, indexes, search form, citations, navigation, and layout.                          |
+| `kopisten`          | Copyist selection, edition tables and maps, language toggle, navigation, layouts, and footer. |
+| `bibliography`      | Search UI, Typesense schema, indexing script, and database export.                            |
+| `digitised-sources` | Mirador viewer and the signature-to-WAB mapping used by manuscripts, first editions, and AGA. |
+
+Features use the shared website elements in `src/components/`, layouts in `src/layouts/`, and
+utilities in `src/lib/`. Import a feature implementation directly from its directory; keep shared UI
+and content rendering independent of individual research features. The WAB catalogue and chronology
+currently use shared elements directly in their routes.
+
+Kopisten generation remains in `src/scripts/edition/`, `src/scripts/ant/`, and `src/scripts/xslt/`.
+Its generated files retain their existing locations in `src/edition/`, `src/data/editions/`, and
+`src/data/meta/`.
+
 ## Getting started
 
 Requirements: Node.js 24, pnpm (the version specified in `package.json`), and Docker for generating
@@ -54,8 +74,9 @@ CI uses the same Docker builder for validation and deployment builds.
 
 ## Bibliography search
 
-The bibliography is indexed in Typesense from `src/data/bibliography_db_export_202506121637.json`.
-Configure these variables in `.env.local`:
+The bibliography is indexed in Typesense from
+`src/features/bibliography/data/bibliography_db_export_202506121637.json`. Configure these variables
+in `.env.local`:
 
 - `PUBLIC_TYPESENSE_HOST`
 - `PUBLIC_TYPESENSE_PORT`

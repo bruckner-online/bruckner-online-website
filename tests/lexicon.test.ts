@@ -3,7 +3,7 @@ import { test } from "node:test";
 
 import type { Result } from "better-result";
 
-import { createLexiconClient, LexiconError } from "../src/lib/lexicon.ts";
+import { createLexiconClient, LexiconError } from "../src/features/lexicon/client.ts";
 
 async function success<T>(request: Promise<Result<T, LexiconError>>) {
 	const result = await request;
