@@ -5,11 +5,10 @@ import "@fontsource-variable/open-sans/wght-italic.css";
 import "@/styles/index.css";
 
 import { isNonEmptyString } from "@acdh-oeaw/lib";
-import { ClientRouter } from "astro:transitions";
 import type { WebSite, WithContext } from "schema-dts";
 
 import Analytics from "@/components/analytics.astro";
-import NavigationProgress from "@/components/navigation-progress.astro";
+import NavigationPending from "@/components/navigation-pending.astro";
 import { env } from "@/config/env.config";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import { createI18n } from "@/lib/i18n";
@@ -39,6 +38,42 @@ const jsonLd: WithContext<WebSite> = {
 	"@type": "WebSite",
 	name: metadata.title,
 	description: metadata.description,
+};
+
+/** Pages with `prerender = false`, which are rendered on request. */
+const onDemandPathnames = [
+	"/aga",
+	"/erstdrucke",
+	"/forschung/kopisten/handschriftenvergleich",
+	"/handschriften",
+	"/kontakt",
+	"/lexikon/artikel",
+	"/lexikon/autorinnen",
+	"/lexikon/literatur",
+	"/lexikon/orte",
+	"/lexikon/personen",
+	"/lexikon/sachbegriffe",
+	"/lexikon/suche",
+	"/lexikon/werke",
+	"/werkverzeichnis/wab",
+].map((pathname) => {
+	return { pathname: `${pathname}{/*}?` };
+});
+
+/**
+ * Prerender pages built ahead of time when a link is hovered. Pages rendered on request are only
+ * prefetched, which skips rendering subresources and running scripts for pages never visited.
+ */
+const speculationRules = {
+	prerender: [
+		{
+			where: {
+				and: [{ href_matches: "/*" }, { not: { href_matches: onDemandPathnames } }],
+			},
+			eagerness: "moderate",
+		},
+	],
+	prefetch: [{ where: { href_matches: onDemandPathnames }, eagerness: "moderate" }],
 };
 
 const matomoBaseUrl = env.PUBLIC_MATOMO_BASE_URL;
@@ -85,13 +120,12 @@ const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 		<link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="32x32" />
 		<link rel="apple-touch-icon" href="/apple-icon.png" type="image/png" sizes="180x180" />
 
-		<ClientRouter />
-
 		<script
 			is:inline
 			set:html={JSON.stringify(jsonLd, safeJsonLdReplacer)}
 			type="application/ld+json"
 		/>
+		<script is:inline set:html={JSON.stringify(speculationRules)} type="speculationrules" />
 		{matomoBaseUrl && matomoId ? <Analytics baseUrl={matomoBaseUrl} id={matomoId} /> : null}
 
 		{googleSiteVerification != null ? (
@@ -100,7 +134,7 @@ const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 	</head>
 
 	<body>
-		<NavigationProgress label={t("Navigation.loading")} />
+		<NavigationPending />
 		<slot />
 	</body>
 </html>
