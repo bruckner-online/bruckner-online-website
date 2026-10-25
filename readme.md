@@ -118,3 +118,13 @@ pnpm test:e2e:install
 pnpm build
 pnpm test:e2e
 ```
+
+Playwright starts a dedicated production server with a test-only Lexikon API adapter, so index tests
+exercise server rendering without depending on the live API. The adapter is not loaded by normal
+production startup. Index tests also run with JavaScript disabled.
+
+If port 3000 is already in use, select another port for the test server:
+
+```sh
+PLAYWRIGHT_PORT=19437 pnpm test:e2e
+```

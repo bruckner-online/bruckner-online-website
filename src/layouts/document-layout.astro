@@ -9,6 +9,7 @@ import { ClientRouter } from "astro:transitions";
 import type { WebSite, WithContext } from "schema-dts";
 
 import Analytics from "@/components/analytics.astro";
+import NavigationProgress from "@/components/navigation-progress.astro";
 import { env } from "@/config/env.config";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import { createI18n } from "@/lib/i18n";
@@ -99,6 +100,7 @@ const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 	</head>
 
 	<body>
+		<NavigationProgress label={t("Navigation.loading")} />
 		<slot />
 	</body>
 </html>

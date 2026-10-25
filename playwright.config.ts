@@ -9,8 +9,8 @@ for (const envFilePath of [".env.test.local", ".env.local", ".env.test", ".env"]
 	expand(dotenv({ path: join(process.cwd(), envFilePath) }));
 }
 
-const port = 3000;
-const baseUrl = `http://localhost:${String(port)}`;
+const port = Number(process.env.PLAYWRIGHT_PORT ?? 3000);
+const baseUrl = `http://127.0.0.1:${String(port)}`;
 
 export default defineConfig({
 	testDir: "./e2e",
@@ -37,8 +37,9 @@ export default defineConfig({
 		},
 	],
 	webServer: {
-		command: "pnpm run start",
+		command: "node --import ./e2e/lib/lexicon-api-mock.mjs dist/server/entry.mjs",
+		env: { PORT: String(port), HOST: "127.0.0.1" },
 		url: baseUrl,
-		reuseExistingServer: !isCI,
+		reuseExistingServer: false,
 	},
 });
