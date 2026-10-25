@@ -26,7 +26,6 @@ const alphabet = alpha.map((x) => {
 					"border rounded w-8 height-8 inline-flex items-center justify-center transition hover:bg-brand-red hover:text-white",
 					isCurrent ? "bg-brand-red text-white" : undefined,
 				]}
-				data-astro-reload
 				href={`?${String(createUrlSearchParams({ letter, start: 1 }))}`}
 			>
 				{letter.toUpperCase()}

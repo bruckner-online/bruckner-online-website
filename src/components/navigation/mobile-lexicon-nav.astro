@@ -9,8 +9,8 @@ const { t } = await createI18n((Astro.currentLocale ?? defaultLocale) as Locale)
 const links = [
 	{ href: "/lexikon", label: t("LexiconNav.links.home") },
 	{ href: "/lexikon/projekt", label: t("LexiconNav.links.project") },
-	{ href: "/lexikon/autorinnen", label: t("LexiconNav.links.authors"), reload: true },
-	{ href: "/lexikon/literatur", label: t("LexiconNav.links.bibliography"), reload: true },
+	{ href: "/lexikon/autorinnen", label: t("LexiconNav.links.authors") },
+	{ href: "/lexikon/literatur", label: t("LexiconNav.links.bibliography") },
 	{ href: "/lexikon/abkuerzungen", label: t("LexiconNav.links.abbreviations") },
 ];
 ---
