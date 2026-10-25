@@ -1,0 +1,33 @@
+---
+import { log } from "@acdh-oeaw/lib";
+
+import { lexicon } from "@/lib/lexicon";
+
+interface Props {
+	errorMessage: string;
+	emptyMessage: string;
+	letter: string;
+	start: number;
+	max: number;
+}
+
+const { errorMessage, emptyMessage, ...query } = Astro.props;
+const result = await lexicon.listLiterature(query);
+if (result.status === "error") {
+	log.error(result.error);
+}
+---
+
+{result.status === "error" ? (
+	<p>{errorMessage}</p>
+) : result.value.items.length === 0 ? (
+	<p>{emptyMessage}</p>
+) : (
+	<div class="grid gap-y-4">
+		<ol class="grid" role="list">
+			{result.value.items.map((citation) => (
+				<li>{citation}</li>
+			))}
+		</ol>
+	</div>
+)}

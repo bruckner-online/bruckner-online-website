@@ -1,0 +1,102 @@
+---
+interface Props {
+	label: string;
+}
+const { label } = Astro.props;
+---
+
+<div id="navigation-progress" role="progressbar" aria-label={label} hidden></div>
+
+<script>
+	let finishCurrent: (() => void) | undefined;
+
+	document.addEventListener("astro:before-preparation", (event) => {
+		finishCurrent?.();
+		const loader = event.loader;
+		const timer = setTimeout(() => {
+			const bar = document.getElementById("navigation-progress");
+			if (bar) {
+				bar.hidden = false;
+			}
+		}, 200);
+
+		function stop() {
+			clearTimeout(timer);
+			event.signal.removeEventListener("abort", stop);
+			// An older, cancelled loader must not hide a newer navigation's indicator.
+			if (finishCurrent === stop) {
+				const bar = document.getElementById("navigation-progress");
+				if (bar) {
+					bar.hidden = true;
+				}
+				finishCurrent = undefined;
+			}
+		}
+
+		finishCurrent = stop;
+		if (event.signal.aborted) {
+			stop();
+			return;
+		}
+		event.signal.addEventListener("abort", stop, { once: true });
+
+		event.loader = async () => {
+			try {
+				await loader();
+			} finally {
+				stop();
+			}
+		};
+		// Another listener can prevent navigation after our listener has run.
+		queueMicrotask(() => {
+			if (event.defaultPrevented) {
+				stop();
+			}
+		});
+	});
+
+	window.addEventListener("pagehide", () => {
+		return finishCurrent?.();
+	});
+	window.addEventListener("pageshow", () => {
+		return finishCurrent?.();
+	});
+</script>
+
+<style>
+	#navigation-progress {
+		position: fixed;
+		inset: 0 0 auto;
+		z-index: 10000;
+		overflow: hidden;
+		height: 3px;
+		background: color-mix(in sRGB, var(--color-brand-red) 20%, transparent);
+		pointer-events: none;
+	}
+
+	#navigation-progress::before {
+		content: "";
+		display: block;
+		width: 35%;
+		height: 100%;
+		background: var(--color-brand-red);
+		animation: navigation-progress 1.3s ease-in-out infinite;
+	}
+
+	@keyframes navigation-progress {
+		from {
+			transform: translateX(-100%);
+		}
+
+		to {
+			transform: translateX(386%);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		#navigation-progress::before {
+			width: 100%;
+			animation: none;
+		}
+	}
+</style>
