@@ -1,3 +1,4 @@
+import { type InferOk, Result } from "better-result";
 import * as v from "valibot";
 
 export type Category = "Artikel" | "Autor" | "Literatur" | "Ort" | "Person" | "Sache" | "Werk";
@@ -76,23 +77,65 @@ const searchArticle = v.pipe(
 	}),
 );
 
+function validate<T extends v.GenericSchema>(
+	schema: T,
+	data: unknown,
+): Result<v.InferOutput<T>, LexiconError> {
+	const parsed = v.safeParse(schema, data);
+	return parsed.success
+		? Result.ok(parsed.output)
+		: Result.err(new LexiconError("invalid-response", { cause: parsed.issues }));
+}
+
 function results<T extends v.GenericSchema>(key: string, schema: T) {
-	return (data: unknown) => {
-		const { results } = v.parse(v.object({ results: v.record(v.string(), v.unknown()) }), data);
-		return {
-			total: v.parse(
-				v.pipe(
-					v.union([v.string(), v.number()]),
-					v.transform(Number),
-					v.number(),
-					v.integer(),
-					v.minValue(0),
-				),
-				results.total,
+	return (
+		data: unknown,
+	): Result<{ total: number; items: Array<v.InferOutput<T>> }, LexiconError> => {
+		const envelope = validate(v.object({ results: v.record(v.string(), v.unknown()) }), data);
+		if (envelope.status === "error") {
+			return Result.err(envelope.error);
+		}
+		const total = validate(
+			v.pipe(
+				v.union([v.string(), v.number()]),
+				v.transform(Number),
+				v.number(),
+				v.integer(),
+				v.minValue(0),
 			),
-			items: v.parse(list(schema), results[key]),
-		};
+			envelope.value.results.total,
+		);
+		if (total.status === "error") {
+			return Result.err(total.error);
+		}
+		const items = validate(list(schema), envelope.value.results[key]);
+		if (items.status === "error") {
+			return Result.err(items.error);
+		}
+		return Result.ok({ total: total.value, items: items.value });
 	};
+}
+
+// Only failures from the fetch/body-read operations become recoverable results.
+// Unexpected exceptions (including bugs in validation transforms) remain exceptions.
+function transportFailure(
+	cause: unknown,
+	signal: AbortSignal,
+	json = false,
+): Result<never, LexiconError> {
+	if (signal.aborted) {
+		return Result.err(new LexiconError("timeout", { cause }));
+	}
+	if (json && cause instanceof SyntaxError) {
+		return Result.err(new LexiconError("invalid-response", { cause }));
+	}
+	if (
+		cause instanceof TypeError ||
+		(cause instanceof DOMException && cause.name === "AbortError")
+	) {
+		return Result.err(new LexiconError("network", { cause }));
+	}
+	throw cause;
 }
 
 interface Pagination {
@@ -105,11 +148,12 @@ interface IndexOptions extends Pagination {
 
 /** Owns the wire format and transport for both browser and server callers. */
 export function createLexiconClient(options: { fetch?: typeof fetch; timeoutMs?: number } = {}) {
-	async function load(
+	async function load<T>(
 		path: string,
 		params: Record<string, string | number | undefined>,
-		html = false,
-	) {
+		decode: (response: Response) => Promise<T>,
+		accept: string,
+	): Promise<Result<T, LexiconError>> {
 		const url = new URL(path, baseUrl);
 		for (const [key, value] of Object.entries(params)) {
 			if (value !== undefined) {
@@ -117,48 +161,50 @@ export function createLexiconClient(options: { fetch?: typeof fetch; timeoutMs?:
 			}
 		}
 		const signal = AbortSignal.timeout(options.timeoutMs ?? 15_000);
+		let response: Response;
 		try {
-			const response = await (options.fetch ?? globalThis.fetch)(url, {
-				signal,
-				headers: { accept: html ? "text/*" : "application/json" },
-			});
-			if (!response.ok) {
-				throw new LexiconError("http", undefined, response.status);
-			}
-			if (html) {
-				return await response.text();
-			}
-			try {
-				return (await response.json()) as unknown;
-			} catch (cause) {
-				if (signal.aborted) {
-					throw cause;
-				}
-				throw new LexiconError("invalid-response", { cause });
-			}
+			response = await (options.fetch ?? globalThis.fetch)(url, { signal, headers: { accept } });
 		} catch (cause) {
-			if (cause instanceof LexiconError) {
-				throw cause;
-			}
-			throw new LexiconError(signal.aborted ? "timeout" : "network", { cause });
+			return transportFailure(cause, signal);
+		}
+		if (!response.ok) {
+			return Result.err(new LexiconError("http", undefined, response.status));
+		}
+		try {
+			return Result.ok(await decode(response));
+		} catch (cause) {
+			return transportFailure(cause, signal, accept === "application/json");
 		}
 	}
 	async function query<T>(
 		path: string,
 		params: Record<string, string | number | undefined>,
-		parse: (data: unknown) => T,
-	): Promise<T> {
-		const data = await load(path, params);
-		try {
-			return parse(data);
-		} catch (cause) {
-			throw new LexiconError("invalid-response", { cause });
+		parse: (data: unknown) => Result<T, LexiconError>,
+	): Promise<Result<T, LexiconError>> {
+		const result = await load(
+			path,
+			params,
+			async (response): Promise<unknown> => {
+				return response.json();
+			},
+			"application/json",
+		);
+		if (result.status === "error") {
+			return Result.err(result.error);
 		}
+		return parse(result.value);
 	}
 
 	return {
 		async getArticle(id: string) {
-			return (await load(`/article/${encodeURIComponent(id)}`, {}, true)) as string;
+			return load(
+				`/article/${encodeURIComponent(id)}`,
+				{},
+				(response) => {
+					return response.text();
+				},
+				"text/*",
+			);
 		},
 		listArticles({
 			letter,
@@ -197,10 +243,10 @@ export function createLexiconClient(options: { fetch?: typeof fetch; timeoutMs?:
 }
 
 export const lexicon = createLexiconClient();
-export type ArticleSearchResponse = Awaited<ReturnType<typeof lexicon.listArticles>>;
-export type AuthorSearchResponse = Awaited<ReturnType<typeof lexicon.listAuthors>>;
-export type BibliographySearchResult = Awaited<ReturnType<typeof lexicon.listLiterature>>;
-export type SearchResponse = Awaited<ReturnType<typeof lexicon.search>>;
+export type ArticleSearchResponse = InferOk<Awaited<ReturnType<typeof lexicon.listArticles>>>;
+export type AuthorSearchResponse = InferOk<Awaited<ReturnType<typeof lexicon.listAuthors>>>;
+export type BibliographySearchResult = InferOk<Awaited<ReturnType<typeof lexicon.listLiterature>>>;
+export type SearchResponse = InferOk<Awaited<ReturnType<typeof lexicon.search>>>;
 
 export const pathnames: Record<Category, string> = {
 	Artikel: "/lexikon/artikel/",

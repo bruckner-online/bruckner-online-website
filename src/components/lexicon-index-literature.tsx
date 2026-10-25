@@ -17,15 +17,15 @@ export default function LexiconLiteratureIndex(props: LexiconLiteratureIndexProp
 	const [error, setError] = createSignal("");
 
 	async function loadIndex() {
-		try {
-			const data = await lexicon.listLiterature({
-				letter: props.letter,
-				start: props.start,
-				max: props.max,
-			});
-			setIndex(data);
-		} catch (error) {
-			log.error(error);
+		const result = await lexicon.listLiterature({
+			letter: props.letter,
+			start: props.start,
+			max: props.max,
+		});
+		if (result.status === "ok") {
+			setIndex(result.value);
+		} else {
+			log.error(result.error);
 			setError(props.errorMessage);
 		}
 	}

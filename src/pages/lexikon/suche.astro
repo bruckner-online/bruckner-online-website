@@ -9,7 +9,7 @@ import PageLayout from "@/layouts/page-layout.astro";
 import { processMdx } from "@/lib/content/mdx";
 import { reader } from "@/lib/content/reader";
 import { createI18n } from "@/lib/i18n";
-import { lexicon, pathnames, type SearchResponse } from "@/lib/lexicon";
+import { lexicon, pathnames } from "@/lib/lexicon";
 
 export const prerender = false;
 
@@ -33,24 +33,11 @@ const { q, field, start } = v.parse(schema, {
 	start: Astro.url.searchParams.get("start"),
 });
 
-async function api(): Promise<
-	{ data: null; error: string } | { data: SearchResponse; error: null }
-> {
-	/** Endpoint does not accept empty search term. */
-	if (q.length === 0) {
-		return { data: null, error: t("SearchResults.empty-query") };
-	}
-
-	try {
-		const data = await lexicon.search({ q, field, start, max: 500 });
-		return { data, error: null };
-	} catch (error) {
-		log.error(error);
-		return { data: null, error: t("SearchResults.error") };
-	}
+// The upstream endpoint does not accept an empty query.
+const result = q.length === 0 ? null : await lexicon.search({ q, field, start, max: 500 });
+if (result?.status === "error") {
+	log.error(result.error);
 }
-
-const { data, error } = await api();
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
@@ -61,12 +48,12 @@ const { data, error } = await api();
 
 		<LexiconSearchForm q={q} field={field} />
 
-		{error == null ? (
-			Number(data.total) !== 0 ? (
+		{result?.status === "ok" ? (
+			Number(result.value.total) !== 0 ? (
 				<div class="grid gap-y-4">
-					<h2>{t("SearchResults.search-results", { count: data.total })}</h2>
+					<h2>{t("SearchResults.search-results", { count: result.value.total })}</h2>
 					<ol class="grid" role="list">
-						{data.items.map((article) => {
+						{result.value.items.map((article) => {
 							const { id, title, snippets } = article;
 
 							return (
@@ -98,7 +85,7 @@ const { data, error } = await api();
 				<div>{t("SearchResults.nothing-found")}</div>
 			)
 		) : (
-			<div>{error}</div>
+			<div>{result === null ? t("SearchResults.empty-query") : t("SearchResults.error")}</div>
 		)}
 	</LexiconLayout>
 </PageLayout>

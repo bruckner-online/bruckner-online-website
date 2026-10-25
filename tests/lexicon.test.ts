@@ -1,7 +1,17 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
+import type { Result } from "better-result";
+
 import { createLexiconClient, LexiconError } from "../src/lib/lexicon.ts";
+
+async function success<T>(request: Promise<Result<T, LexiconError>>) {
+	const result = await request;
+	if (result.status === "error") {
+		assert.fail(result.error.message);
+	}
+	return result.value;
+}
 
 function fixture(body: unknown, inspect?: (url: URL) => void) {
 	return createLexiconClient({
@@ -29,13 +39,15 @@ void test("article lists preserve filters and normalise singleton results", asyn
 		},
 	);
 	assert.deepEqual(
-		await client.listArticles({
-			letter: "b",
-			start: 12,
-			max: 500,
-			category: "Person",
-			author: "A & B",
-		}),
+		await success(
+			client.listArticles({
+				letter: "b",
+				start: 12,
+				max: 500,
+				category: "Person",
+				author: "A & B",
+			}),
+		),
 		{ total: 1, items: [{ id: "a", title: "Article" }] },
 	);
 });
@@ -43,7 +55,9 @@ void test("article lists preserve filters and normalise singleton results", asyn
 void test("empty results normalise missing and null collections", async () => {
 	for (const article of [undefined, null, []]) {
 		assert.deepEqual(
-			await fixture({ results: { total: "0", article } }).listArticles({ start: 1, max: 500 }),
+			await success(
+				fixture({ results: { total: "0", article } }).listArticles({ start: 1, max: 500 }),
+			),
 			{ total: 0, items: [] },
 		);
 	}
@@ -63,7 +77,7 @@ void test("authors use named fields rather than position", async () => {
 			},
 		},
 	});
-	assert.deepEqual(await client.listAuthors({ letter: "a", start: 1, max: 500 }), {
+	assert.deepEqual(await success(client.listAuthors({ letter: "a", start: 1, max: 500 })), {
 		total: 1,
 		items: [{ name: "Full", sortName: "Sort" }],
 	});
@@ -71,21 +85,27 @@ void test("authors use named fields rather than position", async () => {
 
 void test("literature and search hide XML-derived structures", async () => {
 	assert.deepEqual(
-		await fixture({
-			results: { total: "1", item: { full: { bibl: { "#text": "Citation" } } } },
-		}).listLiterature({ letter: "a", start: 1, max: 500 }),
+		await success(
+			fixture({
+				results: { total: "1", item: { full: { bibl: { "#text": "Citation" } } } },
+			}).listLiterature({ letter: "a", start: 1, max: 500 }),
+		),
 		{ total: 1, items: ["Citation"] },
 	);
-	const result = await fixture({
-		results: {
-			total: "1",
-			article: {
-				id: "a",
-				title: "A",
-				kwic: { p: { span: [{ "#text": "before" }, { "#text": "match" }, { "#text": "after" }] } },
+	const result = await success(
+		fixture({
+			results: {
+				total: "1",
+				article: {
+					id: "a",
+					title: "A",
+					kwic: {
+						p: { span: [{ "#text": "before" }, { "#text": "match" }, { "#text": "after" }] },
+					},
+				},
 			},
-		},
-	}).search({ q: "A & B", field: "all", start: 1, max: 500 });
+		}).search({ q: "A & B", field: "all", start: 1, max: 500 }),
+	);
 	assert.deepEqual(result.items[0]?.snippets, [
 		{ before: "before", match: "match", after: "after" },
 	]);
@@ -102,7 +122,7 @@ void test("article HTML is preserved and identifiers are encoded", async () => {
 			return Promise.resolve(new Response("<p>Article</p>"));
 		},
 	});
-	assert.equal(await client.getArticle("a/b?"), "<p>Article</p>");
+	assert.equal(await success(client.getArticle("a/b?")), "<p>Article</p>");
 });
 
 void test("failures are classified at the integration seam", async () => {
@@ -152,15 +172,34 @@ void test("failures are classified at the integration seam", async () => {
 		],
 	];
 	for (const [fetch, kind] of cases) {
-		await assert.rejects(
-			createLexiconClient({ fetch, timeoutMs: 10 }).listArticles({ start: 1, max: 500 }),
-			(error) => {
-				return (
-					error instanceof LexiconError &&
-					error.kind === kind &&
-					(kind !== "http" || error.status === 503)
-				);
-			},
-		);
+		const result = await createLexiconClient({ fetch, timeoutMs: 10 }).listArticles({
+			start: 1,
+			max: 500,
+		});
+		assert.equal(result.status, "error");
+		assert.ok(result.error instanceof LexiconError);
+		assert.equal(result.error.kind, kind);
+		if (kind === "http") {
+			assert.equal(result.error.status, 503);
+		}
 	}
+});
+
+void test("unexpected exceptions are not converted into integration failures", async () => {
+	const defect = new Error("Programming defect");
+	const client = createLexiconClient({
+		fetch: () => {
+			throw defect;
+		},
+	});
+	await assert.rejects(client.listArticles({ start: 1, max: 500 }), (error) => {
+		return error === defect;
+	});
+});
+
+void test("malformed nested responses return validation errors", async () => {
+	const client = fixture({ results: { total: "1", article: { id: "a", title: 123 } } });
+	const result = await client.listArticles({ start: 1, max: 500 });
+	assert.equal(result.status, "error");
+	assert.equal(result.error.kind, "invalid-response");
 });

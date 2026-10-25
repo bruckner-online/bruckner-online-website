@@ -7,7 +7,7 @@ import LexiconLayout from "@/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { reader } from "@/lib/content/reader";
 import { createI18n } from "@/lib/i18n";
-import { type ArticleSearchResponse, lexicon, pathnames } from "@/lib/lexicon";
+import { lexicon, pathnames } from "@/lib/lexicon";
 
 export const prerender = false;
 
@@ -26,30 +26,21 @@ const { start } = v.parse(schema, {
 	start: Astro.url.searchParams.get("start"),
 });
 
-async function api(): Promise<
-	{ data: ArticleSearchResponse; error: null } | { data: null; error: string }
-> {
-	try {
-		const data = await lexicon.listArticles({ author: id, start, max: 500 });
-		return { data, error: null };
-	} catch (error) {
-		log.error(error);
-		return { data: null, error: t("SearchResults.error") };
-	}
+const result = await lexicon.listArticles({ author: id, start, max: 500 });
+if (result.status === "error") {
+	log.error(result.error);
 }
-
-const { data, error } = await api();
 
 const title = t("ArticlesByAuthor.title", { author: id }) ?? page.title;
 ---
 
 <PageLayout locale={locale} title={title}>
 	<LexiconLayout title={title}>
-		{error == null ? (
-			Number(data.total) !== 0 ? (
+		{result.status === "ok" ? (
+			Number(result.value.total) !== 0 ? (
 				<div class="grid gap-y-4">
 					<ol class="grid" role="list">
-						{data.items.map((article) => {
+						{result.value.items.map((article) => {
 							const { id, title } = article;
 
 							return (
@@ -66,7 +57,7 @@ const title = t("ArticlesByAuthor.title", { author: id }) ?? page.title;
 				<div>{t("SearchResults.nothing-found")}</div>
 			)
 		) : (
-			<div>{error}</div>
+			<div>{t("SearchResults.error")}</div>
 		)}
 	</LexiconLayout>
 </PageLayout>
