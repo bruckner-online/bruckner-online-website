@@ -1,0 +1,19 @@
+{
+	"repository": "https://github.com/acdh-oeaw/bruckner-kopisten-data",
+	"revision": "2c2b99b519c8affd9e1b7e27f7549e43774be052",
+	"archiveSha256": "bc4b63fb31bae6809920f27c2db2f2c6df1bb38281f506d4d0ca4412a0dfa03b",
+	"date": "2026-05-19",
+	"knownDuplicateIds": {
+		"d1e6989": [
+			"anonymus-007",
+			"anonymus-026",
+			"anonymus-039",
+			"anonymus-043",
+			"anonymus-059",
+			"anonymus-068",
+			"anonymus-110"
+		],
+		"d1e179176": ["anonymus-156", "anonymus-157"],
+		"d195145": ["anonymus-173", "anonymus-174"]
+	}
+}

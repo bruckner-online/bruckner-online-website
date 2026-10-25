@@ -7,7 +7,7 @@
     <xsl:output method="text"/>
     <xsl:mode on-no-match="shallow-skip"/>
     <xsl:template match="/">
- 				<xsl:variable name="files" select="collection('../../data/editions')"/>
+				<xsl:variable name="files" select="(for $uri in sort(uri-collection('../../data/editions?select=*.xml')) return doc($uri))"/>
 					<xsl:for-each select="$files//tei:TEI">
 						<xsl:variable name="filename" select="tokenize(base-uri(current()),'/')[last()]"/>
 					  <xsl:variable name="id" select="current()//tei:idno[@type='Bruckner_Kopisten']/text()"/>

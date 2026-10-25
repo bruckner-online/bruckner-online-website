@@ -7,7 +7,7 @@
     xmlns:m="http://www.music-encoding.org/ns/mei"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xi="http://www.w3.org/2001/XInclude"
-    exclude-result-prefixes="#all" version="2.0">
+    exclude-result-prefixes="#all" version="3.0">
     <xsl:output encoding="UTF-8" indent="yes"/>
 
     <xsl:function name="m:sort-by-time">
@@ -78,7 +78,7 @@
                                 <cell>Period</cell>
                                 <cell>Copyist</cell>
                             </row>
-                            <xsl:variable name="Person" select="collection('../../data/editions?select=*.xml;recurse=yes')/t:TEI/t:text/t:body/t:div"/>
+                            <xsl:variable name="Person" select="(for $uri in sort(uri-collection('../../data/editions?select=*.xml;recurse=yes')) return doc($uri))/t:TEI/t:text/t:body/t:div"/>
                             <xsl:for-each-group select="m:sort-by-time($Person)" group-by="t:listPerson/t:person/t:floruit[1]">
                                <xsl:choose>
                                     <xsl:when test="not(current()/t:listPerson/t:person/t:floruit = '')">

@@ -9,7 +9,7 @@
     <xsl:template match="/">
 
 
- 				<xsl:variable name="files" select="collection('../../data/editions')"/>
+				<xsl:variable name="files" select="(for $uri in sort(uri-collection('../../data/editions?select=*.xml')) return doc($uri))"/>
 				<xsl:variable name="index" as="map(*)*">
 					<xsl:for-each select="$files//tei:TEI">
 					<xsl:sort select="//tei:idno[@type='alphabetically_sorted']"

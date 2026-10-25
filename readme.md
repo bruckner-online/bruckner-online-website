@@ -64,11 +64,34 @@ With Docker running, generate or refresh the edition:
 pnpm edition:build
 ```
 
-This downloads the latest XML data from
-[bruckner-kopisten-data](https://github.com/acdh-oeaw/bruckner-kopisten-data) and generates
-`src/edition/`. It replaces `src/data/editions/` and `src/data/meta/`. All three generated
-directories are gitignored. Java, Ant, and Saxon run inside Docker; no host installation is
-required.
+The source revision, archive SHA-256, and artifact date are pinned in
+`src/scripts/edition/source.json`. To update the source, resolve a full commit SHA, download its
+archive, and update the checksum and date together. No mutable branch is used during generation.
+Java, Ant, Saxon, and Python run inside Docker; no host installation is required.
+
+Generation runs in a temporary workspace on the same filesystem. It validates XML, the nonempty
+index and known ID collisions, every detail and facsimile snippet, all metadata pages and tables,
+and the filename-to-ID mappings before replacing `src/edition/`, `src/data/editions/`, and
+`src/data/meta/`. Existing output survives download, transform, or validation failures. Promotion
+uses directory renames and rolls back on errors; readers should not run concurrently with promotion.
+A build lock prevents concurrent generators. Fresh directories remove stale generated files.
+
+The website contract stays unchanged: index fields are `id`, `filename`, `title`, and
+`copyist_name`; detail HTML uses filenames, while runtime facsimile HTML uses IDs.
+`src/edition/provenance.json` records the pinned source, input and generator checksums, tool
+checksums, and all artifact checksums. The citation date is the pinned artifact date so regeneration
+does not change with the wall clock. The production image retains provenance alongside its runtime
+facsimiles.
+
+Run failure-path checks with
+`PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s src/scripts/edition`. To check
+reproducibility, generate twice and compare `src/edition/provenance.json` (including all artifact
+hashes). Generated directories remain gitignored.
+
+The pinned upstream data shares three IDs across eleven records. `knownDuplicateIds` lists these
+collisions by filename; validation accepts exactly these groups and rejects new collisions. Existing
+routes and facsimile filenames are preserved. Resolving the collisions requires a separate source
+and URL migration.
 
 CI uses the same Docker builder for validation and deployment builds.
 
