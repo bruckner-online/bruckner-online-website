@@ -21,6 +21,9 @@ RUN pnpm install --frozen-lockfile --ignore-scripts --offline --prod
 # build
 FROM base as build
 
+# Dependency lifecycle scripts must skip Git hooks in this Git-free build stage.
+ENV CI=true
+
 RUN pnpm fetch --dev
 
 COPY --chown=node:node ./ ./
