@@ -77,3 +77,37 @@ test("bibliography search derives year bounds and supports sorting and filtering
 	await page.locator("#year-range").getByRole("button").click();
 	await expect(hits).toHaveText([/newer publication/]);
 });
+
+test("bibliography distinguishes an outage from empty results and retries", async ({ page }) => {
+	let unavailable = true;
+	await page.route("**/multi_search*", async (route) => {
+		if (unavailable) {
+			await route.fulfill({ status: 503, json: { message: "Unavailable" } });
+			return;
+		}
+		const { searches } = route.request().postDataJSON() as { searches: Array<SearchParameters> };
+		await route.fulfill({
+			json: {
+				results: searches.map((parameters) => {
+					return {
+						found: 0,
+						out_of: 0,
+						page: 1,
+						search_time_ms: 1,
+						request_params: { ...parameters, per_page: 50 },
+						hits: [],
+						facet_counts: [],
+					};
+				}),
+			},
+		});
+	});
+	await page.goto("/leben/bibliographie/");
+	const status = page.locator("#search-unavailable");
+	await expect(status).toBeVisible({ timeout: 30_000 });
+	await expect(page.locator("#hits")).toBeHidden();
+	unavailable = false;
+	await status.getByRole("button", { name: "Erneut versuchen" }).click();
+	await expect(status).toBeHidden();
+	await expect(page.locator("#hits")).toBeVisible();
+});

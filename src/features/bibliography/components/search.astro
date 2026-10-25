@@ -1,3 +1,9 @@
+<div id="search-unavailable" role="status" hidden>
+	Die Suche ist derzeit nicht verfügbar.{" "}
+	<button type="button" class="underline">
+		Erneut versuchen
+	</button>
+</div>
 <div class="flex flex-col gap-3">
 	<div id="searchbox"></div>
 	<div id="year-range"></div>
@@ -21,6 +27,8 @@
 	import { defaultLocale } from "@/config/i18n.config";
 	import { createI18n } from "@/lib/i18n";
 
+	import { withSearchAvailability } from "../search-client";
+
 	const { t } = await createI18n(defaultLocale);
 
 	// CommonJS interop can wrap the adapter constructor in a default export.
@@ -34,6 +42,9 @@
 				).default;
 	const typesenseInstantsearchAdapter = new Adapter({
 		server: {
+			connectionTimeoutSeconds: 5,
+			numRetries: 1,
+			retryIntervalSeconds: 1,
 			apiKey: import.meta.env.PUBLIC_TYPESENSE_SEARCH_API_KEY,
 			nodes: [
 				{
@@ -49,7 +60,16 @@
 			per_page: 50,
 		},
 	});
-	const searchClient = typesenseInstantsearchAdapter.searchClient;
+	const unavailable = document.querySelector<HTMLElement>("#search-unavailable")!;
+	const searchClient = withSearchAvailability(
+		typesenseInstantsearchAdapter.searchClient,
+		(available) => {
+			unavailable.hidden = available;
+			for (const id of ["hits", "stats"]) {
+				document.getElementById(id)!.hidden = !available;
+			}
+		},
+	);
 	const indexName = String(import.meta.env.PUBLIC_TYPESENSE_COLLECTION_NAME);
 
 	const search = instantsearch({
@@ -155,5 +175,11 @@
 		}),
 	]);
 
+	search.on("error", () => {
+		/* The adapter reports the failure and preserves rejection. */
+	});
+	unavailable.querySelector("button")!.addEventListener("click", () => {
+		return search.refresh();
+	});
 	search.start();
 </script>

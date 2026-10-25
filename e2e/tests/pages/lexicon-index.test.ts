@@ -65,6 +65,10 @@ for (const routeName of ["artikel", "autorinnen", "literatur"]) {
 		await expect(
 			page.getByRole("main").getByText(t("SearchResults.error"), { exact: true }),
 		).toBeVisible();
+		await expect(page.getByRole("link", { name: "Erneut versuchen" })).toHaveAttribute(
+			"href",
+			`/lexikon/${routeName}/?letter=E`,
+		);
 	});
 
 	test(`${routeName} renders an empty state in HTML`, async ({ page, createI18n }) => {

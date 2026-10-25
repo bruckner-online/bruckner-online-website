@@ -238,3 +238,28 @@ void test("search accepts omitted text in empty snippet spans", async () => {
 		{ before: "Anton ", match: "Bruckner", after: "" },
 	]);
 });
+
+void test("Lexikon logs request context once and recovers without caching an outage", async () => {
+	let failing = true;
+	const logs: Array<Array<unknown>> = [];
+	const client = createLexiconClient({
+		fetch: () => {
+			return Promise.resolve(
+				failing ? new Response(null, { status: 503 }) : Response.json({ results: { total: 0 } }),
+			);
+		},
+		logger: {
+			error: (...args: Array<unknown>) => {
+				logs.push(args);
+			},
+		},
+	});
+	assert.equal((await client.listArticles({ start: 1, max: 10 })).status, "error");
+	failing = false;
+	assert.deepEqual(await success(client.listArticles({ start: 1, max: 10 })), {
+		total: 0,
+		items: [],
+	});
+	assert.equal(logs.length, 1);
+	assert.equal((logs[0]![1] as { path: string }).path, "/article");
+});

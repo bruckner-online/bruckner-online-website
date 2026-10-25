@@ -1,10 +1,10 @@
 ---
-import { log } from "@acdh-oeaw/lib";
 import * as v from "valibot";
 
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import { lexicon, pathnames } from "@/features/lexicon/client";
 import LexiconSearchForm from "@/features/lexicon/components/lexicon-search-form.astro";
+import LexiconUnavailable from "@/features/lexicon/components/lexicon-unavailable.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { processMdx } from "@/lib/content/mdx";
@@ -35,9 +35,6 @@ const { q, field, start } = v.parse(schema, {
 
 // The upstream endpoint does not accept an empty query.
 const result = q.length === 0 ? null : await lexicon.search({ q, field, start, max: 500 });
-if (result?.status === "error") {
-	log.error(result.error);
-}
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
@@ -84,8 +81,10 @@ if (result?.status === "error") {
 			) : (
 				<div>{t("SearchResults.nothing-found")}</div>
 			)
+		) : result === null ? (
+			<div>{t("SearchResults.empty-query")}</div>
 		) : (
-			<div>{result === null ? t("SearchResults.empty-query") : t("SearchResults.error")}</div>
+			<LexiconUnavailable message={t("SearchResults.error")} />
 		)}
 	</LexiconLayout>
 </PageLayout>
