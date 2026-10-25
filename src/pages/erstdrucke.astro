@@ -6,10 +6,4 @@ const wabId = Astro.url.searchParams.get("wabId");
 export const prerender = false;
 ---
 
-<MiradorViewer
-	sidePanel={false}
-	viewType="ImageView"
-	source="ed"
-	wabId={wabId}
-	presentationPath="bruckner/drucke"
-/>
+<MiradorViewer source="ed" wabId={wabId} />
