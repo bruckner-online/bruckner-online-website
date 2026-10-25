@@ -32,13 +32,15 @@ switch (source) {
 	case "hss":
 		if (!siglum && !wabId) {
 			const sigla = getSigla();
-			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${sigla[0]}/manifest`;
+			loadedManifest = sigla[0]
+				? `${IIIFBaseURL}/${presentationPath}/${sigla[0]}/manifest`
+				: undefined;
 			sigla.forEach((s) => {
 				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
 				catalog.push({ manifestId: manifestUrl });
 			});
 		}
-		if (siglum && !wabId) {
+		if (siglum) {
 			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${siglum}/manifest`;
 			catalog.push({
 				manifestId: loadedManifest,
@@ -46,7 +48,9 @@ switch (source) {
 		}
 		if (wabId && !siglum) {
 			const sigla = getSigla(wabId);
-			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${sigla[0]}/manifest`;
+			loadedManifest = sigla[0]
+				? `${IIIFBaseURL}/${presentationPath}/${sigla[0]}/manifest`
+				: undefined;
 			sigla.forEach((s) => {
 				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
 				catalog.push({ manifestId: manifestUrl });
@@ -76,24 +80,48 @@ const windows = [{ loadedManifest, sidePanel, viewType }];
 	style="height: 600px; /* stylelint-disable-line no-invalid-position-declaration -- Valid inline style reserves space before CSS loads. */"
 ></mirador-viewer>
 
+<p id="viewer-unavailable" role="status" hidden>
+	Die Digitalisate sind derzeit nicht verfügbar.{" "}
+	<button type="button" class="underline">
+		Erneut versuchen
+	</button>
+</p>
 <script>
-	// @ts-expect-error No type definitions available for mirador
-	import Mirador from "mirador";
+	import { openViewer } from "../viewer";
 
 	class MiradorViewer extends HTMLElement {
 		connectedCallback() {
-			Mirador.viewer({
-				id: "mirador-viewer",
-				preserveManifestOrder: true,
-				showAddFromURLBox: false,
-				catalog: JSON.parse(this.dataset.catalog!),
-				windows: JSON.parse(this.dataset.windows!),
-				workspace: {
-					isWorkspaceAddVisible: true,
-				},
+			const unavailable = document.querySelector<HTMLElement>("#viewer-unavailable")!;
+			const retry = unavailable.querySelector("button")!;
+			const open = async () => {
+				retry.disabled = true;
+				this.hidden = false;
+				const windows = JSON.parse(this.dataset.windows!);
+				unavailable.hidden = true;
+				const available = await openViewer({
+					manifest: windows[0]?.loadedManifest,
+					start: async () => {
+						// @ts-expect-error No type definitions available for mirador
+						const { default: Mirador } = await import("mirador");
+						Mirador.viewer({
+							id: this.id,
+							preserveManifestOrder: true,
+							showAddFromURLBox: false,
+							catalog: JSON.parse(this.dataset.catalog!),
+							windows,
+							workspace: { isWorkspaceAddVisible: true },
+						});
+					},
+				});
+				retry.disabled = false;
+				unavailable.hidden = available;
+				this.hidden = !available;
+			};
+			retry.addEventListener("click", () => {
+				void open();
 			});
+			void open();
 		}
 	}
-
 	customElements.define("mirador-viewer", MiradorViewer);
 </script>

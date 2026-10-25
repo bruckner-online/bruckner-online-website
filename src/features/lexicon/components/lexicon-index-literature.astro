@@ -1,7 +1,6 @@
 ---
-import { log } from "@acdh-oeaw/lib";
-
 import { lexicon } from "@/features/lexicon/client";
+import LexiconUnavailable from "@/features/lexicon/components/lexicon-unavailable.astro";
 
 interface Props {
 	errorMessage: string;
@@ -13,13 +12,10 @@ interface Props {
 
 const { errorMessage, emptyMessage, ...query } = Astro.props;
 const result = await lexicon.listLiterature(query);
-if (result.status === "error") {
-	log.error(result.error);
-}
 ---
 
 {result.status === "error" ? (
-	<p>{errorMessage}</p>
+	<LexiconUnavailable message={errorMessage} />
 ) : result.value.items.length === 0 ? (
 	<p>{emptyMessage}</p>
 ) : (

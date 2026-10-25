@@ -22,7 +22,7 @@ const { default: Content } = await processMdx(await page.content(), locale);
 const wabId = Astro.url.searchParams.get("WAB");
 
 const wabEndpoint = wabId
-	? `https://apps-mufo.oeaw.ac.at/dcm/wab/document.xq?doc=${wabId}.xml`
+	? `https://apps-mufo.oeaw.ac.at/dcm/wab/document.xq?doc=${encodeURIComponent(wabId)}.xml`
 	: "https://apps-mufo.oeaw.ac.at/dcm/wab/navigation.xq";
 ---
 
@@ -33,6 +33,13 @@ const wabEndpoint = wabId
 				<PageTitle>{title}</PageTitle>
 				<div>
 					<Content />
+					<p>
+						Falls der eingebettete Katalog nicht verfügbar ist:{" "}
+						<a class="underline" href={wabEndpoint}>
+							WAB-Katalog direkt öffnen
+						</a>
+						.
+					</p>
 					<Embed caption="Werkverzeichnis Anton Bruckner" href={wabEndpoint} />
 				</div>
 			</PageCard>

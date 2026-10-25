@@ -1,0 +1,13 @@
+---
+interface Props {
+	message: string;
+}
+const { message } = Astro.props;
+---
+
+<p role="status">
+	<span>{message}</span>{" "}
+	<a class="underline" href={Astro.url.pathname + Astro.url.search}>
+		Erneut versuchen
+	</a>
+</p>

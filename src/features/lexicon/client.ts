@@ -151,7 +151,20 @@ interface IndexOptions extends Pagination {
 }
 
 /** Owns the wire format and transport for both browser and server callers. */
-export function createLexiconClient(options: { fetch?: typeof fetch; timeoutMs?: number } = {}) {
+export function createLexiconClient(
+	options: { fetch?: typeof fetch; timeoutMs?: number; logger?: Pick<Console, "error"> } = {},
+) {
+	function report<T>(path: string, result: Result<T, LexiconError>): Result<T, LexiconError> {
+		if (result.status === "error") {
+			(options.logger ?? console).error("Lexikon unavailable", {
+				path,
+				kind: result.error.kind,
+				status: result.error.status,
+				error: result.error,
+			});
+		}
+		return result;
+	}
 	async function load<T>(
 		path: string,
 		params: Record<string, string | number | undefined>,
@@ -169,15 +182,15 @@ export function createLexiconClient(options: { fetch?: typeof fetch; timeoutMs?:
 		try {
 			response = await (options.fetch ?? globalThis.fetch)(url, { signal, headers: { accept } });
 		} catch (cause) {
-			return transportFailure(cause, signal);
+			return report(path, transportFailure(cause, signal));
 		}
 		if (!response.ok) {
-			return Result.err(new LexiconError("http", undefined, response.status));
+			return report(path, Result.err(new LexiconError("http", undefined, response.status)));
 		}
 		try {
 			return Result.ok(await decode(response));
 		} catch (cause) {
-			return transportFailure(cause, signal, accept === "application/json");
+			return report(path, transportFailure(cause, signal, accept === "application/json"));
 		}
 	}
 	async function query<T>(
@@ -196,7 +209,7 @@ export function createLexiconClient(options: { fetch?: typeof fetch; timeoutMs?:
 		if (result.status === "error") {
 			return Result.err(result.error);
 		}
-		return parse(result.value);
+		return report(path, parse(result.value));
 	}
 
 	return {

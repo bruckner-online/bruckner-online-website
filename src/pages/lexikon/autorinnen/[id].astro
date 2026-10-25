@@ -1,9 +1,10 @@
 ---
-import { assert, log } from "@acdh-oeaw/lib";
+import { assert } from "@acdh-oeaw/lib";
 import * as v from "valibot";
 
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import { lexicon, pathnames } from "@/features/lexicon/client";
+import LexiconUnavailable from "@/features/lexicon/components/lexicon-unavailable.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { reader } from "@/lib/content/reader";
@@ -27,9 +28,6 @@ const { start } = v.parse(schema, {
 });
 
 const result = await lexicon.listArticles({ author: id, start, max: 500 });
-if (result.status === "error") {
-	log.error(result.error);
-}
 
 const title = t("ArticlesByAuthor.title", { author: id }) ?? page.title;
 ---
@@ -57,7 +55,7 @@ const title = t("ArticlesByAuthor.title", { author: id }) ?? page.title;
 				<div>{t("SearchResults.nothing-found")}</div>
 			)
 		) : (
-			<div>{t("SearchResults.error")}</div>
+			<LexiconUnavailable message={t("SearchResults.error")} />
 		)}
 	</LexiconLayout>
 </PageLayout>

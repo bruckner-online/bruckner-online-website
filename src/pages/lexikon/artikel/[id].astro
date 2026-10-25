@@ -1,9 +1,10 @@
 ---
-import { assert, log } from "@acdh-oeaw/lib";
+import { assert } from "@acdh-oeaw/lib";
 
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import { lexicon } from "@/features/lexicon/client";
 import Citation from "@/features/lexicon/components/citation.astro";
+import LexiconUnavailable from "@/features/lexicon/components/lexicon-unavailable.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
 import { reader } from "@/lib/content/reader";
@@ -23,9 +24,6 @@ const documentTitle = page.title;
 const { title } = page;
 
 const result = await lexicon.getArticle(id);
-if (result.status === "error") {
-	log.error(result.error);
-}
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
@@ -36,7 +34,7 @@ if (result.status === "error") {
 				<Citation id={id} />
 			</>
 		) : (
-			<div>{t("SearchResults.error")}</div>
+			<LexiconUnavailable message={t("SearchResults.error")} />
 		)}
 	</LexiconLayout>
 </PageLayout>
