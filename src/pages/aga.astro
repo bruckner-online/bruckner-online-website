@@ -6,10 +6,4 @@ const aga = Astro.url.searchParams.get("aga");
 export const prerender = false;
 ---
 
-<MiradorViewer
-	viewType="ImageView"
-	sidePanel={true}
-	source="aga"
-	aga={aga}
-	presentationPath="bruckner/drucke"
-/>
+<MiradorViewer source="aga" aga={aga} />

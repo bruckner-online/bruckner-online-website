@@ -1,82 +1,14 @@
 ---
-import siglumWabMapping from "~/src/features/digitised-sources/data/siglum_wab_mapping.json";
+import { selectSource, type SourceSelection } from "../source-viewing";
 
-interface Props {
-	aga?: string | null;
-	siglum?: string | null;
-	presentationPath: string;
-	sidePanel: boolean;
-	viewType: "ImageView" | "ThumbnailsView";
-	source: "hss" | "ed" | "aga";
-	wabId?: string | null;
-}
+type Props = SourceSelection;
 
-const IIIFBaseURL = "https://iiifpresentation.acdh.oeaw.ac.at";
-
-const { aga, siglum, presentationPath, sidePanel, viewType, source, wabId } = Astro.props;
-
-const getSigla = (wabId?: string) => {
-	return siglumWabMapping
-		.filter((x) => {
-			return !wabId || x.WAB.split(" ").includes(wabId);
-		})
-		.map((x) => {
-			return x.Signatur;
-		});
-};
-
-let loadedManifest;
-const catalog = [];
-
-switch (source) {
-	case "hss":
-		if (!siglum && !wabId) {
-			const sigla = getSigla();
-			loadedManifest = sigla[0]
-				? `${IIIFBaseURL}/${presentationPath}/${sigla[0]}/manifest`
-				: undefined;
-			sigla.forEach((s) => {
-				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
-				catalog.push({ manifestId: manifestUrl });
-			});
-		}
-		if (siglum) {
-			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${siglum}/manifest`;
-			catalog.push({
-				manifestId: loadedManifest,
-			});
-		}
-		if (wabId && !siglum) {
-			const sigla = getSigla(wabId);
-			loadedManifest = sigla[0]
-				? `${IIIFBaseURL}/${presentationPath}/${sigla[0]}/manifest`
-				: undefined;
-			sigla.forEach((s) => {
-				const manifestUrl = `${IIIFBaseURL}/${presentationPath}/${s}/manifest`;
-				catalog.push({ manifestId: manifestUrl });
-			});
-		}
-		break;
-	case "ed":
-		if (wabId) {
-			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${wabId}/manifest`;
-		}
-		break;
-	case "aga":
-		if (aga) {
-			loadedManifest = `${IIIFBaseURL}/${presentationPath}/${aga}/manifest`;
-		}
-		break;
-}
-
-const windows = [{ loadedManifest, sidePanel, viewType }];
+const view = selectSource(Astro.props);
 ---
 
 <mirador-viewer
 	id="mirador-viewer"
-	data-presentation-path={presentationPath}
-	data-windows={JSON.stringify(windows)}
-	data-catalog={JSON.stringify(catalog)}
+	data-view={JSON.stringify(view)}
 	style="height: 600px; /* stylelint-disable-line no-invalid-position-declaration -- Valid inline style reserves space before CSS loads. */"
 ></mirador-viewer>
 
@@ -87,7 +19,7 @@ const windows = [{ loadedManifest, sidePanel, viewType }];
 	</button>
 </p>
 <script>
-	import { openViewer } from "../viewer";
+	import { openSourceView } from "../source-viewing/browser";
 
 	class MiradorViewer extends HTMLElement {
 		connectedCallback() {
@@ -96,23 +28,9 @@ const windows = [{ loadedManifest, sidePanel, viewType }];
 			const open = async () => {
 				retry.disabled = true;
 				this.hidden = false;
-				const windows = JSON.parse(this.dataset.windows!);
+				const view = JSON.parse(this.dataset.view!);
 				unavailable.hidden = true;
-				const available = await openViewer({
-					manifest: windows[0]?.loadedManifest,
-					start: async () => {
-						// @ts-expect-error No type definitions available for mirador
-						const { default: Mirador } = await import("mirador");
-						Mirador.viewer({
-							id: this.id,
-							preserveManifestOrder: true,
-							showAddFromURLBox: false,
-							catalog: JSON.parse(this.dataset.catalog!),
-							windows,
-							workspace: { isWorkspaceAddVisible: true },
-						});
-					},
-				});
+				const available = await openSourceView(this.id, view);
 				retry.disabled = false;
 				unavailable.hidden = available;
 				this.hidden = !available;

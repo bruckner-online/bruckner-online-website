@@ -7,11 +7,4 @@ const wabId = Astro.url.searchParams.get("wab");
 export const prerender = false;
 ---
 
-<MiradorViewer
-	viewType="ThumbnailsView"
-	sidePanel={false}
-	source="hss"
-	siglum={siglum}
-	wabId={wabId}
-	presentationPath="bruckner"
-/>
+<MiradorViewer source="hss" siglum={siglum} wabId={wabId} />
