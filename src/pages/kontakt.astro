@@ -74,7 +74,7 @@ if (Astro.request.method === "POST") {
 					<Content />
 				</div>
 
-				<form class="grid gap-y-6" data-astro-reload method="post">
+				<form class="grid gap-y-6" method="post">
 					<TextInputField required label={t("ContactPage.form.name")} name="name" />
 					<TextInputField required label={t("ContactPage.form.email")} name="email" type="email" />
 					<TextInputField required label={t("ContactPage.form.subject")} name="subject" />

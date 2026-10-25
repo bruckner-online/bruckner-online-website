@@ -14,9 +14,9 @@ const links: Array<
 	| {
 			kind: "menu";
 			label: string;
-			children: Array<{ kind: "link"; href: string; label: string; reload?: boolean }>;
+			children: Array<{ kind: "link"; href: string; label: string }>;
 	  }
-	| { kind: "link"; href: string; label: string; reload?: boolean }
+	| { kind: "link"; href: string; label: string }
 > = [
 	{ kind: "link", href: "/forschung/kopisten", label: t("KopistenNav.links.home") },
 	{
@@ -93,9 +93,7 @@ const links: Array<
 				case "link": {
 					return (
 						<li>
-							<NavMenuLink href={link.href} reload={link.reload}>
-								{link.label}
-							</NavMenuLink>
+							<NavMenuLink href={link.href}>{link.label}</NavMenuLink>
 						</li>
 					);
 				}
