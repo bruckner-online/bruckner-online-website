@@ -1,27 +1,26 @@
 /* @jsxImportSource solid-js */
 
+import "@/features/kopisten/components/kopisten-language-toggle.css";
+
 import { createSignal, For } from "solid-js";
 
 type KopistenContentLanguages = "de" | "en";
 
 interface KopistenLanguageToggleProps {
 	languages: Array<KopistenContentLanguages>;
+	contentId: string;
 }
 
 export function KopistenLanguageToggle(props: KopistenLanguageToggleProps) {
 	const [language, setLanguage] = createSignal("de");
 
-	const handler = (language: string) => {
-		return () => {
-			setLanguage(language);
-			document.querySelectorAll(`body *[lang="${language}"]`).forEach((el) => {
-				el.classList.remove("hidden");
-			});
-			document.querySelectorAll(`body *[lang]:not([lang="${language}"])`).forEach((el) => {
-				el.classList.add("hidden");
-			});
-		};
-	};
+	function selectLanguage(next: KopistenContentLanguages) {
+		const content = document.getElementById(props.contentId);
+		if (content) {
+			content.dataset.kopistenLanguage = next;
+			setLanguage(next);
+		}
+	}
 
 	return (
 		<div class="flex justify-end space-x-4">
@@ -30,6 +29,8 @@ export function KopistenLanguageToggle(props: KopistenLanguageToggleProps) {
 					return (
 						<button
 							type="button"
+							aria-controls={props.contentId}
+							aria-pressed={lang === language()}
 							classList={{
 								"hover:bg-neutral-50": true,
 								"font-bold": true,
@@ -38,7 +39,9 @@ export function KopistenLanguageToggle(props: KopistenLanguageToggleProps) {
 								"rounded-l": true,
 								"bg-neutral-100": lang === language(),
 							}}
-							on:click={handler(lang)}
+							onClick={() => {
+								selectLanguage(lang);
+							}}
 						>
 							{lang.toLocaleUpperCase()}
 						</button>

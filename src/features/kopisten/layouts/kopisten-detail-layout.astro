@@ -4,6 +4,7 @@ import PageSection from "@/components/page-section.astro";
 import PageTitle from "@/components/page-title.astro";
 import { KopistenLanguageToggle } from "@/features/kopisten/components/kopisten-language-toggle";
 import KopistenNav from "@/features/kopisten/components/kopisten-nav.astro";
+import { generateUniqueId } from "@/lib/generate-unique-id";
 
 interface Props {
 	title: string;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const contentId = generateUniqueId();
 ---
 
 <MainContent>
@@ -21,8 +23,16 @@ const { title } = Astro.props;
 	</div>
 	<PageSection fullWidth={true}>
 		<PageTitle class="sr-only">{title}</PageTitle>
-		<div class="prose mx-auto grid w-full max-w-[80%] gap-y-8">
-			<KopistenLanguageToggle languages={["de", "en"]} client:only="solid-js" />
+		<div
+			id={contentId}
+			data-kopisten-language="de"
+			class="prose mx-auto grid w-full max-w-[80%] gap-y-8"
+		>
+			<KopistenLanguageToggle
+				contentId={contentId}
+				languages={["de", "en"]}
+				client:only="solid-js"
+			/>
 			<slot />
 		</div>
 	</PageSection>

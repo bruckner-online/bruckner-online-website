@@ -3,6 +3,7 @@ import MainContent from "@/components/main-content.astro";
 import PageSection from "@/components/page-section.astro";
 import { KopistenLanguageToggle } from "@/features/kopisten/components/kopisten-language-toggle";
 import KopistenNav from "@/features/kopisten/components/kopisten-nav.astro";
+import { generateUniqueId } from "@/lib/generate-unique-id";
 
 interface Props {
 	title: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const { bg = true, shadow = true, languageToggle = false } = Astro.props;
+const contentId = generateUniqueId();
 ---
 
 <MainContent>
@@ -22,8 +24,16 @@ const { bg = true, shadow = true, languageToggle = false } = Astro.props;
 		</div>
 	</div>
 	<PageSection>
-		{languageToggle && <KopistenLanguageToggle languages={["de", "en"]} client:only="solid-js" />}
+		{languageToggle && (
+			<KopistenLanguageToggle
+				contentId={contentId}
+				languages={["de", "en"]}
+				client:only="solid-js"
+			/>
+		)}
 		<div
+			id={contentId}
+			data-kopisten-language={languageToggle ? "de" : undefined}
 			class:list={["prose my-2", { "bg-white": bg }, { "shadow-lg shadow-neutral-500": shadow }]}
 		>
 			<slot />
