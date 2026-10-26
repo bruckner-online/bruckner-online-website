@@ -137,3 +137,46 @@ test("main and Kopisten dropdowns retain independent targets and keyboard behavi
 	});
 	expect(new Set(ids).size).toBe(ids.length);
 });
+
+test("hovering an adjacent dropdown link does not cover the keyboard focus ring", async ({
+	page,
+}) => {
+	await page.goto("/lexikon");
+	const trigger = page.locator("header").getByRole("button", { name: "Forschung", exact: true });
+	await trigger.focus();
+	await trigger.press("ArrowDown");
+	const focused = page
+		.locator("header")
+		.getByRole("link", { name: "Digitale Edition", exact: true });
+	const neighbor = page.locator("header").getByRole("link", { name: "Projekt", exact: true });
+	await expect(focused).toBeFocused();
+	await expect(focused).toHaveCSS("outline-style", "solid");
+	await expect(focused).toHaveCSS("outline-width", "2px");
+	await page.evaluate(() => {
+		return document.fonts.ready;
+	});
+	const bounds = await focused.boundingBox();
+	expect(bounds).not.toBeNull();
+	// Compare only the straight bottom edge, where the neighboring hover background overlapped it.
+	const clip = {
+		x: Math.ceil(bounds!.x) + 8,
+		y: Math.ceil(bounds!.y + bounds!.height),
+		width: Math.floor(bounds!.width) - 16,
+		height: 2,
+	};
+	const before = await page.screenshot({ clip, animations: "disabled" });
+	await neighbor.hover();
+	await expect(focused).toBeFocused();
+	const after = await page.screenshot({ clip, animations: "disabled" });
+	await page
+		.locator("header [data-popover]")
+		.filter({ has: page.getByRole("link", { name: "Digitale Edition", exact: true }) })
+		.screenshot({ path: test.info().outputPath("hovered-menu.png") });
+	await test.info().attach("focused-edge", { body: before, contentType: "image/png" });
+	await test
+		.info()
+		.attach("focused-edge-with-adjacent-hover", { body: after, contentType: "image/png" });
+	expect(after.equals(before), "Adjacent hover must preserve the complete focus-ring edge").toBe(
+		true,
+	);
+});
