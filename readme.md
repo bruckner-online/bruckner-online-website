@@ -24,6 +24,7 @@ Astro routes live in `src/pages/`. Research implementations are grouped in `src/
 | `kopisten`          | Copyist selection, edition tables and maps, language toggle, navigation, layouts, and footer. |
 | `bibliography`      | Search UI, Typesense schema, indexing script, and database export.                            |
 | `digitised-sources` | Mirador viewer and the signature-to-WAB mapping used by manuscripts, first editions, and AGA. |
+| `contact`           | Form validation, submission outcomes, and SMTP delivery.                                      |
 
 Features use the shared website elements in `src/components/`, layouts in `src/layouts/`, and
 utilities in `src/lib/`. Import a feature implementation directly from its directory; keep shared UI

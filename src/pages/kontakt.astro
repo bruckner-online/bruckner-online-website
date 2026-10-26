@@ -1,7 +1,4 @@
 ---
-import { getFormDataValues } from "@acdh-oeaw/lib";
-import * as v from "valibot";
-
 import SubmitButton from "@/components/form/submit-button.astro";
 import TextAreaField from "@/components/form/text-area-field.astro";
 import TextInputField from "@/components/form/text-input-field.astro";
@@ -10,9 +7,10 @@ import PageCard from "@/components/page-card.astro";
 import PageSection from "@/components/page-section.astro";
 import PageTitle from "@/components/page-title.astro";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
+import { sendContactEmail } from "@/features/contact/email";
+import { type ContactSubmissionStatus, submitContact } from "@/features/contact/submission";
 import PageLayout from "@/layouts/page-layout.astro";
 import { readPage } from "@/lib/content/page";
-import { sendEmail } from "@/lib/email";
 import { createI18n } from "@/lib/i18n";
 
 export const prerender = false;
@@ -25,41 +23,11 @@ const { page, Content } = await readPage("kontakt", locale);
 const documentTitle = page.title;
 const { title } = page;
 
-let status = { kind: "initial" } as
-	| { kind: "error"; message: string }
-	| { kind: "initial" }
-	| { kind: "success"; message: string };
-
+let status: "initial" | ContactSubmissionStatus = "initial";
 if (Astro.request.method === "POST") {
-	try {
-		const data = await Astro.request.formData();
-		const formData = getFormDataValues(data);
-		const schema = v.object({
-			name: v.pipe(v.string(), v.nonEmpty()),
-			email: v.pipe(v.string(), v.email()),
-			message: v.pipe(v.string(), v.nonEmpty()),
-			subject: v.pipe(v.string(), v.nonEmpty()),
-		});
-		const result = v.safeParse(schema, formData);
-		if (!result.success) {
-			status = { kind: "error", message: t("ContactPage.form.invalid-input") };
-		} else {
-			const { name, email, message, subject } = result.output;
-			await sendEmail({
-				from: `${name} <${email}>`,
-				subject,
-				text: message,
-				attachments: [],
-			});
-			status = { kind: "success", message: t("ContactPage.form.success") };
-		}
-	} catch (error) {
-		if (error instanceof Error) {
-			console.error(error.message);
-		}
-		status = { kind: "error", message: t("ContactPage.form.unknown-error") };
-	}
+	status = await submitContact(Astro.request, { sendEmail: sendContactEmail });
 }
+const statusMessage = status === "initial" ? undefined : t(`ContactPage.form.${status}`);
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
@@ -84,14 +52,14 @@ if (Astro.request.method === "POST") {
 						aria-live="polite"
 						aria-atomic="true"
 						class={
-							status.kind === "error"
+							status === "invalid-input" || status === "unknown-error"
 								? "text-negative-600"
-								: status.kind === "success"
+								: status === "success"
 									? "text-positive-600"
 									: undefined
 						}
 					>
-						{status.kind !== "initial" ? status.message : null}
+						{statusMessage}
 					</div>
 				</form>
 			</PageCard>

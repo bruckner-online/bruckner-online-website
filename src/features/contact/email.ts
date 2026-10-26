@@ -1,16 +1,10 @@
 import { assert } from "@acdh-oeaw/lib";
-import { createTransport, type SendMailOptions } from "nodemailer";
+import { createTransport } from "nodemailer";
 
 import { env } from "@/config/env.config";
+import type { ContactEmail } from "@/features/contact/submission";
 
-interface SendEmailParams extends Pick<
-	SendMailOptions,
-	"attachments" | "from" | "subject" | "text"
-> {}
-
-export function sendEmail(params: SendEmailParams) {
-	const { attachments, from, subject, text } = params;
-
+export function sendContactEmail({ from, subject, text }: ContactEmail) {
 	assert(env.EMAIL_SMTP_SERVER, "Invalid email configuration.");
 	assert(env.EMAIL_SMTP_PORT, "Invalid email configuration.");
 	assert(env.EMAIL_CONTACT_ADDRESS, "Invalid email configuration.");
@@ -33,6 +27,5 @@ export function sendEmail(params: SendEmailParams) {
 		to: env.EMAIL_CONTACT_ADDRESS,
 		subject,
 		text,
-		attachments,
 	});
 }
