@@ -88,7 +88,7 @@ const links: Array<
 
 <Nav class="mb-4 pb-2" label={t("KopistenNav.nav")}>
 	<ul class="-mx-4 flex gap-x-2 font-medium text-[#555]" role="list">
-		{links.map((link) => {
+		{links.map((link, index) => {
 			switch (link.kind) {
 				case "link": {
 					return (
@@ -102,8 +102,10 @@ const links: Array<
 					return (
 						<li>
 							<NavMenu>
-								<NavMenuTrigger>{link.label}</NavMenuTrigger>
-								<NavMenuPopover>
+								<NavMenuTrigger controls={`kopisten-navigation-${String(index)}`}>
+									{link.label}
+								</NavMenuTrigger>
+								<NavMenuPopover id={`kopisten-navigation-${String(index)}`}>
 									<ul role="list">
 										{link.children.map((link) => {
 											return (

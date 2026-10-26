@@ -5,7 +5,7 @@ import WebsiteHeader from "@/components/website-header.astro";
 import type { Locale } from "@/config/i18n.config";
 import DocumentLayout from "@/layouts/document-layout.astro";
 
-interface Props {
+export interface Props {
 	description?: string;
 	locale?: Locale;
 	robots?: string;
@@ -21,6 +21,8 @@ const { description, locale, robots, title } = Astro.props;
 	<div class="grid min-h-full grid-rows-[auto_1fr_auto]">
 		<WebsiteHeader />
 		<slot />
-		<WebsiteFooter />
+		<slot name="footer">
+			<WebsiteFooter />
+		</slot>
 	</div>
 </DocumentLayout>

@@ -2,16 +2,14 @@
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import ChronikLayout from "@/layouts/chronik-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
-import { processMdx } from "@/lib/content/mdx";
-import { reader } from "@/lib/content/reader";
+import { readPage } from "@/lib/content/page";
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 
-const page = await reader().collections.pages.readOrThrow("forschung/chronologie-datenbank");
+const { page, Content } = await readPage("forschung/chronologie-datenbank", locale);
 
 const documentTitle = page.title;
 const { title, image } = page;
-const { default: Content } = await processMdx(await page.content(), locale);
 ---
 
 <PageLayout locale={locale} title={documentTitle}>

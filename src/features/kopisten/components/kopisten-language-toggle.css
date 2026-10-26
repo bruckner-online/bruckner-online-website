@@ -1,0 +1,10 @@
+/* Scope translation visibility to the edition, including content hydrated after a language change. */
+[data-kopisten-language="de"] [lang="de"],
+[data-kopisten-language="en"] [lang="en"] {
+	display: revert;
+}
+
+[data-kopisten-language="de"] [lang="en"],
+[data-kopisten-language="en"] [lang="de"] {
+	display: none;
+}

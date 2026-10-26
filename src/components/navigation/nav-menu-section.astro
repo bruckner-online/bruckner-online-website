@@ -1,16 +1,16 @@
 ---
 interface Props {
+	id: string;
 	title: string;
 }
-
-const { title } = Astro.props;
+const { id, title } = Astro.props;
 ---
 
 <li>
-	<ul role="group" aria-labelledby={title}>
-		<span class="rounded inline-flex w-full px-4 py-2.5 text-xs uppercase" id={title}>
-			{title}
-		</span>
+	<span class="rounded inline-flex w-full px-4 py-2.5 text-xs uppercase" id={id}>
+		{title}
+	</span>
+	<ul role="list" class="divide-y" aria-labelledby={id}>
 		<slot />
 	</ul>
 </li>

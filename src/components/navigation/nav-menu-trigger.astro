@@ -1,8 +1,15 @@
 ---
 import { Icon } from "astro-icon/components";
+
+interface Props {
+	controls: string;
+}
+const { controls } = Astro.props;
 ---
 
 <button
+	type="button"
+	aria-controls={controls}
 	aria-expanded="true"
 	class="rounded inline-flex items-center gap-x-2 p-2 text-sm font-semibold uppercase hover:text-brand-red aria-expanded:text-brand-red"
 	data-nav-menu-trigger
