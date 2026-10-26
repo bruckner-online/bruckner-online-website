@@ -1,11 +1,10 @@
 ---
-import * as v from "valibot";
-
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import { lexicon, pathnames } from "@/features/lexicon/client";
 import LexiconSearchForm from "@/features/lexicon/components/lexicon-search-form.astro";
 import LexiconUnavailable from "@/features/lexicon/components/lexicon-unavailable.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
+import { parseLexiconSearchQuery } from "@/features/lexicon/query";
 import PageLayout from "@/layouts/page-layout.astro";
 import { readPage } from "@/lib/content/page";
 import { createI18n } from "@/lib/i18n";
@@ -20,16 +19,7 @@ const { page, Content } = await readPage("lexikon/suche", locale);
 const documentTitle = page.title;
 const { title } = page;
 
-const schema = v.object({
-	q: v.fallback(v.optional(v.string(), ""), ""),
-	field: v.fallback(v.optional(v.picklist(["title", "all"]), "title"), "title"),
-	start: v.fallback(v.optional(v.pipe(v.unknown(), v.transform(Number), v.number()), 1), 1),
-});
-const { q, field, start } = v.parse(schema, {
-	q: Astro.url.searchParams.get("q"),
-	field: Astro.url.searchParams.get("field"),
-	start: Astro.url.searchParams.get("start"),
-});
+const { q, field, start } = parseLexiconSearchQuery(Astro.url.searchParams);
 
 // The upstream endpoint does not accept an empty query.
 const result = q.length === 0 ? null : await lexicon.search({ q, field, start, max: 500 });

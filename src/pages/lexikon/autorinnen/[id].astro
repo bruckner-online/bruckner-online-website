@@ -1,11 +1,11 @@
 ---
 import { assert } from "@acdh-oeaw/lib";
-import * as v from "valibot";
 
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import { lexicon, pathnames } from "@/features/lexicon/client";
 import LexiconUnavailable from "@/features/lexicon/components/lexicon-unavailable.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
+import { parseLexiconPagination } from "@/features/lexicon/query";
 import PageLayout from "@/layouts/page-layout.astro";
 import { reader } from "@/lib/content/reader";
 import { createI18n } from "@/lib/i18n";
@@ -20,12 +20,7 @@ const { t } = await createI18n(locale);
 
 const page = await reader().collections.pages.readOrThrow("lexikon/autorinnen");
 
-const schema = v.object({
-	start: v.fallback(v.optional(v.pipe(v.unknown(), v.transform(Number), v.number()), 1), 1),
-});
-const { start } = v.parse(schema, {
-	start: Astro.url.searchParams.get("start"),
-});
+const { start } = parseLexiconPagination(Astro.url.searchParams);
 
 const result = await lexicon.listArticles({ author: id, start, max: 500 });
 

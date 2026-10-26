@@ -1,6 +1,4 @@
 ---
-import * as v from "valibot";
-
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import type { Category } from "@/features/lexicon/client";
 import LexiconAlphabetLinks from "@/features/lexicon/components/lexicon-alphabet-links.astro";
@@ -8,6 +6,7 @@ import LexiconAuthorsIndex from "@/features/lexicon/components/lexicon-index-aut
 import LexiconLiteratureIndex from "@/features/lexicon/components/lexicon-index-literature.astro";
 import LexiconIndex from "@/features/lexicon/components/lexicon-index.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
+import { parseLexiconIndexQuery } from "@/features/lexicon/query";
 import PageLayout from "@/layouts/page-layout.astro";
 import { readPage } from "@/lib/content/page";
 import { createI18n } from "@/lib/i18n";
@@ -30,14 +29,7 @@ const { page, Content } = await readPage(contentPath, locale);
 const documentTitle = page.title;
 const { title } = page;
 
-const schema = v.object({
-	letter: v.fallback(v.optional(v.pipe(v.string(), v.regex(/\w/), v.toLowerCase()), "a"), "a"),
-	start: v.fallback(v.optional(v.pipe(v.unknown(), v.transform(Number), v.number()), 1), 1),
-});
-const { letter, start } = v.parse(schema, {
-	letter: Astro.url.searchParams.get("letter"),
-	start: Astro.url.searchParams.get("start"),
-});
+const { letter, start } = parseLexiconIndexQuery(Astro.url.searchParams);
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
