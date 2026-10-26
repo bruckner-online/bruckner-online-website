@@ -27,32 +27,37 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 
 <image-carousel>
 	<div
+		role="group"
 		aria-roledescription="carousel"
 		aria-label={title}
 		class="group relative"
 		data-carousel
 		data-state="paused"
 	>
-		<div data-controls class="hidden md:block">
-			<div class="absolute left-8 top-8 z-10">
+		<div data-controls>
+			<div class="absolute left-2 top-2 z-10 md:left-8 md:top-8">
 				<button
 					class="rounded-md bg-[#00000080] p-2 text-white transition hover:bg-[#000000a0] focus-visible:bg-[#000000a0] focus-visible:outline-white"
+					aria-controls={id}
+					aria-label={t("ImageCarousel.start")}
+					data-start-label={t("ImageCarousel.start")}
+					data-stop-label={t("ImageCarousel.stop")}
 					data-control-toggle
 					type="button"
 				>
 					<Icon
-						aria-label={t("ImageCarousel.stop")}
+						aria-hidden="true"
 						class="hidden size-6 group-data-[state=playing]:block"
 						name="lucide:circle-pause"
 					/>
 					<Icon
-						aria-label={t("ImageCarousel.start")}
+						aria-hidden="true"
 						class="hidden size-6 group-data-[state=paused]:block"
 						name="lucide:circle-play"
 					/>
 				</button>
 			</div>
-			<div class="absolute right-8 top-8 z-10">
+			<div class="absolute right-2 top-2 z-10 md:right-8 md:top-8">
 				<button
 					aria-controls={id}
 					aria-label={t("ImageCarousel.previous")}
@@ -60,7 +65,7 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 					data-control-previous
 					type="button"
 				>
-					<Icon class="size-6" name="lucide:chevron-left" />
+					<Icon aria-hidden="true" class="size-6" name="lucide:chevron-left" />
 				</button>
 				<button
 					aria-controls={id}
@@ -69,14 +74,15 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 					data-control-next
 					type="button"
 				>
-					<Icon class="size-6" name="lucide:chevron-right" />
+					<Icon aria-hidden="true" class="size-6" name="lucide:chevron-right" />
 				</button>
 			</div>
 		</div>
 
 		<div
 			id={id}
-			aria-live="off"
+			aria-live="polite"
+			aria-atomic="false"
 			class="relative aspect-[2.125] overflow-hidden"
 			data-carousel-items
 		>
@@ -95,10 +101,10 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 						role="group"
 						aria-roledescription="slide"
 						aria-label={t("ImageCarousel.slide", {
-							current: index,
+							current: index + 1,
 							total: slides.length,
 						})}
-						class="group invisible absolute size-full translate-x-1/3 opacity-0 transition-all duration-500 data-[active]:visible data-[active]:translate-x-0 data-[active]:opacity-100"
+						class="group invisible absolute size-full translate-x-1/3 opacity-0 transition-[opacity,transform,visibility] duration-500 data-[active]:visible data-[active]:translate-x-0 data-[active]:opacity-100"
 					>
 						<a
 							class="block size-full -outline-offset-2 focus-visible:outline-white"
@@ -166,137 +172,145 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 		disconnect: (() => void) | null = null;
 
 		connectedCallback() {
-			const state = {
-				paused: true,
-				intent: "auto" as "auto" | "play" | "pause",
-				current: 0,
-			};
-
-			const root = this.querySelector<HTMLDivElement>("div[data-carousel]");
-			const container = this.querySelector<HTMLDivElement>("div[data-carousel-items]");
-			const liveRegion = this.querySelector<HTMLDivElement>("div[data-carousel-items]");
-			const slides = this.querySelectorAll<HTMLDivElement>("div[data-carousel-item]");
-			const toggle = this.querySelector<HTMLButtonElement>("button[data-control-toggle]");
-			const previous = this.querySelector<HTMLButtonElement>("button[data-control-previous]");
-			const next = this.querySelector<HTMLButtonElement>("button[data-control-next]");
+			this.disconnect?.();
+			const controller = new AbortController();
+			const { signal } = controller;
+			const root = this.querySelector<HTMLDivElement>("[data-carousel]");
+			const container = this.querySelector<HTMLDivElement>("[data-carousel-items]");
+			const slides = [...this.querySelectorAll<HTMLDivElement>("[data-carousel-item]")];
+			const toggle = this.querySelector<HTMLButtonElement>("[data-control-toggle]");
+			const previous = this.querySelector<HTMLButtonElement>("[data-control-previous]");
+			const next = this.querySelector<HTMLButtonElement>("[data-control-next]");
 			assert(root);
 			assert(container);
-			assert(liveRegion);
 			assert(slides.length);
 			assert(toggle);
 			assert(previous);
 			assert(next);
+			const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+			let requested = !motion.matches && !root.contains(document.activeElement);
+			let hoverPaused = root.matches(":hover");
+			let current = 0;
+			let timer: ReturnType<typeof setInterval> | null = null;
+			let pointerWasPlaying: boolean | null = null;
 
 			function updateSlide() {
 				slides.forEach((slide, index) => {
-					// slide.hidden = index !== state.current;
-					if (index === state.current) {
-						slide.dataset.active = "";
-					} else {
-						delete slide.dataset.active;
-					}
+					const active = index === current;
+					slide.toggleAttribute("data-active", active);
+					slide.inert = !active;
+					slide.setAttribute("aria-hidden", String(!active));
 				});
 			}
 
-			updateSlide();
-
-			function onPreviousSlide() {
-				state.current = state.current > 0 ? state.current - 1 : slides.length - 1;
-				updateSlide();
-			}
-
-			function onNextSlide() {
-				state.current = state.current < slides.length - 1 ? state.current + 1 : 0;
-				updateSlide();
-			}
-
-			previous.addEventListener("click", onPreviousSlide);
-			next.addEventListener("click", onNextSlide);
-
-			let timer: ReturnType<typeof setInterval> | null = null;
-			const delay = 5000;
-
-			function play(force?: boolean) {
-				if (force) {
-					state.intent = "play";
-				}
-				state.paused = false;
-				timer = setInterval(onNextSlide, delay);
-				root!.dataset.state = "playing";
-				liveRegion!.setAttribute("aria-live", "off");
-			}
-
-			function pause(force?: boolean) {
-				if (force) {
-					state.intent = "pause";
-				}
-				state.paused = true;
-				if (timer) {
+			const updateRotation = () => {
+				if (timer !== null) {
 					clearInterval(timer);
 				}
 				timer = null;
-				root!.dataset.state = "paused";
-			}
-
-			function onTogglePlayState() {
-				if (state.paused) {
-					play(true);
-				} else {
-					pause(true);
+				const playing = requested && !hoverPaused && slides.length > 1;
+				root.dataset.state = playing ? "playing" : "paused";
+				container.setAttribute("aria-live", playing ? "off" : "polite");
+				toggle.setAttribute(
+					"aria-label",
+					(playing ? toggle.dataset.stopLabel : toggle.dataset.startLabel)!,
+				);
+				if (playing) {
+					timer = setInterval(() => {
+						current = (current + 1) % slides.length;
+						updateSlide();
+					}, 5000);
 				}
+			};
+
+			function stopRotation() {
+				requested = false;
+				updateRotation();
 			}
 
-			toggle.addEventListener("click", onTogglePlayState);
-
-			function hasReducedMotion() {
-				return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-			}
-
-			function autoplay() {
-				if (state.intent === "play" || (state.intent === "auto" && !hasReducedMotion())) {
-					play();
-				}
-			}
-
-			function onMouseEnter() {
-				pause();
-			}
-
-			function onMouseLeave() {
-				autoplay();
-			}
-
-			container.addEventListener("mouseenter", onMouseEnter);
-			container.addEventListener("mouseleave", onMouseLeave);
-
-			function onFocusIn(event: FocusEvent) {
-				const elementLosingFocus = event.relatedTarget as Element | null;
-				if (elementLosingFocus == null || !root!.contains(elementLosingFocus)) {
-					pause();
-				}
-			}
-
-			function onFocusOut(event: FocusEvent) {
-				const elementReceivingFocus = event.relatedTarget as Element | null;
-				if (elementReceivingFocus == null || !root!.contains(elementReceivingFocus)) {
-					autoplay();
-				}
-			}
-
-			root.addEventListener("focusin", onFocusIn);
-			root.addEventListener("focusout", onFocusOut);
-
-			autoplay();
-
+			previous.addEventListener(
+				"click",
+				() => {
+					stopRotation();
+					current = (current + slides.length - 1) % slides.length;
+					updateSlide();
+				},
+				{ signal },
+			);
+			next.addEventListener(
+				"click",
+				() => {
+					stopRotation();
+					current = (current + 1) % slides.length;
+					updateSlide();
+				},
+				{ signal },
+			);
+			// Remember the action before pointer focus pauses rotation (notably on touch).
+			toggle.addEventListener(
+				"pointerdown",
+				() => {
+					pointerWasPlaying = timer !== null;
+				},
+				{ signal },
+			);
+			toggle.addEventListener(
+				"pointercancel",
+				() => {
+					pointerWasPlaying = null;
+				},
+				{ signal },
+			);
+			toggle.addEventListener(
+				"click",
+				(event) => {
+					const wasPlaying =
+						event.detail > 0 && pointerWasPlaying !== null ? pointerWasPlaying : timer !== null;
+					pointerWasPlaying = null;
+					requested = !wasPlaying;
+					// An explicit start works while the rotation button is focused or hovered.
+					hoverPaused = false;
+					updateRotation();
+				},
+				{ signal },
+			);
+			root.addEventListener("focusin", stopRotation, { signal });
+			root.addEventListener(
+				"pointerenter",
+				(event) => {
+					if (event.pointerType !== "touch") {
+						hoverPaused = true;
+						updateRotation();
+					}
+				},
+				{ signal },
+			);
+			root.addEventListener(
+				"pointerleave",
+				(event) => {
+					if (event.pointerType !== "touch") {
+						hoverPaused = false;
+						updateRotation();
+					}
+				},
+				{ signal },
+			);
+			motion.addEventListener(
+				"change",
+				() => {
+					if (motion.matches) {
+						stopRotation();
+					}
+				},
+				{ signal },
+			);
+			updateSlide();
+			updateRotation();
 			this.disconnect = () => {
-				pause();
-				previous!.removeEventListener("click", onPreviousSlide);
-				next!.removeEventListener("click", onNextSlide);
-				toggle!.removeEventListener("click", onTogglePlayState);
-				container!.removeEventListener("mouseenter", onMouseEnter);
-				container!.removeEventListener("mouseleave", onMouseLeave);
-				root!.removeEventListener("focusin", onFocusIn);
-				root!.removeEventListener("focusout", onFocusOut);
+				controller.abort();
+				if (timer !== null) {
+					clearInterval(timer);
+				}
 			};
 		}
 

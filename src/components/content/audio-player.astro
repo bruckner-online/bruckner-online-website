@@ -1,44 +1,61 @@
 ---
-import { Icon } from "astro-icon/components";
+import { defaultLocale, type Locale } from "@/config/i18n.config";
+import { createI18n } from "@/lib/i18n";
 
 interface Props {
 	tracks: Array<{ title: string; file: string }>;
 }
 
 const { tracks } = Astro.props;
+const { t } = await createI18n((Astro.currentLocale ?? defaultLocale) as Locale);
 ---
 
-<audio-player class="not-prose group grid gap-y-2" data-state="pause">
-	<ul class="grid gap-y-1" role="list">
-		{tracks.map((track) => {
-			return (
-				<li class="grid">
-					<audio-track
-						class="select-none rounded-md border px-4 py-1 transition hover:bg-neutral-100 data-[current]:bg-neutral-100"
-						data-title={track.title}
-						data-href={track.file}
-						tabIndex={0}
-					>
-						{track.title}
-					</audio-track>
-				</li>
-			);
-		})}
+<audio-player
+	class="not-prose grid gap-y-2 text-neutral-800"
+	role="group"
+	aria-label={t("AudioPlayer.playlist")}
+	data-selected-label={t("AudioPlayer.selected")}
+	data-playing-label={t("AudioPlayer.playing")}
+	data-paused-label={t("AudioPlayer.paused")}
+	data-ended-label={t("AudioPlayer.ended")}
+	data-error-label={t("AudioPlayer.error")}
+>
+	<ul class="hidden gap-y-1" role="list" data-playlist>
+		{tracks.map((track, index) => (
+			<li class="grid">
+				<button
+					type="button"
+					class="select-none rounded-md border px-4 py-1 text-left transition hover:bg-neutral-100 aria-[current=true]:bg-neutral-100 aria-[current=true]:font-semibold"
+					data-audio-track
+					data-title={track.title}
+					data-href={track.file}
+					aria-current={index === 0 ? "true" : undefined}
+				>
+					{track.title}
+				</button>
+			</li>
+		))}
 	</ul>
-	<div class="flex items-center gap-x-4">
-		<button data-control>
-			<Icon
-				aria-label="play"
-				class="size-8 shrink-0 group-data-[state=play]:hidden"
-				name="lucide:circle-play"
-			/>
-			<Icon
-				aria-label="pause"
-				class="size-8 shrink-0 group-data-[state=pause]:hidden"
-				name="lucide:circle-pause"
-			/>
-		</button>
-		<div data-track-title></div>
+	<noscript>
+		<ul class="grid gap-y-1" role="list">
+			{tracks.map((track) => (
+				<li>
+					<a class="underline" href={track.file}>
+						{track.title}
+					</a>
+				</li>
+			))}
+		</ul>
+	</noscript>
+	<audio
+		controls
+		preload="none"
+		src={tracks[0]?.file}
+		aria-label={t("AudioPlayer.controls")}
+		class="w-full"
+	/>
+	<div role="status" aria-live="polite" aria-atomic="true" data-track-title>
+		{tracks[0] ? `${t("AudioPlayer.selected")} ${tracks[0].title}` : null}
 	</div>
 </audio-player>
 
@@ -46,97 +63,124 @@ const { tracks } = Astro.props;
 	import { assert } from "@acdh-oeaw/lib";
 
 	class AudioPlayer extends HTMLElement {
-		audio: HTMLAudioElement | null;
-		button: HTMLButtonElement | null;
-		currentTrack: number;
-		track: HTMLDivElement | null;
-		tracks: Array<{ title: string; href: string; element: HTMLElement }>;
-
-		constructor() {
-			super();
-
-			this.audio = null;
-			this.button = null;
-			this.currentTrack = 0;
-			this.track = null;
-			this.tracks = [];
-		}
+		private disconnect?: () => void;
 
 		connectedCallback() {
-			this.audio = document.createElement("audio");
+			this.disconnect?.();
+			const audio = this.querySelector("audio");
+			const playlist = this.querySelector<HTMLElement>("[data-playlist]");
+			const status = this.querySelector<HTMLElement>("[data-track-title]");
+			const tracks = [...this.querySelectorAll<HTMLButtonElement>("[data-audio-track]")];
+			assert(audio);
+			assert(playlist);
+			assert(status);
+			if (tracks.length === 0) {
+				return;
+			}
+			const controller = new AbortController();
+			const { signal } = controller;
+			let current = Math.max(
+				0,
+				tracks.findIndex((track) => {
+					return track.getAttribute("aria-current") === "true";
+				}),
+			);
+			let request = 0;
 
-			this.audio.addEventListener("pause", () => {
-				assert(this.audio);
-				assert(this.track);
-
-				this.dataset.state = "pause";
-				this.track.textContent = "";
-			});
-
-			this.audio.addEventListener("play", () => {
-				assert(this.audio);
-				assert(this.track);
-
-				const track = this.tracks[this.currentTrack];
-				assert(track);
-				this.dataset.state = "play";
-				this.track.textContent = `Sie hören: ${track.title}`;
-				this.tracks.forEach(({ element }) => {
-					if (element === track.element) {
-						element.dataset.current = "";
+			const updateStatus = (state: "selected" | "playing" | "paused" | "ended" | "error") => {
+				const label = this.getAttribute(`data-${state}-label`);
+				assert(label);
+				const text = state === "error" ? label : `${label} ${tracks[current]!.dataset.title!}`;
+				if (status.textContent !== text) {
+					status.textContent = text;
+				}
+			};
+			const playTrack = async (index: number) => {
+				const pending = ++request;
+				const track = tracks[index];
+				assert(track?.dataset.href);
+				if (current !== index || audio.getAttribute("src") !== track.dataset.href || audio.error) {
+					audio.src = track.dataset.href;
+				}
+				current = index;
+				tracks.forEach((item, trackIndex) => {
+					if (trackIndex === current) {
+						item.setAttribute("aria-current", "true");
 					} else {
-						delete element.dataset.current;
+						item.removeAttribute("aria-current");
 					}
 				});
-			});
-
-			this.audio.addEventListener("ended", () => {
-				if (this.currentTrack < this.tracks.length - 1) {
-					this.currentTrack++;
-					this.play();
+				updateStatus("selected");
+				try {
+					await audio.play();
+					if (pending === request && !signal.aborted && !audio.paused) {
+						updateStatus("playing");
+					}
+				} catch (error) {
+					if (
+						pending === request &&
+						!signal.aborted &&
+						!(error instanceof DOMException && error.name === "AbortError")
+					) {
+						updateStatus("error");
+					}
 				}
+			};
+			tracks.forEach((track, index) => {
+				track.addEventListener(
+					"click",
+					() => {
+						void playTrack(index);
+					},
+					{ signal },
+				);
 			});
-
-			const tracks = this.querySelectorAll<HTMLElement>("audio-track");
-
-			tracks.forEach((element, index) => {
-				element.addEventListener("click", () => {
-					this.currentTrack = index;
-					this.play();
-				});
-			});
-
-			this.tracks = Array.from(tracks).map((element) => {
-				const { href, title } = element.dataset;
-				assert(href);
-				assert(title);
-				return { href, title, element };
-			});
-
-			this.button = this.querySelector<HTMLButtonElement>("button");
-
-			this.button?.addEventListener("click", () => {
-				assert(this.audio);
-				if (this.audio.paused) {
-					this.play();
-				} else {
-					this.pause();
-				}
-			});
-
-			this.track = this.querySelector<HTMLDivElement>("div[data-track-title]");
+			audio.addEventListener(
+				"play",
+				() => {
+					updateStatus("playing");
+				},
+				{ signal },
+			);
+			audio.addEventListener(
+				"pause",
+				() => {
+					if (!audio.ended) {
+						updateStatus("paused");
+					}
+				},
+				{ signal },
+			);
+			audio.addEventListener(
+				"error",
+				() => {
+					updateStatus("error");
+				},
+				{ signal },
+			);
+			audio.addEventListener(
+				"ended",
+				() => {
+					if (current < tracks.length - 1) {
+						void playTrack(current + 1);
+					} else {
+						updateStatus("ended");
+					}
+				},
+				{ signal },
+			);
+			playlist.classList.remove("hidden");
+			playlist.classList.add("grid");
+			this.disconnect = () => {
+				controller.abort();
+				request++;
+				audio.pause();
+			};
 		}
 
-		play() {
-			assert(this.audio);
-			const track = this.tracks[this.currentTrack];
-			assert(track);
-			this.audio.src = track.href;
-			this.audio.play();
-		}
-
-		pause() {
-			this.audio?.pause();
+		disconnectedCallback() {
+			this.disconnect?.();
+			this.disconnect = undefined;
 		}
 	}
 

@@ -39,8 +39,8 @@
 		"next": "Nächste",
 		"previous": "Vorherige",
 		"slide": "{current} von {total}",
-		"start": "Starten",
-		"stop": "Pausieren"
+		"start": "Automatischen Bildwechsel starten",
+		"stop": "Automatischen Bildwechsel pausieren"
 	},
 	"ImprintPage": {
 		"meta": {
@@ -144,5 +144,14 @@
 			"home": "Startseite"
 		},
 		"navigation-primary": "Primär"
+	},
+	"AudioPlayer": {
+		"playlist": "Wiedergabeliste",
+		"controls": "Audiowiedergabe",
+		"selected": "Ausgewählt:",
+		"playing": "Sie hören:",
+		"paused": "Pausiert:",
+		"ended": "Beendet:",
+		"error": "Die Audiodatei konnte nicht abgespielt werden. Wählen Sie einen Titel, um es erneut zu versuchen."
 	}
 }
