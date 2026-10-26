@@ -1,30 +1,26 @@
 /* @jsxImportSource solid-js */
 
-import { createSignal } from "solid-js";
+import { createSignal, type JSX } from "solid-js";
 
 import { DataTable } from "@/features/kopisten/components/data-table";
-
-import { LeafletMap } from "./leaflet-map";
+import { LeafletMap } from "@/features/kopisten/components/leaflet-map";
+import { type Coordinate, getTableCoordinates } from "@/features/kopisten/components/table-data";
 
 interface MapTableProps {
-	children: HTMLDivElement;
-	title?: string;
-	labels: Record<string, unknown>;
-	html: string;
+	children: JSX.Element;
+	labels: { search: string };
 }
 
-const [coordinates, setCoordinates] = createSignal<Array<[number, number]>>([]);
-const [initialLatLng, setInitialLatLng] = createSignal<[string, string]>(["", ""]);
-const initialZoom = "2";
-
 export function MapTable(props: MapTableProps) {
+	const [coordinates, setCoordinates] = createSignal<Array<Coordinate>>([]);
 	return (
 		<>
-			<LeafletMap latLng={initialLatLng} zoom={initialZoom} coordinates={coordinates} />
+			<LeafletMap coordinates={coordinates} />
 			<DataTable
 				labels={props.labels}
-				setCoordinates={setCoordinates}
-				setInitialLatLng={setInitialLatLng}
+				onRowsChange={(rows) => {
+					setCoordinates(getTableCoordinates(rows));
+				}}
 			>
 				{props.children}
 			</DataTable>
