@@ -6,17 +6,14 @@ import PageTitle from "@/components/page-title.astro";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import Search from "@/features/bibliography/components/search.astro";
 import PageLayout from "@/layouts/page-layout.astro";
-import { processMdx } from "@/lib/content/mdx";
-import { reader } from "@/lib/content/reader";
+import { readPage } from "@/lib/content/page";
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 
-const page = await reader().collections.pages.readOrThrow("leben/bibliographie");
+const { page, Content } = await readPage("leben/bibliographie", locale);
 
 const documentTitle = page.title;
 const { title, image } = page;
-
-const { default: Content } = await processMdx(await page.content(), locale);
 ---
 
 <PageLayout locale={locale} title={documentTitle}>

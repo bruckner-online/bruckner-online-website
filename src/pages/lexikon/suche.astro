@@ -7,8 +7,7 @@ import LexiconSearchForm from "@/features/lexicon/components/lexicon-search-form
 import LexiconUnavailable from "@/features/lexicon/components/lexicon-unavailable.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
-import { processMdx } from "@/lib/content/mdx";
-import { reader } from "@/lib/content/reader";
+import { readPage } from "@/lib/content/page";
 import { createI18n } from "@/lib/i18n";
 
 export const prerender = false;
@@ -16,11 +15,10 @@ export const prerender = false;
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 const { t } = await createI18n(locale);
 
-const page = await reader().collections.pages.readOrThrow("lexikon/suche");
+const { page, Content } = await readPage("lexikon/suche", locale);
 
 const documentTitle = page.title;
 const { title } = page;
-const { default: Content } = await processMdx(await page.content(), locale);
 
 const schema = v.object({
 	q: v.fallback(v.optional(v.string(), ""), ""),

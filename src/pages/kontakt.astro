@@ -11,8 +11,7 @@ import PageSection from "@/components/page-section.astro";
 import PageTitle from "@/components/page-title.astro";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
 import PageLayout from "@/layouts/page-layout.astro";
-import { processMdx } from "@/lib/content/mdx";
-import { reader } from "@/lib/content/reader";
+import { readPage } from "@/lib/content/page";
 import { sendEmail } from "@/lib/email";
 import { createI18n } from "@/lib/i18n";
 
@@ -21,11 +20,10 @@ export const prerender = false;
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 const { t } = await createI18n(locale);
 
-const page = await reader().collections.pages.readOrThrow("kontakt");
+const { page, Content } = await readPage("kontakt", locale);
 
 const documentTitle = page.title;
 const { title } = page;
-const { default: Content } = await processMdx(await page.content(), locale);
 
 let status = { kind: "initial" } as
 	| { kind: "error"; message: string }

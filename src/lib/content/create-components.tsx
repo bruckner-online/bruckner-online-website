@@ -49,20 +49,8 @@ export const linkCollections = [
 
 export const videoProviders = [{ label: "YouTube", value: "youtube" }] as const;
 
-function create(
-	assetPath: `/${string}/`,
-	components?: Array<
-		| "AudioPlayer"
-		| "Download"
-		| "Embed"
-		| "Figure"
-		| "Footnote"
-		| "IconLink"
-		| "TranskriptionsTool"
-		| "Video"
-	>,
-) {
-	const allComponents = {
+function create(assetPath: `/${string}/`) {
+	return {
 		AudioPlayer: block({
 			label: "AudioPlayer",
 			description: "An audio player with playlist.",
@@ -292,12 +280,6 @@ function create(
 			},
 		}),
 	};
-
-	if (components == null) {
-		return allComponents;
-	}
-
-	return pick(allComponents, components);
 }
 
 type Components = ReturnType<typeof create>;

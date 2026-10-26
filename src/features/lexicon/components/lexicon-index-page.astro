@@ -9,8 +9,7 @@ import LexiconLiteratureIndex from "@/features/lexicon/components/lexicon-index-
 import LexiconIndex from "@/features/lexicon/components/lexicon-index.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
 import PageLayout from "@/layouts/page-layout.astro";
-import { processMdx } from "@/lib/content/mdx";
-import { reader } from "@/lib/content/reader";
+import { readPage } from "@/lib/content/page";
 import { createI18n } from "@/lib/i18n";
 
 interface Props {
@@ -26,11 +25,10 @@ const { t } = await createI18n(locale);
 const errorMessage = t("SearchResults.error");
 const emptyMessage = t("SearchResults.nothing-found");
 
-const page = await reader().collections.pages.readOrThrow(contentPath);
+const { page, Content } = await readPage(contentPath, locale);
 
 const documentTitle = page.title;
 const { title } = page;
-const { default: Content } = await processMdx(await page.content(), locale);
 
 const schema = v.object({
 	letter: v.fallback(v.optional(v.pipe(v.string(), v.regex(/\w/), v.toLowerCase()), "a"), "a"),
