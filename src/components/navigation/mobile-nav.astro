@@ -2,143 +2,76 @@
 import { Icon } from "astro-icon/components";
 
 import { mobileNavId } from "@/components/navigation/constants";
+import type { NavigationLink, NavigationMenu } from "@/components/navigation/model";
 import NavLink from "@/components/navigation/nav-link.astro";
-import type { Navigation } from "@/lib/content/types";
-import navigation from "~/content/navigation.json";
 
-function createSectionId(label: string) {
-	return label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+interface Props {
+	entries: Array<NavigationLink | NavigationMenu>;
 }
+const { entries } = Astro.props;
 ---
 
 <div id={mobileNavId} hidden class="px-4 pb-6 lg:hidden" data-mobile-nav>
 	<ul class="grid gap-y-2 text-[#555]" role="list">
-		{(navigation as Navigation).links.map((item) => {
-			switch (item.discriminant) {
-				case "link": {
-					return (
-						<li>
-							<NavLink class="transition hover:text-[#212529]" href={item.value.href}>
-								{item.value.label}
-							</NavLink>
-						</li>
-					);
-				}
-
-				case "page": {
-					return (
-						<li>
-							<NavLink class="transition hover:text-[#212529]" href={`/${item.value.reference}`}>
-								{item.value.label}
-							</NavLink>
-						</li>
-					);
-				}
-
-				case "menu": {
-					return (
-						<li>
-							<details class="group">
-								<summary class="inline-flex cursor-pointer items-center gap-x-1.5">
-									{item.value.label}
-									<Icon
-										aria-hidden="true"
-										class="size-4 shrink-0 group-open:rotate-180"
-										name="lucide:chevron-down"
-									/>
-								</summary>
-								<ul class="ml-4 mt-2 grid gap-y-1" role="list">
-									{item.value.links.map((link) => {
-										switch (link.discriminant) {
-											case "link": {
-												return (
+		{entries.map((entry) => (
+			<li>
+				{entry.kind === "link" ? (
+					<NavLink class="transition hover:text-[#212529]" href={entry.href}>
+						{entry.label}
+					</NavLink>
+				) : (
+					<details class="group">
+						<summary class="inline-flex cursor-pointer items-center gap-x-1.5">
+							{entry.label}
+							<Icon
+								aria-hidden="true"
+								class="size-4 shrink-0 group-open:rotate-180"
+								name="lucide:chevron-down"
+							/>
+						</summary>
+						<ul class="ml-4 mt-2 grid gap-y-1" role="list">
+							{entry.links.map((item) =>
+								item.kind === "link" ? (
+									<li>
+										<NavLink class="transition hover:text-[#212529]" href={item.href}>
+											{item.label}
+										</NavLink>
+									</li>
+								) : item.kind === "section" ? (
+									<li>
+										<span class="mt-2 block text-xs uppercase text-[#777]" id={`${item.id}-mobile`}>
+											{item.label}
+										</span>
+										<ul
+											aria-labelledby={`${item.id}-mobile`}
+											class="ml-3 mt-1 grid gap-y-1 border-l pl-3"
+											role="list"
+										>
+											{item.links.map((link) =>
+												link.kind === "link" ? (
 													<li>
-														<NavLink class="transition hover:text-[#212529]" href={link.value.href}>
-															{link.value.label}
+														<NavLink class="transition hover:text-[#212529]" href={link.href}>
+															{link.label}
 														</NavLink>
 													</li>
-												);
-											}
-
-											case "page": {
-												return (
-													<li>
-														<NavLink
-															class="transition hover:text-[#212529]"
-															href={`/${link.value.reference}`}
-														>
-															{link.value.label}
-														</NavLink>
+												) : (
+													<li role="separator">
+														<hr />
 													</li>
-												);
-											}
-
-											case "section": {
-												const sectionId = `${mobileNavId}-section-${createSectionId(link.value.label)}`;
-
-												return (
-													<li>
-														<span class="mt-2 block text-xs uppercase text-[#777]" id={sectionId}>
-															{link.value.label}
-														</span>
-														<ul
-															aria-labelledby={sectionId}
-															class="ml-3 mt-1 grid gap-y-1 border-l pl-3"
-															role="group"
-														>
-															{link.value.links.map((link) => {
-																switch (link.discriminant) {
-																	case "link": {
-																		return (
-																			<li>
-																				<NavLink
-																					class="transition hover:text-[#212529]"
-																					href={link.value.href}
-																				>
-																					{link.value.label}
-																				</NavLink>
-																			</li>
-																		);
-																	}
-
-																	case "page": {
-																		return (
-																			<li>
-																				<NavLink
-																					class="transition hover:text-[#212529]"
-																					href={`/${link.value.reference}`}
-																				>
-																					{link.value.label}
-																				</NavLink>
-																			</li>
-																		);
-																	}
-
-																	default: {
-																		return null;
-																	}
-																}
-															})}
-														</ul>
-													</li>
-												);
-											}
-
-											default: {
-												return null;
-											}
-										}
-									})}
-								</ul>
-							</details>
-						</li>
-					);
-				}
-
-				default: {
-					return null;
-				}
-			}
-		})}
+												),
+											)}
+										</ul>
+									</li>
+								) : (
+									<li role="separator">
+										<hr />
+									</li>
+								),
+							)}
+						</ul>
+					</details>
+				)}
+			</li>
+		))}
 	</ul>
 </div>

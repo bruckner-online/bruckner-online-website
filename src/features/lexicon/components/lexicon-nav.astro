@@ -1,6 +1,7 @@
 ---
 import NavMenuLink from "@/components/navigation/nav-menu-link.astro";
 import { defaultLocale, type Locale } from "@/config/i18n.config";
+import { createLexiconLinks } from "@/features/lexicon/components/navigation/links";
 import MobileLexiconNavToggle from "@/features/lexicon/components/navigation/mobile-lexicon-nav-toggle.astro";
 import { createI18n } from "@/lib/i18n";
 
@@ -12,27 +13,7 @@ const { t } = await createI18n((Astro.currentLocale ?? defaultLocale) as Locale)
 
 const { currentPage } = Astro.props;
 
-const links = [
-	{ href: "/lexikon", label: t("LexiconNav.links.home") },
-	{ href: "/lexikon/projekt", label: t("LexiconNav.links.project") },
-	{ href: "/lexikon/autorinnen", label: t("LexiconNav.links.authors") },
-	{ href: "/lexikon/literatur", label: t("LexiconNav.links.bibliography") },
-	{ href: "/lexikon/abkuerzungen", label: t("LexiconNav.links.abbreviations") },
-
-	// FIXME: why are these links not included on the nav, but only accessible from the landing page?
-
-	// { href: "/lexikon/suche", label: t("LexiconNav.links.search") },
-
-	// { href: "/lexikon/werke", label: t("LexiconNav.links.works") },
-	// { href: "/lexikon/personen", label: t("LexiconNav.links.persons") },
-	// { href: "/lexikon/orte", label: t("LexiconNav.links.places") },
-	// { href: "/lexikon/sachbegriffe", label: t("LexiconNav.links.terms") },
-	// { href: "/lexikon/artikel", label: t("LexiconNav.links.articles") },
-	// {
-	// 	href: "https://www.musiklexikon.ac.at/ml/musik_B/Bruckner_Anton.xml",
-	// 	label: t("LexiconNav.links.oeml"),
-	// },
-];
+const links = createLexiconLinks(t);
 ---
 
 <nav class="mb-4 pb-2" aria-label={t("LexiconNav.nav")}>
