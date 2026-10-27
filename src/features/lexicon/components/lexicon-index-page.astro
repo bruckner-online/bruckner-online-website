@@ -1,23 +1,22 @@
 ---
 import { defaultLocale, type Locale } from "@/config/i18n.config";
-import type { Category } from "@/features/lexicon/client";
 import LexiconAlphabetLinks from "@/features/lexicon/components/lexicon-alphabet-links.astro";
 import LexiconAuthorsIndex from "@/features/lexicon/components/lexicon-index-authors.astro";
 import LexiconLiteratureIndex from "@/features/lexicon/components/lexicon-index-literature.astro";
 import LexiconIndex from "@/features/lexicon/components/lexicon-index.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
-import { parseLexiconIndexQuery } from "@/features/lexicon/query";
+import type { loadLexiconIndex } from "@/features/lexicon/load-index";
 import PageLayout from "@/layouts/page-layout.astro";
 import { readPage } from "@/lib/content/page";
 import { createI18n } from "@/lib/i18n";
 
 interface Props {
 	contentPath: string;
-	category?: Category;
-	kind?: "articles" | "authors" | "literature";
+	data: Awaited<ReturnType<typeof loadLexiconIndex>>;
 }
 
-const { contentPath, category, kind = "articles" } = Astro.props;
+const { contentPath, data } = Astro.props;
+const { letter, authors, literature, articles } = data;
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 const { t } = await createI18n(locale);
@@ -28,8 +27,6 @@ const { page, Content } = await readPage(contentPath, locale);
 
 const documentTitle = page.title;
 const { title } = page;
-
-const { letter, start } = parseLexiconIndexQuery(Astro.url.searchParams);
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
@@ -39,31 +36,20 @@ const { letter, start } = parseLexiconIndexQuery(Astro.url.searchParams);
 		</div>
 
 		<LexiconAlphabetLinks current={letter} />
-		{kind === "authors" ? (
+		{authors ? (
 			<LexiconAuthorsIndex
+				result={authors}
 				errorMessage={errorMessage}
 				emptyMessage={emptyMessage}
-				letter={letter}
-				start={start}
-				max={500}
 			/>
-		) : kind === "literature" ? (
+		) : literature ? (
 			<LexiconLiteratureIndex
+				result={literature}
 				errorMessage={errorMessage}
 				emptyMessage={emptyMessage}
-				letter={letter}
-				start={start}
-				max={500}
 			/>
-		) : (
-			<LexiconIndex
-				category={category}
-				errorMessage={errorMessage}
-				emptyMessage={emptyMessage}
-				letter={letter}
-				start={start}
-				max={500}
-			/>
-		)}
+		) : articles ? (
+			<LexiconIndex result={articles} errorMessage={errorMessage} emptyMessage={emptyMessage} />
+		) : null}
 	</LexiconLayout>
 </PageLayout>

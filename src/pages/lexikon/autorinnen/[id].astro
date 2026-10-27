@@ -24,6 +24,11 @@ const { start } = parseLexiconPagination(Astro.url.searchParams);
 
 const result = await lexicon.listArticles({ author: id, start, max: 500 });
 
+// Unavailable responses must remain retryable on the next request.
+if (Astro.cache.enabled && result.status === "ok") {
+	Astro.cache.set({ maxAge: 600 });
+}
+
 const title = t("ArticlesByAuthor.title", { author: id }) ?? page.title;
 ---
 

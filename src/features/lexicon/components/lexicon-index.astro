@@ -1,18 +1,14 @@
 ---
-import { lexicon, pathnames, type Category } from "@/features/lexicon/client";
+import { pathnames, type lexicon } from "@/features/lexicon/client";
 import LexiconUnavailable from "@/features/lexicon/components/lexicon-unavailable.astro";
 
 interface Props {
 	errorMessage: string;
 	emptyMessage: string;
-	letter: string;
-	start: number;
-	max: number;
-	category?: Category;
+	result: Awaited<ReturnType<typeof lexicon.listArticles>>;
 }
 
-const { errorMessage, emptyMessage, ...query } = Astro.props;
-const result = await lexicon.listArticles(query);
+const { errorMessage, emptyMessage, result } = Astro.props;
 ---
 
 {result.status === "error" ? (

@@ -1,7 +1,10 @@
 ---
 import LexiconIndexPage from "@/features/lexicon/components/lexicon-index-page.astro";
+import { loadLexiconIndex } from "@/features/lexicon/load-index";
 
 export const prerender = false;
+
+const data = await loadLexiconIndex(Astro, { category: "Werk" });
 ---
 
-<LexiconIndexPage contentPath="lexikon/werke" category="Werk" />
+<LexiconIndexPage contentPath="lexikon/werke" data={data} />
