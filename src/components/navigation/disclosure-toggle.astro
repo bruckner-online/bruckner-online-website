@@ -1,0 +1,56 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	controls: string;
+	icon: string;
+	label: string;
+}
+
+const { controls, icon, label } = Astro.props;
+---
+
+<disclosure-toggle>
+	<button
+		type="button"
+		aria-controls={controls}
+		aria-expanded="false"
+		class="p-2.5 transition hover:text-[#212529]"
+	>
+		<Icon aria-hidden="true" class="size-5 shrink-0" name={icon} />
+		<span class="sr-only">{label}</span>
+	</button>
+</disclosure-toggle>
+
+<script>
+	class DisclosureToggle extends HTMLElement {
+		private controller?: AbortController;
+
+		connectedCallback() {
+			this.controller?.abort();
+			this.controller = new AbortController();
+			const trigger = this.querySelector("button");
+			const controls = trigger?.getAttribute("aria-controls");
+			const panel = controls ? document.getElementById(controls) : null;
+			if (!trigger || !panel) {
+				return;
+			}
+
+			trigger.setAttribute("aria-expanded", String(!panel.hidden));
+			trigger.addEventListener(
+				"click",
+				() => {
+					panel.hidden = !panel.hidden;
+					trigger.setAttribute("aria-expanded", String(!panel.hidden));
+				},
+				{ signal: this.controller.signal },
+			);
+		}
+
+		disconnectedCallback() {
+			this.controller?.abort();
+		}
+	}
+
+	customElements.define("disclosure-toggle", DisclosureToggle);
+</script>
