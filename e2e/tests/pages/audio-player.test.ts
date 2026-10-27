@@ -151,6 +151,11 @@ test("playback errors are announced and the same track can be retried", async ({
 	const track = player.getByRole("button", { name: "Adagio", exact: true });
 	await track.click();
 	await expect(player.getByRole("status")).toContainText("nicht abgespielt");
+	// A failed media load can queue a pause event after its error event.
+	await player.locator("audio").evaluate((node) => {
+		node.dispatchEvent(new Event("pause"));
+	});
+	await expect(player.getByRole("status")).toContainText("nicht abgespielt");
 	unavailable = false;
 	await track.click();
 	await expect
