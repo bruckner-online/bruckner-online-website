@@ -6,12 +6,15 @@ import solidJs from "@astrojs/solid-js";
 import keystatic from "@keystatic/astro";
 import tailwindcss from "@tailwindcss/vite";
 import icon from "astro-icon";
-import { defineConfig } from "astro/config";
+import { defineConfig, memoryCache } from "astro/config";
 import { loadEnv } from "vite";
 
 const env = loadEnv(import.meta.env.MODE, process.cwd(), "");
 
 export default defineConfig({
+	// Only routes that explicitly set cache options are stored. Each server
+	// process keeps its own bounded cache, cleared on restart/deployment.
+	cache: { provider: memoryCache({ max: 500 }) },
 	vite: { plugins: [tailwindcss()] },
 	adapter: node({
 		mode: "standalone",

@@ -24,6 +24,11 @@ const documentTitle = page.title;
 const { title } = page;
 
 const result = await lexicon.getArticle(id);
+
+// Unavailable responses must remain retryable on the next request.
+if (Astro.cache.enabled && result.status === "ok") {
+	Astro.cache.set({ maxAge: 3600 });
+}
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
