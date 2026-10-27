@@ -4,6 +4,32 @@ test.beforeEach(async ({ page }) => {
 	await page.emulateMedia({ reducedMotion: "no-preference" });
 });
 
+test("slide changes animate movement together with the fade", async ({ page }) => {
+	await page.goto("/");
+	const next = page.locator("[data-control-next]");
+	await next.focus();
+	const transitions = await next.evaluate((button) => {
+		const root = button.closest("[data-carousel]")!;
+		const outgoing = root.querySelector("[data-active]")!;
+		// Finish any initial rendering transitions before measuring navigation.
+		root.getAnimations({ subtree: true }).forEach((animation) => {
+			animation.finish();
+		});
+		getComputedStyle(outgoing).getPropertyValue("translate");
+		(button as HTMLButtonElement).click();
+		const incoming = root.querySelector("[data-active]")!;
+		getComputedStyle(incoming).getPropertyValue("translate");
+		return [outgoing, incoming].map((slide) => {
+			return slide.getAnimations().map((animation) => {
+				return (animation as CSSTransition).transitionProperty;
+			});
+		});
+	});
+	for (const properties of transitions) {
+		expect(properties).toEqual(expect.arrayContaining(["opacity", "translate"]));
+	}
+});
+
 test("carousel exposes named groups, one-based slides, and keyboard controls", async ({
 	page,
 	createAccessibilityScanner,
