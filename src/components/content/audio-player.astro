@@ -145,7 +145,7 @@ const { t } = await createI18n((Astro.currentLocale ?? defaultLocale) as Locale)
 			audio.addEventListener(
 				"pause",
 				() => {
-					if (!audio.ended) {
+					if (!audio.ended && !audio.error) {
 						updateStatus("paused");
 					}
 				},
