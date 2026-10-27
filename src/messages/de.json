@@ -36,6 +36,7 @@
 		"footnotes": "Fußnoten"
 	},
 	"ImageCarousel": {
+		"more-topics": "Weitere Themen",
 		"next": "Nächste",
 		"previous": "Vorherige",
 		"slide": "{current} von {total}",

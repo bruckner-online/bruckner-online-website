@@ -19,6 +19,8 @@ interface Props {
 }
 
 const { slides, title } = Astro.props;
+const featured = slides[0];
+const otherSlides = slides.slice(1);
 
 const id = generateUniqueId();
 
@@ -140,29 +142,48 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 </image-carousel>
 
 <noscript>
-	<!--
-		The markup is rendered in its javascript-enabled state, so it also survives view transitions
-		and bfcache restores. Without javascript, unstack the slides and hide the (inert) controls.
-	-->
 	<style is:inline>
-		[data-carousel] [data-controls] {
+		[data-carousel] {
 			display: none;
 		}
-
-		[data-carousel-items] {
-			overflow: visible;
-			height: auto;
-			aspect-ratio: auto;
-		}
-
-		[data-carousel-item] {
-			position: relative;
-			opacity: 100%;
-			visibility: visible;
-			transition: none;
-			transform: none;
-		}
 	</style>
+	{featured && (
+		<section aria-label={title} class="grid gap-y-4" data-carousel-fallback>
+			<a
+				href={`/${featured.page}`}
+				aria-labelledby={`${id}-featured-title`}
+				aria-describedby={`${id}-featured-summary`}
+				class="block bg-white text-neutral-800 shadow-lg"
+			>
+				<Image
+					alt=""
+					class="aspect-[2.125] w-full object-cover"
+					loading="eager"
+					src={getImageImport(featured.image)}
+				/>
+				<div class="grid gap-y-2 p-6">
+					<h2 class="text-xl font-bold underline" id={`${id}-featured-title`}>
+						{featured.title}
+					</h2>
+					<p id={`${id}-featured-summary`}>{featured.summary}</p>
+				</div>
+			</a>
+			{otherSlides.length > 0 && (
+				<div class="grid gap-y-3 bg-white p-6 text-neutral-800">
+					<h2 class="text-lg font-semibold">{t("ImageCarousel.more-topics")}</h2>
+					<ul class="grid list-disc gap-y-2 ps-5" role="list">
+						{otherSlides.map((slide) => (
+							<li>
+								<a class="underline hover:text-brand-red" href={`/${slide.page}`}>
+									{slide.title}
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
+		</section>
+	)}
 </noscript>
 
 <script>

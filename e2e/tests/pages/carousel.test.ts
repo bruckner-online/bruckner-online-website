@@ -10,6 +10,7 @@ test("carousel exposes named groups, one-based slides, and keyboard controls", a
 }) => {
 	await page.goto("/");
 	const root = page.locator("[data-carousel]");
+	await expect(page.locator("[data-carousel-fallback]")).toHaveCount(0);
 	await expect(root).toHaveRole("group");
 	await expect(root).toHaveAccessibleName(/.+/);
 	await expect(root.locator("[data-carousel-item]").first()).toHaveAccessibleName(/^1 von /);
@@ -96,20 +97,51 @@ test("enabling reduced motion stops active rotation without restarting on prefer
 	await expect(root).toHaveAttribute("data-state", "paused");
 });
 
-test("without JavaScript every slide remains available and inert controls are hidden", async ({
-	browser,
-}) => {
-	const context = await browser.newContext({ javaScriptEnabled: false });
-	try {
-		const page = await context.newPage();
-		await page.goto(`${String(test.info().project.use.baseURL)}/`);
-		const root = page.locator("[data-carousel]");
-		await expect(root.locator("[data-controls]")).toBeHidden();
-		for (const slide of await root.locator("[data-carousel-item]").all()) {
-			await expect(slide).toBeVisible();
-			await expect(slide.locator("a").first()).toBeVisible();
+for (const width of [390, 1280]) {
+	test(`without JavaScript the ${String(width)}px layout shows one feature and all remaining links`, async ({
+		browser,
+		createI18n,
+	}) => {
+		const { t } = await createI18n();
+		const context = await browser.newContext({
+			javaScriptEnabled: false,
+			viewport: { width, height: 900 },
+		});
+		try {
+			const page = await context.newPage();
+			await page.goto(`${String(test.info().project.use.baseURL)}/`);
+			const root = page.locator("[data-carousel]");
+			const expected = await root.locator("[data-carousel-item]").evaluateAll((slides) => {
+				return slides.map((slide) => {
+					const link = slide.querySelector("a")!;
+					return { title: link.getAttribute("aria-label"), href: link.getAttribute("href") };
+				});
+			});
+			await expect(root).toBeHidden();
+			const fallback = page.getByRole("region", { name: t("IndexPage.carousel.title") });
+			await expect(fallback).toBeVisible();
+			await expect(fallback.locator("img")).toHaveCount(1);
+			await expect(fallback.getByRole("button")).toHaveCount(0);
+			await expect(
+				fallback.getByRole("heading", { name: expected[0]!.title!, exact: true }),
+			).toBeVisible();
+			await expect(
+				fallback.getByRole("heading", { name: t("ImageCarousel.more-topics") }),
+			).toBeVisible();
+			await expect(fallback.getByRole("listitem")).toHaveCount(expected.length - 1);
+			const links = fallback.getByRole("link");
+			await expect(links).toHaveCount(expected.length);
+			for (const [index, slide] of expected.entries()) {
+				await expect(links.nth(index)).toHaveAttribute("href", slide.href!);
+				await expect(links.nth(index)).toHaveAccessibleName(slide.title!);
+			}
+			await links.first().focus();
+			await page.keyboard.press("Tab");
+			await expect(links.nth(1)).toBeFocused();
+			await links.nth(1).press("Enter");
+			await expect(page).toHaveURL(new RegExp(`${expected[1]!.href!}/?$`));
+		} finally {
+			await context.close();
 		}
-	} finally {
-		await context.close();
-	}
-});
+	});
+}
