@@ -96,6 +96,10 @@ test("desktop and mobile share all main and Lexikon links, including grouped ext
 	await expect(page.locator("[data-mobile-nav]")).toBeVisible();
 	await page.locator("[data-mobile-nav] summary").filter({ hasText: "Bruckner" }).click();
 	await expect(mobile.filter({ hasText: "Kindheit und Jugend" })).toBeVisible();
+	// Menus share a `name`, so opening another one closes the previous one.
+	await page.locator("[data-mobile-nav] summary").filter({ hasText: "Projekt" }).click();
+	await expect(mobile.filter({ hasText: "Kindheit und Jugend" })).toBeHidden();
+	await page.locator("[data-mobile-nav] summary").filter({ hasText: "Bruckner" }).click();
 	await mobileLexiconNavToggle.click();
 	await expect(mobileLexiconNavToggle).toHaveAttribute("aria-expanded", "true");
 	await expect(page.locator("[data-mobile-lexicon-nav]")).toBeVisible();
