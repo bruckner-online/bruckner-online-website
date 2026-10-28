@@ -1,35 +1,127 @@
-<div id="search-unavailable" role="status" hidden>
-	Die Suche ist derzeit nicht verfügbar.{" "}
-	<button type="button" class="underline">
-		Erneut versuchen
-	</button>
-</div>
-<div class="flex flex-col gap-3">
-	<div id="searchbox"></div>
-	<div id="year-range"></div>
-	<div id="sort-by"></div>
-	<div id="stats"></div>
-	<div id="hits"></div>
+---
+import { Icon } from "astro-icon/components";
+
+import SubmitButton from "@/components/form/submit-button.astro";
+import { defaultLocale, type Locale } from "@/config/i18n.config";
+import { createI18n } from "@/lib/i18n";
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { t } = await createI18n(locale);
+
+const indexName = String(import.meta.env.PUBLIC_TYPESENSE_COLLECTION_NAME);
+---
+
+<div class="not-prose mt-2 grid gap-y-6">
+	<div id="search-unavailable" role="status" hidden>
+		Die Suche ist derzeit nicht verfügbar.{" "}
+		<button type="button" class="underline">
+			Erneut versuchen
+		</button>
+	</div>
+
+	<form id="searchbox" class="grid grid-cols-[1fr_auto] gap-x-4" novalidate role="search">
+		<label class="min-w-0">
+			<span class="sr-only">{t("BibliographySearch.search")}</span>
+			<input
+				autocomplete="off"
+				class="size-full rounded-md border px-4 py-2 text-neutral-800 placeholder:text-neutral-500"
+				maxlength="512"
+				name="q"
+				placeholder={t("BibliographySearch.search-placeholder")}
+				spellcheck="false"
+				type="search"
+			/>
+		</label>
+		<SubmitButton>{t("BibliographySearch.search")}</SubmitButton>
+	</form>
+
+	<div class="flex flex-wrap items-end gap-x-8 gap-y-4">
+		<form id="year-range" novalidate>
+			<fieldset>
+				<legend class="mb-2 font-semibold">{t("BibliographySearch.filter-header")}</legend>
+				<div class="flex flex-wrap items-center gap-x-2 gap-y-2">
+					<label class="flex items-center gap-x-2">
+						{t("BibliographySearch.filter-from")}
+						<input
+							class="w-24 rounded-md border px-3 py-2 text-neutral-800 placeholder:text-neutral-500"
+							inputmode="numeric"
+							name="min"
+							step="1"
+							type="number"
+						/>
+					</label>
+					<label class="flex items-center gap-x-2">
+						{t("BibliographySearch.filter-to")}
+						<input
+							class="w-24 rounded-md border px-3 py-2 text-neutral-800 placeholder:text-neutral-500"
+							inputmode="numeric"
+							name="max"
+							step="1"
+							type="number"
+						/>
+					</label>
+					<SubmitButton>{t("BibliographySearch.filter-label")}</SubmitButton>
+				</div>
+			</fieldset>
+		</form>
+
+		<label id="sort-by" class="grid gap-y-2">
+			<span class="font-semibold">{t("BibliographySearch.sortby-header")}</span>
+			<span class="relative">
+				<select
+					class="w-full appearance-none rounded-md border bg-white py-2 pl-4 pr-10 text-neutral-800 forced-colors:appearance-auto"
+					name="sort"
+				>
+					<option value={`${indexName}/sort/author:asc`}>{t("BibliographySearch.author")}</option>
+					<option selected value={indexName}>
+						{t("BibliographySearch.year")}
+					</option>
+				</select>
+				<Icon
+					aria-hidden="true"
+					class="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 forced-colors:hidden"
+					name="lucide:chevron-down"
+				/>
+			</span>
+		</label>
+	</div>
+
+	<p
+		id="stats"
+		class="empty:sr-only"
+		data-no-results={t("BibliographySearch.no-results")}
+		data-result-multiple={t("BibliographySearch.result-multiple")}
+		data-result-single={t("BibliographySearch.result-single")}
+		role="status"
+	></p>
+
+	<div id="hits" class="grid gap-y-6">
+		<p class="rounded-md border border-dashed px-6 py-8 text-center" data-hits-hint>
+			{t("BibliographySearch.hint")}
+		</p>
+		<ol class="grid" data-hits-list role="list"></ol>
+		<button
+			class="justify-self-center rounded-md border px-6 py-2 text-sm font-medium transition hover:bg-neutral-100"
+			data-show-more
+			hidden
+			type="button"
+		>
+			{t("BibliographySearch.show-more")}
+		</button>
+	</div>
 </div>
 
 <script>
 	import instantsearch from "instantsearch.js";
 	import {
-		infiniteHits,
-		panel,
-		rangeInput,
-		searchBox,
-		sortBy,
-		stats,
-	} from "instantsearch.js/es/widgets";
+		connectInfiniteHits,
+		connectRange,
+		connectSearchBox,
+		connectSortBy,
+	} from "instantsearch.js/es/connectors";
 	import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 
-	import { defaultLocale } from "@/config/i18n.config";
-	import { createI18n } from "@/lib/i18n";
-
 	import { withSearchAvailability } from "../search-client";
-
-	const { t } = await createI18n(defaultLocale);
 
 	// CommonJS interop can wrap the adapter constructor in a default export.
 	const Adapter =
@@ -60,119 +152,146 @@
 			per_page: 50,
 		},
 	});
+
 	const unavailable = document.querySelector<HTMLElement>("#search-unavailable")!;
+	const searchForm = document.querySelector<HTMLFormElement>("#searchbox")!;
+	const searchInput = searchForm.querySelector<HTMLInputElement>('input[name="q"]')!;
+	const yearForm = document.querySelector<HTMLFormElement>("#year-range")!;
+	const minInput = yearForm.querySelector<HTMLInputElement>('input[name="min"]')!;
+	const maxInput = yearForm.querySelector<HTMLInputElement>('input[name="max"]')!;
+	const sortSelect = document.querySelector<HTMLSelectElement>("#sort-by select")!;
+	const stats = document.querySelector<HTMLElement>("#stats")!;
+	const hits = document.querySelector<HTMLElement>("#hits")!;
+	const hint = hits.querySelector<HTMLElement>("[data-hits-hint]")!;
+	const list = hits.querySelector<HTMLOListElement>("[data-hits-list]")!;
+	const showMore = hits.querySelector<HTMLButtonElement>("[data-show-more]")!;
+
 	const searchClient = withSearchAvailability(
 		typesenseInstantsearchAdapter.searchClient,
 		(available) => {
 			unavailable.hidden = available;
-			for (const id of ["hits", "stats"]) {
-				document.getElementById(id)!.hidden = !available;
-			}
+			stats.hidden = !available;
+			hits.hidden = !available;
 		},
 	);
-	const indexName = String(import.meta.env.PUBLIC_TYPESENSE_COLLECTION_NAME);
 
 	const search = instantsearch({
 		searchClient,
-		indexName,
+		indexName: sortSelect.options[sortSelect.selectedIndex]!.value,
 	});
 
-	const yearsFilterPanel = panel({
-		cssClasses: {
-			header: "font-bold",
-		},
-		templates: {
-			header: t("BibliographySearch.filter-header"),
-		},
-	})(rangeInput);
+	/** Results are only listed once the user searched for something or narrowed the years. */
+	function isActive(results: {
+		query: string;
+		_state: { numericRefinements: Record<string, Record<string, Array<unknown>> | undefined> };
+	}) {
+		const query = results.query.trim();
+		// The range widget registers an empty `year` entry even without bounds.
+		const years = Object.values(results._state.numericRefinements.year ?? {});
+		return (
+			(query !== "" && query !== "*") ||
+			years.some((values) => {
+				return values.length > 0;
+			})
+		);
+	}
 
-	const sortingPanel = panel({
-		cssClasses: {
-			header: "font-bold",
+	const searchBox = connectSearchBox(({ query, refine, instantSearchInstance }, isFirstRender) => {
+		if (isFirstRender) {
+			searchInput.addEventListener("input", () => {
+				refine(searchInput.value);
+			});
+			searchForm.addEventListener("submit", (event) => {
+				event.preventDefault();
+				refine(searchInput.value);
+				if (searchInput.value.trim() === "") {
+					searchInput.focus();
+				}
+			});
+		}
+		if (document.activeElement !== searchInput) {
+			searchInput.value = query;
+		}
+		hits.setAttribute("aria-busy", String(instantSearchInstance.status === "stalled"));
+	});
+
+	const yearRange = connectRange(({ range, start, refine }, isFirstRender) => {
+		if (isFirstRender) {
+			yearForm.addEventListener("submit", (event) => {
+				event.preventDefault();
+				refine([
+					minInput.value === "" ? undefined : Number(minInput.value),
+					maxInput.value === "" ? undefined : Number(maxInput.value),
+				]);
+			});
+		}
+		if (range.min !== undefined && range.max !== undefined && range.min < range.max) {
+			for (const input of [minInput, maxInput]) {
+				input.min = String(range.min);
+				input.max = String(range.max);
+			}
+			minInput.placeholder = String(range.min);
+			maxInput.placeholder = String(range.max);
+		}
+		const [min, max] = start;
+		minInput.value = Number.isFinite(min) ? String(min) : "";
+		maxInput.value = Number.isFinite(max) ? String(max) : "";
+	});
+
+	const sortBy = connectSortBy(({ currentRefinement, refine }, isFirstRender) => {
+		if (isFirstRender) {
+			sortSelect.addEventListener("change", () => {
+				refine(sortSelect.value);
+			});
+		}
+		sortSelect.value = currentRefinement;
+	});
+
+	const infiniteHits = connectInfiniteHits(
+		({ items, results, isLastPage, showMore: loadMore }, isFirstRender) => {
+			if (isFirstRender) {
+				showMore.addEventListener("click", () => {
+					loadMore();
+				});
+			}
+			const active = results != null && isActive(results);
+			if (!active) {
+				stats.textContent = "";
+			} else if (results.nbHits === 0) {
+				stats.textContent = stats.dataset.noResults!;
+			} else {
+				const label =
+					results.nbHits === 1 ? stats.dataset.resultSingle : stats.dataset.resultMultiple;
+				stats.textContent = `${String(results.nbHits)} ${label!}`;
+			}
+			hint.hidden = active;
+			showMore.hidden = !active || isLastPage;
+			list.replaceChildren(
+				...(active ? items : []).map((hit, index) => {
+					const item = document.createElement("li");
+					item.className = "grid grid-cols-[4ch_1fr] gap-x-3 px-2 py-1 even:bg-neutral-100";
+					const position = document.createElement("span");
+					position.className = "text-right tabular-nums";
+					position.setAttribute("aria-hidden", "true");
+					position.textContent = String(index + 1);
+					const reference = document.createElement("span");
+					reference.textContent = hit.reference as string;
+					item.append(position, reference);
+					return item;
+				}),
+			);
 		},
-		templates: {
-			header: t("BibliographySearch.sortby-header"),
-		},
-	})(sortBy);
+	);
 
 	search.addWidgets([
-		yearsFilterPanel({
-			container: "#year-range",
-			attribute: "year",
-			cssClasses: {
-				form: "flex gap-2 items-center",
-				input: "rounded-sm border px-3 py-1",
-				submit:
-					"rounded-sm bg-neutral-900 px-6 py-2 text-sm font-medium text-white transition hover:bg-neutral-700",
-			},
-			templates: {
-				separatorText: "bis",
-				submitText: t("BibliographySearch.filter-label"),
-			},
+		searchBox({}),
+		yearRange({ attribute: "year" }),
+		sortBy({
+			items: [...sortSelect.options].map((option) => {
+				return { label: option.text, value: option.value };
+			}),
 		}),
-		searchBox({
-			container: "#searchbox",
-			cssClasses: {
-				form: "flex gap-2",
-				input: "rounded-sm border px-3 py-1",
-				submit:
-					"rounded-sm bg-neutral-900 px-6 py-2 text-sm font-medium text-white transition hover:bg-neutral-700",
-			},
-			templates: {
-				submit() {
-					return `
-		${t("BibliographySearch.search")}`;
-				},
-			},
-		}),
-		infiniteHits({
-			container: "#hits",
-			cssClasses: {
-				list: ["list-none"],
-				loadMore: [
-					"rounded-sm bg-neutral-900 px-6 py-2 text-sm font-medium text-white transition hover:bg-neutral-700",
-				],
-				item: ["even:bg-neutral-100 flex gap-2"],
-			},
-			templates: {
-				empty(_results, { html }) {
-					return html`<p>${t("BibliographySearch.no-results")}</p>`;
-				},
-				item(hit) {
-					return `<span class="text-right min-w-[4ch]">${hit.__position}</span><span>${hit.reference}</span>`;
-				},
-				showMoreText() {
-					return t("BibliographySearch.show-more");
-				},
-			},
-			transformItems(items, { results }) {
-				return results?.query && results.query.trim() !== "*" ? items : [];
-			},
-		}),
-		sortingPanel({
-			container: "#sort-by",
-			cssClasses: {
-				select: "rounded-sm border px-3 py-1 bg-white",
-			},
-			items: [
-				{ label: t("BibliographySearch.author"), value: `${indexName}/sort/author:asc` },
-				{ label: t("BibliographySearch.year"), value: indexName },
-			],
-		}),
-		stats({
-			container: "#stats",
-			templates: {
-				text: (stats) => {
-					let recordsLabel;
-					if (stats.hasManyResults) {
-						recordsLabel = t("BibliographySearch.result-multiple");
-					} else if (stats.hasOneResult) {
-						recordsLabel = t("BibliographySearch.result-single");
-					}
-					return `<span class="${stats.query === "*" || stats.nbHits === 0 ? "hidden" : ""}">${stats.nbHits} ${recordsLabel}</span>`;
-				},
-			},
-		}),
+		infiniteHits({}),
 	]);
 
 	search.on("error", () => {

@@ -5,11 +5,15 @@
 	"BibliographySearch": {
 		"search": "Suche",
 		"no-results": "Keine Ergebnisse gefunden",
+		"hint": "Geben Sie einen Suchbegriff ein oder schränken Sie die Editions-Jahre ein, um Literaturzitate anzuzeigen.",
+		"search-placeholder": "Autor, Titel, Stichwort …",
 		"result-single": "Literaturzitat wurde gefunden",
 		"result-multiple": "Literaturzitate wurden gefunden",
 		"filter-header": "Editions-Jahre",
 		"filter-label": "Filtern",
-		"sortby-header": "Sortieren",
+		"filter-from": "von",
+		"filter-to": "bis",
+		"sortby-header": "Sortieren nach",
 		"show-more": "Mehr anzeigen",
 		"year": "Jahr",
 		"author": "Autor"

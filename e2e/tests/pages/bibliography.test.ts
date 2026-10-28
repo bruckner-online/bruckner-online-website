@@ -65,10 +65,22 @@ test("bibliography search derives year bounds and supports sorting and filtering
 	await expect(years.first()).toHaveAttribute("placeholder", "1900");
 	await expect(years.last()).toHaveAttribute("placeholder", "2025");
 	await expect(years.last()).toHaveAttribute("max", "2025");
+	await expect(years.first()).toHaveAccessibleName(/von/);
+	await expect(years.last()).toHaveAccessibleName(/bis/);
+	await expect(page.locator("#searchbox").getByRole("searchbox")).toHaveAccessibleName("Suche");
+
+	// Without a query or year filter, a prompt explains how to get results.
+	const hint = page.locator("#hits").getByText(/Suchbegriff/);
+	await expect(hint).toBeVisible();
+	await page.locator("#searchbox").getByRole("button", { name: "Suche" }).click();
+	await expect(hint).toBeVisible();
+	await expect(page.locator("#searchbox").getByRole("searchbox")).toBeFocused();
 
 	await page.locator("#searchbox").getByRole("searchbox").fill("Bruckner");
 	const hits = page.locator("#hits").getByRole("listitem");
 	await expect(hits).toHaveText([/older publication/, /newer publication/]);
+	await expect(hint).toBeHidden();
+	await expect(page.locator("#stats")).toHaveText("2 Literaturzitate wurden gefunden");
 
 	await page.locator("#sort-by").getByRole("combobox").selectOption({ index: 0 });
 	await expect(hits).toHaveText([/newer publication/, /older publication/]);
