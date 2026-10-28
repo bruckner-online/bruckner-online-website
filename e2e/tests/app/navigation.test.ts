@@ -80,14 +80,27 @@ test("desktop and mobile share all main and Lexikon links, including grouped ext
 		await readLinks(lexiconDesktop),
 	);
 
+	const mobileNavToggle = page.getByRole("button", {
+		name: "Navigationsmenü öffnen",
+		exact: true,
+	});
+	const mobileLexiconNavToggle = page.getByRole("button", {
+		name: "Navigationsmenü für Lexikon öffnen",
+		exact: true,
+	});
+
 	await page.setViewportSize({ width: 390, height: 844 });
-	await page.locator("[data-mobile-nav-trigger]").click();
+	await expect(mobileNavToggle).toHaveAttribute("aria-expanded", "false");
+	await mobileNavToggle.click();
+	await expect(mobileNavToggle).toHaveAttribute("aria-expanded", "true");
 	await expect(page.locator("[data-mobile-nav]")).toBeVisible();
 	await page.locator("[data-mobile-nav] summary").filter({ hasText: "Bruckner" }).click();
 	await expect(mobile.filter({ hasText: "Kindheit und Jugend" })).toBeVisible();
-	await page.locator("[data-mobile-lexicon-nav-trigger]").click();
+	await mobileLexiconNavToggle.click();
+	await expect(mobileLexiconNavToggle).toHaveAttribute("aria-expanded", "true");
 	await expect(page.locator("[data-mobile-lexicon-nav]")).toBeVisible();
-	await page.locator("[data-mobile-nav-trigger]").click();
+	await mobileNavToggle.click();
+	await expect(mobileNavToggle).toHaveAttribute("aria-expanded", "false");
 	await expect(page.locator("[data-mobile-nav]")).toBeHidden();
 	await expect(page.locator("[data-mobile-lexicon-nav]")).toBeVisible();
 });

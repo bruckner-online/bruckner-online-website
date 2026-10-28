@@ -1,6 +1,5 @@
 ---
-import { Icon } from "astro-icon/components";
-
+import DisclosureToggle from "@/components/navigation/disclosure-toggle.astro";
 import type { Locale } from "@/config/i18n.config";
 import { mobileLexiconNavId } from "@/features/lexicon/components/navigation/constants";
 import { createI18n } from "@/lib/i18n";
@@ -10,47 +9,4 @@ const { t } = await createI18n(Astro.currentLocale as Locale | undefined);
 const label = t("MobileLexiconNavToggle.label");
 ---
 
-<mobile-lexicon-nav-toggle>
-	<button
-		aria-controls={mobileLexiconNavId}
-		aria-expanded="true"
-		class="p-2.5 transition hover:text-[#212529]"
-		data-mobile-lexicon-nav-trigger
-	>
-		<Icon aria-hidden="true" class="size-5 shrink-0" name="lucide:ellipsis" />
-		<span class="sr-only">{label}</span>
-	</button>
-</mobile-lexicon-nav-toggle>
-
-<script>
-	import { assert } from "@acdh-oeaw/lib";
-
-	class MobileNavToggle extends HTMLElement {
-		constructor() {
-			super();
-
-			const trigger = this.querySelector<HTMLButtonElement>(
-				"button[data-mobile-lexicon-nav-trigger]",
-			);
-			assert(trigger);
-
-			const nav = document.querySelector<HTMLDivElement>("div[data-mobile-lexicon-nav]");
-
-			trigger.setAttribute("aria-expanded", "false");
-
-			trigger.addEventListener("click", (event) => {
-				if (nav == null) {
-					return;
-				}
-
-				const trigger = event.currentTarget as HTMLButtonElement;
-
-				nav.toggleAttribute("hidden");
-
-				trigger.setAttribute("aria-expanded", String(!nav.hidden));
-			});
-		}
-	}
-
-	customElements.define("mobile-lexicon-nav-toggle", MobileNavToggle);
-</script>
+<DisclosureToggle controls={mobileLexiconNavId} icon="lucide:ellipsis" label={label} />
