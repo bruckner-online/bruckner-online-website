@@ -138,7 +138,7 @@
             "discriminant": "page",
             "value": {
               "label": "WAB-Konkordanz",
-              "reference": "werkverzeichnis/konkordanz"
+              "reference": "werkverzeichnis/wab-konkordanz"
             }
           },
           {
