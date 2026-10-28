@@ -32,11 +32,12 @@ export function selectSource(selection: SourceSelection) {
 		identifiers = identifier ? [identifier] : [];
 	}
 	// Catalog sigla include spaces, punctuation, and historical slash-separated identifiers.
-	// Other selections must be single path segments, never URLs or relative paths.
+	// Other selections must be single path segments, never URLs or relative paths. Some print
+	// identifiers number their volumes after a comma, e.g. "WAB084,1".
 	const valid = identifiers.every((identifier) => {
 		return (
 			(source === "hss" && knownSigla.has(identifier)) ||
-			/^[\p{L}\p{N}_-][\p{L}\p{N}_.-]*$/u.test(identifier)
+			/^[\p{L}\p{N}_-][\p{L}\p{N}_.,-]*$/u.test(identifier)
 		);
 	});
 	const path = source === "hss" ? "bruckner" : "bruckner/drucke";
