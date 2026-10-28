@@ -6,13 +6,53 @@ Website for the Bruckner online project, deployed at <https://www.bruckner-onlin
 
 The website brings together several research services and datasets:
 
-| Section                        | Service or data source                                                                     | Integration                                                                                                                                     |
-| ------------------------------ | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Lexikon                        | [Bruckner-Lexikon API](https://api-brucknerlex.acdh.oeaw.ac.at)                            | Fetches lexicon articles and indexes from the external API.                                                                                     |
-| Werkverzeichnis                | [Werkverzeichnis Anton Bruckner (WAB)](https://apps-mufo.oeaw.ac.at/dcm/wab/navigation.xq) | Embeds the external catalogue, with links to individual work records.                                                                           |
-| Manuscripts and first editions | [IIIF Presentation service](https://iiifpresentation.acdh.oeaw.ac.at)                      | Displays digitised sources in Mirador using manifests under `bruckner` (manuscripts) and `bruckner/drucke` (first editions).                    |
-| Kopisten                       | [bruckner-kopisten-data](https://github.com/acdh-oeaw/bruckner-kopisten-data)              | Downloads XML data and generates the edition locally using Java, Ant, and Saxon in Docker. See [Kopisten edition data](#kopisten-edition-data). |
-| Bibliography                   | Local JSON database export and a configured Typesense instance                             | Imports the export into Typesense for frontend search. See [Bibliography search](#bibliography-search).                                         |
+| Section                          | Service or data source                                                                     | Integration                                                                                                                                                                                                                                                                                       |
+| -------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lexikon                          | [Bruckner-Lexikon API](https://api-brucknerlex.acdh.oeaw.ac.at)                            | Fetches lexicon articles and indexes at request time. Successful responses are cached in memory per server process: articles for 1 hour, indexes and author pages for 10 minutes.                                                                                                                 |
+| Werkverzeichnis                  | [Werkverzeichnis Anton Bruckner (WAB)](https://apps-mufo.oeaw.ac.at/dcm/wab/navigation.xq) | Embeds the external catalogue. `/werkverzeichnis/wab?WAB=wab-001` loads `document.xq?doc=wab-001.xml`; without `WAB` it loads the catalogue navigation.                                                                                                                                           |
+| Chronologie                      | [Anton Bruckner Chronologie Datenbank](https://abcd.acdh-dev.oeaw.ac.at)                   | Embedded in the `forschung/chronologie-datenbank` content page.                                                                                                                                                                                                                                   |
+| Manuscripts, first editions, AGA | [IIIF Presentation service](https://iiifpresentation.acdh.oeaw.ac.at)                      | Displays digitised sources in Mirador. Manuscripts (`/handschriften`) use manifests under `bruckner/<siglum>`. First editions (`/erstdrucke?wabId=`) and the Alte Gesamtausgabe (`/aga?aga=`) use `bruckner/drucke/<id>`, with identifiers such as `WAB001`, `WAB083_1`, `WAB084,1`, and `AGA15`. |
+| Kopisten                         | [bruckner-kopisten-data](https://github.com/acdh-oeaw/bruckner-kopisten-data)              | Downloads XML data and generates the edition locally using Java, Ant, and Saxon in Docker. See [Kopisten edition data](#kopisten-edition-data).                                                                                                                                                   |
+| Bibliography                     | Local JSON database export and a configured Typesense instance                             | Imports the export into Typesense for frontend search. See [Bibliography search](#bibliography-search).                                                                                                                                                                                           |
+
+### Supporting services
+
+| Service                                                 | Used for                        | Configuration                                          | When                                                                                     |
+| ------------------------------------------------------- | ------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| [ACDH imprint service](https://imprint.acdh.oeaw.ac.at) | Imprint page text               | `PUBLIC_IMPRINT_SERVICE_BASE_URL`, `PUBLIC_REDMINE_ID` | Build time: `/impressum` is prerendered, so the build needs the service to be reachable. |
+| Matomo                                                  | Analytics                       | `PUBLIC_MATOMO_BASE_URL`, `PUBLIC_MATOMO_ID`           | In the browser                                                                           |
+| SMTP server                                             | Contact form delivery           | `EMAIL_SMTP_*`, `EMAIL_CONTACT_ADDRESS`                | Request time                                                                             |
+| GitHub (Keystatic)                                      | Content editing at `/keystatic` | `PUBLIC_KEYSTATIC_*`, `KEYSTATIC_*`                    | Editing only                                                                             |
+
+### When a service is unavailable
+
+| Service       | What visitors see                                                                                                                                        |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lexikon API   | An error message with a retry link that keeps the current filters. Failed responses are not cached.                                                      |
+| Typesense     | A "search unavailable" message with a retry button. An outage is never shown as zero results.                                                            |
+| IIIF          | A "digitised sources unavailable" message with a retry button when the first manifest cannot load. After startup, Mirador handles image failures itself. |
+| WAB catalogue | The catalogue's own error inside the embed, with a direct link to the catalogue above it.                                                                |
+| Chronologie   | The database's own error inside the embed. There is no fallback link.                                                                                    |
+
+### Embedding external pages
+
+Content pages embed external tools with `<Embed href="https://…" caption="…" />` in MDX. Set `href`,
+or the embed renders an empty frame. The external host must allow being framed: no
+`X-Frame-Options: DENY` or `SAMEORIGIN`, and no `frame-ancestors` policy that excludes this site.
+
+### URLs of the previous site
+
+URLs of the previous site are still linked from elsewhere. Redirect them permanently (301) instead
+of recreating pages:
+
+- URLs matched by pattern or query parameter (`/ABLO_<id>`, `/wab-<nnn>`, `/miradorAGA.php?AGA=`,
+  `/miradorDrucke.php?WAB=`) are redirected in `src/middleware.ts`.
+- Fixed paths, including pages renamed or removed in Keystatic, are redirected in `redirects` in
+  `astro.config.ts`.
+
+Content links to current, relative URLs. `e2e/tests/app/legacy-urls.test.ts` covers the redirects.
+`tests/navigation.test.ts` checks that navigation entries reference existing pages, since renaming a
+page in Keystatic does not update them.
 
 ## Source layout
 
@@ -149,7 +189,7 @@ pnpm lint:check
 pnpm types:check
 ```
 
-Lexikon integration tests use fixture responses and do not require external services:
+Unit tests use fixture responses and do not require external services:
 
 ```sh
 pnpm test:unit
@@ -166,7 +206,9 @@ pnpm test:e2e
 
 Playwright starts a dedicated production server with a test-only Lexikon API adapter, so index tests
 exercise server rendering without depending on the live API. The adapter is not loaded by normal
-production startup. Index tests also run with JavaScript disabled.
+production startup. Index tests also run with JavaScript disabled. Tests for other external services
+intercept their requests in the browser: Typesense and IIIF receive mocked responses, and the WAB
+catalogue is blocked to exercise its fallback.
 
 If port 3000 is already in use, select another port for the test server:
 

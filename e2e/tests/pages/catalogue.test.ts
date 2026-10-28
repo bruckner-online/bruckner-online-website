@@ -11,8 +11,11 @@ test("WAB direct link remains available when the iframe cannot load", async ({ p
 		"href",
 		"https://apps-mufo.oeaw.ac.at/dcm/wab/document.xq?doc=001.xml",
 	);
-	await expect(page.locator('iframe[title="Werkverzeichnis Anton Bruckner"]')).toHaveAttribute(
+	const iframe = page.locator('iframe[title="Werkverzeichnis Anton Bruckner"]');
+	await expect(iframe).toHaveAttribute(
 		"src",
 		"https://apps-mufo.oeaw.ac.at/dcm/wab/document.xq?doc=001.xml",
 	);
+	// The embed must reserve space; an undefined height utility once collapsed it to 0px.
+	expect((await iframe.boundingBox())?.height).toBeGreaterThan(300);
 });

@@ -15,7 +15,7 @@ const { controls, icon, label } = Astro.props;
 		type="button"
 		aria-controls={controls}
 		aria-expanded="false"
-		class="p-2.5 transition hover:text-[#212529]"
+		class="rounded p-2.5 transition hover:text-brand-red aria-expanded:text-brand-red"
 	>
 		<Icon aria-hidden="true" class="size-5 shrink-0" name={icon} />
 		<span class="sr-only">{label}</span>

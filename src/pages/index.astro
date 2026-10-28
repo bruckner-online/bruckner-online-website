@@ -26,9 +26,9 @@ const { hero, links, quote } = page;
 			<ImageCarousel slides={hero.slides} title={t("IndexPage.carousel.title")} />
 		</PageSection>
 
-		<PageSection class="hidden md:block">
-			<blockquote class="flex items-start gap-x-8 bg-white py-8 pl-8 pr-12 text-lg shadow-xl">
-				<Icon aria-hidden="true" class="h-auto w-20 pt-1.5" name="lucide:quote" />
+		<PageSection>
+			<blockquote class="flex items-start gap-x-4 bg-white p-6 text-sm shadow-xl md:gap-x-6 md:p-8 md:text-base lg:text-lg">
+				<Icon aria-hidden="true" class="size-8 shrink-0 md:size-10" name="lucide:quote" />
 				{quote}
 			</blockquote>
 		</PageSection>
@@ -43,12 +43,12 @@ const { hero, links, quote } = page;
 						<a
 							class:list={[
 								bg,
-								"grid grid-cols-[auto_1fr] content-start gap-x-4 text-sm px-6 py-4 text-white transition hover:-translate-y-1",
+								"grid grid-cols-[auto_1fr] content-start gap-x-4 text-sm px-6 py-4 text-white transition hover:-translate-y-1 focus-visible:-translate-y-1 focus-visible:outline-offset-2",
 							]}
 							href={`/${link.page}`}
 						>
-							<div class="row-span-2 inline-flex items-start pt-4">
-								<Icon aria-hidden="true" class="size-6 shrink-0" name="lucide:database" />
+							<div class="row-span-2 inline-flex items-start">
+								<Icon aria-hidden="true" class="-mt-0.5 size-6 shrink-0" name="lucide:database" />
 							</div>
 							<strong class="uppercase">{link.title}</strong>
 							<div>{link.summary}</div>

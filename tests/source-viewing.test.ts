@@ -40,9 +40,11 @@ void test("explicit siglum overrides WAB selection", () => {
 });
 
 void test("first editions and AGA share manifest construction with their own display defaults", () => {
+	// Identifier formats as published by the IIIF server.
 	for (const selection of [
-		{ source: "ed", wabId: "016" },
-		{ source: "aga", aga: "Band_1" },
+		{ source: "ed", wabId: "WAB016" },
+		{ source: "ed", wabId: "WAB083_1" },
+		{ source: "aga", aga: "AGA15" },
 	] as const) {
 		const view = selectSource(selection);
 		assert.deepEqual(view.catalog, []);
@@ -53,6 +55,10 @@ void test("first editions and AGA share manifest construction with their own dis
 			`https://iiifpresentation.acdh.oeaw.ac.at/bruckner/drucke/${selection.source === "ed" ? selection.wabId : selection.aga}/manifest`,
 		);
 	}
+	assert.equal(
+		selectSource({ source: "ed", wabId: "WAB084,1" }).windows[0]?.loadedManifest,
+		"https://iiifpresentation.acdh.oeaw.ac.at/bruckner/drucke/WAB084%2C1/manifest",
+	);
 });
 
 void test("empty, unmapped, and invalid selections never construct a manifest", () => {

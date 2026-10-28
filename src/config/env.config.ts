@@ -32,7 +32,6 @@ const result = createEnv({
 			const schema = v.object({
 				CI: v.optional(v.pipe(v.unknown(), v.transform(Boolean), v.boolean())),
 				EMAIL_CONTACT_ADDRESS: v.pipe(v.string(), v.email()),
-				EMAIL_SERVICE_API_BASE_URL: v.optional(v.pipe(v.string(), v.url())),
 				EMAIL_SMTP_PASSWORD: v.optional(v.pipe(v.string(), v.nonEmpty())),
 				EMAIL_SMTP_PORT: v.pipe(
 					v.string(),

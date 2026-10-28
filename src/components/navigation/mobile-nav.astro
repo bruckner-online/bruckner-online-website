@@ -20,7 +20,7 @@ const { entries } = Astro.props;
 						{entry.label}
 					</NavLink>
 				) : (
-					<details class="group">
+					<details class="group" name={mobileNavId}>
 						<summary class="inline-flex cursor-pointer items-center gap-x-1.5">
 							{entry.label}
 							<Icon

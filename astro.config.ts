@@ -74,6 +74,21 @@ export default defineConfig({
 			destination: "/lexikon",
 			status: 307,
 		},
+		/** The navigation briefly linked here after a since-reverted page rename. */
+		"/werkverzeichnis/konkordanz": {
+			destination: "/werkverzeichnis/wab-konkordanz",
+			status: 301,
+		},
+		/** Former experimental embed of the external Kopisten app, superseded by native pages. */
+		"/kopisten-iframe": {
+			destination: "/forschung/kopisten",
+			status: 301,
+		},
+		/** Former placeholder, replaced by the native Kopisten pages. */
+		"/forschung/kopisten-platzhalter": {
+			destination: "/forschung/kopisten",
+			status: 301,
+		},
 	},
 	server: {
 		port: 3000,
