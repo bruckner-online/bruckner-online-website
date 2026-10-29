@@ -59,3 +59,13 @@ const { hero, links, quote } = page;
 		</PageSection>
 	</MainContent>
 </PageLayout>
+
+<script>
+	import { resolveLegacyPageId } from "@/lib/legacy-urls";
+
+	// The homepage is prerendered, so the middleware never sees links to WordPress pages of the previous site.
+	const location = resolveLegacyPageId(new URLSearchParams(window.location.search));
+	if (location != null) {
+		window.location.replace(location);
+	}
+</script>

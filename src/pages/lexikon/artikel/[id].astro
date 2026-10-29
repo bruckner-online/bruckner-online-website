@@ -6,6 +6,7 @@ import { lexicon } from "@/features/lexicon/client";
 import Citation from "@/features/lexicon/components/citation.astro";
 import LexiconUnavailable from "@/features/lexicon/components/lexicon-unavailable.astro";
 import LexiconLayout from "@/features/lexicon/layouts/lexicon-layout.astro";
+import { rewriteLegacyLinks } from "@/features/lexicon/legacy-links";
 import PageLayout from "@/layouts/page-layout.astro";
 import { reader } from "@/lib/content/reader";
 import { createI18n } from "@/lib/i18n";
@@ -35,7 +36,7 @@ if (Astro.cache.enabled && result.status === "ok") {
 	<LexiconLayout title={title}>
 		{result.status === "ok" ? (
 			<>
-				<div class="prose" set:html={result.value} />
+				<div class="prose" set:html={rewriteLegacyLinks(result.value)} />
 				<Citation id={id} />
 			</>
 		) : (
