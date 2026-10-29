@@ -19,7 +19,8 @@ class GenerationTests(unittest.TestCase):
         source.write_text(f'<TEI xmlns="{generate.TEI[1:-1]}"><idno type="Bruckner_Kopisten">id1</idno></TEI>')
         files = ['a.html', 'facs/id1.html', 'toc.html']
         files += [f'meta/{name}.html' for name in ('about', 'introduction', 'userguide',
-                  'methodology', 'authors_note', 'Tabelle_1', 'Tabelle_2', 'Tabelle_3', 'Tabelle_4')]
+                  'methodology', 'authors_note', 'Tabelle_1', 'Tabelle_2', 'Tabelle_3', 'Tabelle_4',
+                  'Tabelle_5')]
         for name in files:
             path = self.edition / name
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -27,7 +28,7 @@ class GenerationTests(unittest.TestCase):
         (self.edition / 'meta/edition_file_mappings.properties').write_text('a.xml=id1\n')
         self.entry = dict(id='id1', filename='a', title='A', copyist_name='A')
         self.index([self.entry])
-        for number in range(1, 5):
+        for number in range(1, 6):
             path = self.stage / f'src/data/meta/Tabelle_{number}.xml'
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text('<TEI/>')

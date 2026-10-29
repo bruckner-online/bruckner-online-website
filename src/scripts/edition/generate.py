@@ -54,7 +54,7 @@ def validate(stage, known_duplicates=None):
     required.update(f'facs/{identifier}.html' for identifier in ids)
     required.update(f'meta/{name}.html' for name in (
         'about', 'introduction', 'userguide', 'methodology', 'authors_note',
-        'Tabelle_1', 'Tabelle_2', 'Tabelle_3', 'Tabelle_4'))
+        'Tabelle_1', 'Tabelle_2', 'Tabelle_3', 'Tabelle_4', 'Tabelle_5'))
     actual = set(inventory(edition))
     assert actual == required, f'Output contract mismatch: missing={required-actual}, extra={actual-required}'
     for name in required:
@@ -64,7 +64,7 @@ def validate(stage, known_duplicates=None):
     assert dict(line.split('=', 1) for line in mappings) == {
         f'{name}.xml': identifier for name, identifier in expected.items()
     }, 'Invalid facsimile mappings'
-    for number in range(1, 5):
+    for number in range(1, 6):
         ElementTree.parse(stage / f'src/data/meta/Tabelle_{number}.xml')
 
 
