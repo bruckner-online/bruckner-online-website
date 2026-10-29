@@ -26,7 +26,15 @@ const entries = normalizeNavigation(navigation as Navigation, Astro.url.pathname
 	<div class="mx-auto flex w-full max-w-screen-lg items-center justify-between p-4 text-md font-medium">
 		<Nav class="flex-1" label={t("WebsiteHeader.navigation-primary")}>
 			<NavMenuLink class="-ml-4 shrink-0" href="/">
-				<Image alt="" class="block h-16 w-auto" fetchpriority="high" loading="eager" src={logo} />
+				<Image
+					alt=""
+					class="block h-16 w-auto"
+					densities={[1, 2]}
+					fetchpriority="high"
+					height={64}
+					loading="eager"
+					src={logo}
+				/>
 				<span class="sr-only">{home}</span>
 			</NavMenuLink>
 			<ul class="hidden flex-1 flex-wrap items-center justify-end gap-x-4 lg:flex" role="list">

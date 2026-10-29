@@ -24,6 +24,10 @@ const otherSlides = slides.slice(1);
 
 const id = generateUniqueId();
 
+/** Slides span the page section, which is `max-w-screen-lg` with `p-4`. */
+const widths = [480, 768, 1140];
+const sizes = "(min-width: 1024px) 992px, calc(100vw - 2rem)";
+
 const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? defaultLocale);
 ---
 
@@ -116,8 +120,11 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 							<Image
 								alt=""
 								class="size-full object-cover"
+								fetchpriority={index === 0 ? "high" : undefined}
 								loading={index === 0 ? "eager" : undefined}
+								sizes={sizes}
 								src={getImageImport(slide.image)}
+								widths={widths}
 							/>
 						</a>
 						<div
@@ -159,7 +166,9 @@ const { t } = await createI18n((Astro.currentLocale as Locale | undefined) ?? de
 					alt=""
 					class="aspect-[2.125] w-full object-cover"
 					loading="eager"
+					sizes={sizes}
 					src={getImageImport(featured.image)}
+					widths={widths}
 				/>
 				<div class="grid gap-y-2 p-6">
 					<h2 class="text-xl font-bold underline" id={`${id}-featured-title`}>

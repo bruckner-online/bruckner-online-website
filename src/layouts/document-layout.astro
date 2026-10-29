@@ -5,6 +5,7 @@ import "@fontsource-variable/open-sans/wght-italic.css";
 import "@/styles/index.css";
 
 import { isNonEmptyString } from "@acdh-oeaw/lib";
+import openSansUrl from "@fontsource-variable/open-sans/files/open-sans-latin-wght-normal.woff2?url";
 import type { WebSite, WithContext } from "schema-dts";
 
 import Analytics from "@/components/analytics.astro";
@@ -91,6 +92,8 @@ const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 		<meta name="description" content={description ?? metadata.description} />
 
 		{robots != null ? <meta name="robots" content={robots} /> : null}
+
+		<link rel="preload" href={openSansUrl} as="font" type="font/woff2" crossorigin />
 
 		<link rel="canonical" href={canonicalUrl} />
 		<link rel="manifest" href={manifestUrl} />
