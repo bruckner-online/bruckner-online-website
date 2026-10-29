@@ -157,6 +157,17 @@ const { class: className, label } = Astro.props;
 				},
 				{ signal },
 			);
+
+			/** Pages restored from the back/forward cache keep their state. */
+			window.addEventListener(
+				"pagehide",
+				() => {
+					if (current != null) {
+						closeMenu(current);
+					}
+				},
+				{ signal },
+			);
 		}
 
 		disconnectedCallback() {
