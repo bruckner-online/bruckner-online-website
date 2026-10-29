@@ -50,6 +50,53 @@ test("dropdowns open exclusively and close on outside interaction", async ({ pag
 	await expect(bruckner).toHaveAttribute("aria-expanded", "false");
 });
 
+test("menus are closed when returning via the back/forward cache", async ({
+	browser: defaultBrowser,
+}) => {
+	// The headless shell and Playwright's default arguments both disable the back/forward cache.
+	const browser = await defaultBrowser
+		.browserType()
+		.launch({ channel: "chromium", ignoreDefaultArgs: ["--disable-back-forward-cache"] });
+	const page = await browser.newPage({ baseURL: test.info().project.use.baseURL });
+	try {
+		await page.goto("/lexikon");
+		await page.evaluate(() => {
+			window.addEventListener("pageshow", (event) => {
+				document.documentElement.dataset.restored = String(event.persisted);
+			});
+		});
+		const header = page.locator("header");
+		const project = header.getByRole("button", { name: "Projekt", exact: true });
+		await project.click();
+		await header.getByRole("link", { name: "Mitarbeiter", exact: true }).click();
+		await page.waitForURL((url) => {
+			return url.pathname !== "/lexikon";
+		});
+		// Restoring from the back/forward cache does not fire a `load` event.
+		await page.goBack({ waitUntil: "commit" });
+		await expect(page.locator("html")).toHaveAttribute("data-restored", "true");
+		await expect(project).toHaveAttribute("aria-expanded", "false");
+		await expect(header.getByRole("link", { name: "Mitarbeiter", exact: true })).toBeHidden();
+
+		await page.setViewportSize({ width: 390, height: 844 });
+		const mobileNavToggle = page.getByRole("button", {
+			name: "Navigationsmenü öffnen",
+			exact: true,
+		});
+		await mobileNavToggle.click();
+		await page.locator("[data-mobile-nav] summary").filter({ hasText: "Projekt" }).click();
+		await page.locator("[data-mobile-nav]").getByRole("link", { name: "Mitarbeiter" }).click();
+		await page.waitForURL((url) => {
+			return url.pathname !== "/lexikon";
+		});
+		await page.goBack({ waitUntil: "commit" });
+		await expect(mobileNavToggle).toHaveAttribute("aria-expanded", "false");
+		await expect(page.locator("[data-mobile-nav]")).toBeHidden();
+	} finally {
+		await browser.close();
+	}
+});
+
 test("desktop and mobile share all main and Lexikon links, including grouped external links", async ({
 	page,
 }) => {

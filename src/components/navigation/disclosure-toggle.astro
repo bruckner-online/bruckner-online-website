@@ -45,6 +45,16 @@ const { controls, icon, label } = Astro.props;
 				},
 				{ signal: this.controller.signal },
 			);
+
+			/** Pages restored from the back/forward cache keep their state. */
+			window.addEventListener(
+				"pagehide",
+				() => {
+					panel.hidden = true;
+					trigger.setAttribute("aria-expanded", "false");
+				},
+				{ signal: this.controller.signal },
+			);
 		}
 
 		disconnectedCallback() {
