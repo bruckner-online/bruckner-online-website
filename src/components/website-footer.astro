@@ -11,15 +11,24 @@ const { t } = await createI18n(Astro.currentLocale as Locale | undefined);
 		<div class="relative grid grid-cols-[75px_1fr] items-start gap-x-8 gap-y-6 md:grid-cols-[75px_1fr_1fr_0.5fr]">
 			<div class="grid gap-y-4">
 				<a class="inline-flex py-1 focus-visible:outline-white" href="https://www.oeaw.ac.at/">
-					<img alt="" class="h-16 w-auto" loading="lazy" src="/assets/images/oeaw-logo-dark.png" />
+					<img
+						alt=""
+						class="h-16 w-auto"
+						height="95"
+						loading="lazy"
+						src="/assets/images/oeaw-logo-dark.png"
+						width="110"
+					/>
 					<span class="sr-only">Österreichische Akademie der Wissenschaften</span>
 				</a>
 				<a class="inline-flex py-1 focus-visible:outline-white" href="https://www.oeaw.ac.at/acdh/">
 					<img
 						alt=""
 						class="h-16 w-auto"
+						height="64"
 						loading="lazy"
 						src="/assets/images/acdh-ch-logo-dark.svg"
+						width="58"
 					/>
 					<span class="sr-only">Austrian Centre for Digital Humanities</span>
 				</a>
@@ -65,12 +74,26 @@ const { t } = await createI18n(Astro.currentLocale as Locale | undefined);
 				<div>PUB 240-G21 und ORD 77-VO</div>
 				<div class="grid gap-y-1.5">
 					<a class="inline-flex py-1 focus-visible:outline-white" href="https://www.fwf.ac.at/">
-						<img alt="" class="h-6 w-auto" loading="lazy" src="/assets/images/fwf-logo-dark.png" />
+						<img
+							alt=""
+							class="h-6 w-auto"
+							height="24"
+							loading="lazy"
+							src="/assets/images/fwf-logo-dark.png"
+							width="200"
+						/>
 						<span class="sr-only">Austrian Science Fund (FWF)</span>
 					</a>
 					<div>und</div>
 					<a class="inline-flex py-1 focus-visible:outline-white" href="https://www.onb.ac.at/">
-						<img alt="" class="size-auto" loading="lazy" src="/assets/images/oenb-logo-dark.png" />
+						<img
+							alt=""
+							class="size-auto"
+							height="65"
+							loading="lazy"
+							src="/assets/images/oenb-logo-dark.png"
+							width="204"
+						/>
 						<span class="sr-only">Österreichische Nationalbibliothek</span>
 					</a>
 				</div>
@@ -78,9 +101,11 @@ const { t } = await createI18n(Astro.currentLocale as Locale | undefined);
 			<div class="hidden md:grid">
 				<img
 					alt=""
-					class="absolute -top-28 right-4 h-60 rotate-[var(--footer-image-rotation)]"
+					class="absolute -top-28 right-4 h-60 w-auto rotate-[var(--footer-image-rotation)]"
+					height="330"
 					loading="lazy"
 					src="/assets/images/footer_img_kk.png"
+					width="215"
 				/>
 			</div>
 		</div>
