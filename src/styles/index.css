@@ -266,6 +266,11 @@ div[data-slug="drucke/erstdrucke-digitalisate"] table th:first-child {
 	@apply w-1 whitespace-nowrap pe-8;
 }
 
+/* Category lists carry their own numbering (e.g. "2a."), so hide the list markers. */
+div[data-slug="werkverzeichnis/werksystematik"] ul {
+	@apply list-none;
+}
+
 .tables-striped * {
 	@apply border-0;
 }

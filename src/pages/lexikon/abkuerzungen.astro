@@ -10,11 +10,13 @@ const { page, Content } = await readPage("lexikon/abkuerzungen", locale);
 
 const documentTitle = page.title;
 const { title } = page;
+const tablesStriped = page["tables-striped"];
+const classes = `prose ${tablesStriped ? "tables-striped" : ""}`;
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
 	<LexiconLayout title={title} currentPage="/lexikon/abkuerzungen">
-		<div class="prose">
+		<div class={classes}>
 			<Content />
 		</div>
 	</LexiconLayout>
