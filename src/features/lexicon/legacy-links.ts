@@ -1,13 +1,5 @@
-import { resolveLegacyUrl } from "../../lib/legacy-urls.ts";
+import { resolveLegacyPageId, resolveLegacyUrl } from "../../lib/legacy-urls.ts";
 import { type Category, pathnames } from "./client.ts";
-
-/** WordPress pages of the previous site linked from articles, resolved via archived snapshots. */
-const pages: Record<string, string> = {
-	"1317": pathnames.Sache,
-	"1319": pathnames.Werk,
-	"1913": "/anton-bruckner-2024",
-	"1928": "/forschung/chronologie-datenbank",
-};
 
 const origin = /^https?:\/\/(?:www\.)?bruckner-online\.at(?=[/?#]|$)/i;
 const link = /(<a\b[^>]*?\shref=")([^"]*)("[^>]*>)([^<]*)/gi;
@@ -19,18 +11,12 @@ function resolve(url: URL, text: string): string {
 		return location;
 	}
 
-	const pageId = url.searchParams.get("page_id");
-	if (url.pathname === "/" && pageId != null) {
+	if (url.pathname === "/" && url.searchParams.has("page_id")) {
 		// Category links of person and place articles have an empty `page_id`.
 		if (Object.hasOwn(pathnames, text)) {
 			return pathnames[text as Category];
 		}
-		// The article page took the article id as a separate parameter.
-		const id = url.searchParams.get("id");
-		if (pageId === "1433" && id) {
-			return `${pathnames.Artikel}${encodeURIComponent(id)}`;
-		}
-		const pathname = pages[pageId];
+		const pathname = resolveLegacyPageId(url.searchParams);
 		if (pathname != null) {
 			return pathname;
 		}

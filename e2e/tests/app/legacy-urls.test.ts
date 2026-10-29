@@ -18,6 +18,25 @@ test("URLs of the previous site redirect permanently to their current pages", as
 	}
 });
 
+test("links to WordPress pages of the previous site redirect to their current pages", async ({
+	page,
+}) => {
+	for (const [legacy, current] of [
+		["/?page_id=1913", "/anton-bruckner-2024"],
+		["/?page_id=1433&id=d1e5394", "/lexikon/artikel/d1e5394"],
+	]) {
+		await page.goto(legacy!);
+		await expect(page).toHaveURL((url) => {
+			return url.pathname + url.search === current;
+		});
+	}
+
+	await page.goto("/?page_id=9999");
+	await expect(page).toHaveURL((url) => {
+		return url.pathname === "/";
+	});
+});
+
 test("content links to current pages instead of URLs of the previous site", async ({ page }) => {
 	for (const path of [
 		"/drucke/alte-gesamtausgabe",
