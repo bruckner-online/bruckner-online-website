@@ -166,6 +166,25 @@ for (const path of ["gesamtbestand", "ausserhalb_wiens"]) {
 	});
 }
 
+test("copyists by WAB number are reachable from the navigation and link to copyists", async ({
+	page,
+}) => {
+	await page.goto("/forschung/kopisten/einleitung/");
+	const kopisten = page.getByRole("navigation", { name: "Kopisten", exact: true });
+	await kopisten.getByRole("button", { name: "Katalogzugänge", exact: true }).click();
+	await kopisten.getByRole("link", { name: "Kopisten nach WAB-Nummer", exact: true }).click();
+	await expect(
+		page.getByRole("heading", { name: "Tabelle 5 – Kopisten nach WAB-Nummer" }),
+	).toBeVisible();
+	await page.getByRole("searchbox", { name: "Suchen" }).fill("Erstlingsfeste");
+	const rows = page.locator("table tbody tr");
+	await expect(rows).toHaveCount(1);
+	await expect(rows.locator("td").first()).toHaveText("061");
+	await rows.getByTitle("schimatschek-franz").click();
+	await expect(page).toHaveURL(/\/forschung\/kopisten\/d1e33463\/?$/);
+	await expect(page.getByText("Schimatschek, Franz").first()).toBeVisible();
+});
+
 test("table-only pages retain working search without a map", async ({ page }) => {
 	await page.goto("/forschung/kopisten/primaerquellen/");
 	const search = page.getByRole("searchbox", { name: "Suchen" });
