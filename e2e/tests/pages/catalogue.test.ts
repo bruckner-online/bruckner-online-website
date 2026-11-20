@@ -1,7 +1,7 @@
 import { expect, test } from "~/e2e/lib/test";
 
 test("WAB direct link remains available when the iframe cannot load", async ({ page }) => {
-	await page.route("https://apps-mufo.oeaw.ac.at/**", (route) => {
+	await page.route("https://dwab.acdh-dev.oeaw.ac.at/**", (route) => {
 		return route.abort();
 	});
 	await page.goto("/werkverzeichnis/wab/?WAB=001");
@@ -9,12 +9,12 @@ test("WAB direct link remains available when the iframe cannot load", async ({ p
 	await expect(link).toBeVisible();
 	await expect(link).toHaveAttribute(
 		"href",
-		"https://apps-mufo.oeaw.ac.at/dcm/wab/document.xq?doc=001.xml",
+		"https://dwab.acdh-dev.oeaw.ac.at/wab-001.html",
 	);
 	const iframe = page.locator('iframe[title="Werkverzeichnis Anton Bruckner"]');
 	await expect(iframe).toHaveAttribute(
 		"src",
-		"https://apps-mufo.oeaw.ac.at/dcm/wab/document.xq?doc=001.xml",
+		"https://dwab.acdh-dev.oeaw.ac.at/wab-001.html",
 	);
 	// The embed must reserve space; an undefined height utility once collapsed it to 0px.
 	expect((await iframe.boundingBox())?.height).toBeGreaterThan(300);

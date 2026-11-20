@@ -20,8 +20,8 @@ const { title, image } = page;
 const wabId = Astro.url.searchParams.get("WAB");
 
 const wabEndpoint = wabId
-	? `https://apps-mufo.oeaw.ac.at/dcm/wab/document.xq?doc=${encodeURIComponent(wabId)}.xml`
-	: "https://apps-mufo.oeaw.ac.at/dcm/wab/navigation.xq";
+	? `https://dwab.acdh-dev.oeaw.ac.at/${encodeURIComponent(wabId)}.html`
+	: "https://dwab.acdh-dev.oeaw.ac.at/";
 ---
 
 <PageLayout locale={locale} title={documentTitle}>
