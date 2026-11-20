@@ -4,13 +4,29 @@ import { test } from "node:test";
 import mapping from "../src/features/digitised-sources/data/siglum_wab_mapping.json";
 import { selectSource } from "../src/features/digitised-sources/source-viewing/index.ts";
 
-void test("manuscripts default to the ordered catalog and select its first manifest", () => {
+void test("manuscripts default to the ordered catalog without a pre-opened window", () => {
 	const view = selectSource({ source: "hss" });
 	assert.equal(view.catalog.length, mapping.length);
-	assert.equal(view.windows[0]?.loadedManifest, view.catalog[0]?.manifestId);
-	assert.equal(view.windows[0]!.viewType, "ThumbnailsView");
-	assert.equal(view.windows[0]!.sidePanel, false);
+	assert.equal(
+		view.catalog[0]?.manifestId,
+		`https://iiifpresentation.acdh.oeaw.ac.at/bruckner/${mapping[0]!.Signatur}/manifest`,
+	);
+	assert.equal(view.workspace.isWorkspaceAddVisible, true);
+	// Picking a catalog entry adds a window; a pre-opened one would be duplicated.
+	assert.deepEqual(view.windows, []);
 	assert.deepEqual(selectSource({ source: "hss", siglum: "", wabId: "" }), view);
+});
+
+void test("the resource list opens only when there is more than one manuscript to choose", () => {
+	assert.equal(selectSource({ source: "hss" }).workspace.isWorkspaceAddVisible, true);
+	for (const selection of [
+		{ source: "hss", siglum: "A-WnMus.Hs.38849" },
+		{ source: "ed", wabId: "WAB001" },
+		{ source: "aga", aga: "AGA15" },
+		{ source: "ed" },
+	] as const) {
+		assert.equal(selectSource(selection).workspace.isWorkspaceAddVisible, false);
+	}
 });
 
 void test("WAB filtering uses complete tokens and preserves mapping order", () => {
@@ -30,13 +46,16 @@ void test("WAB filtering uses complete tokens and preserves mapping order", () =
 	assert.deepEqual(selectSource({ source: "hss", wabId: "16" }).windows, []);
 });
 
-void test("explicit siglum overrides WAB selection", () => {
+void test("explicit siglum overrides WAB selection and opens its window directly", () => {
 	const view = selectSource({ source: "hss", siglum: "A-WnMus.Hs.38849", wabId: "missing" });
 	assert.equal(view.catalog.length, 1);
+	assert.equal(view.workspace.isWorkspaceAddVisible, false);
 	assert.equal(
 		view.windows[0]?.loadedManifest,
 		"https://iiifpresentation.acdh.oeaw.ac.at/bruckner/A-WnMus.Hs.38849/manifest",
 	);
+	assert.equal(view.windows[0].viewType, "ThumbnailsView");
+	assert.equal(view.windows[0].sidePanel, false);
 });
 
 void test("first editions and AGA share manifest construction with their own display defaults", () => {
@@ -67,7 +86,11 @@ void test("empty, unmapped, and invalid selections never construct a manifest", 
 		{ source: "aga" },
 		{ source: "hss", wabId: "missing" },
 	] as const) {
-		assert.deepEqual(selectSource(selection), { catalog: [], windows: [] });
+		assert.deepEqual(selectSource(selection), {
+			catalog: [],
+			workspace: { isWorkspaceAddVisible: false },
+			windows: [],
+		});
 	}
 	for (const identifier of [
 		"../secret",
@@ -85,7 +108,11 @@ void test("empty, unmapped, and invalid selections never construct a manifest", 
 			{ source: "ed", wabId: identifier },
 			{ source: "aga", aga: identifier },
 		] as const) {
-			assert.deepEqual(selectSource(selection), { catalog: [], windows: [] });
+			assert.deepEqual(selectSource(selection), {
+				catalog: [],
+				workspace: { isWorkspaceAddVisible: false },
+				windows: [],
+			});
 		}
 	}
 });
