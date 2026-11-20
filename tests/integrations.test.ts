@@ -50,6 +50,18 @@ void test("IIIF adapter reports unavailable responses and can recover on retry",
 	}
 	assert.equal(starts, 2);
 	assert.equal(await openViewer({ ...options, manifest: undefined }), false);
+	// A resource list has no single manifest to check, so Mirador starts without fetching.
+	assert.equal(
+		await openViewer({
+			...options,
+			manifest: false,
+			fetch: () => {
+				return Promise.reject(new Error("must not fetch"));
+			},
+		}),
+		true,
+	);
+	assert.equal(starts, 3);
 	assert.equal(
 		await openViewer({
 			...options,

@@ -59,17 +59,13 @@ export function selectSource(selection: SourceSelection) {
 	const showCatalog = catalog.length > 1;
 	return {
 		catalog,
+		// Window defaults apply to the pre-opened window and to windows added from the list alike.
+		window: {
+			defaultView: source === "hss" ? ("gallery" as const) : ("single" as const),
+			sideBarOpen: source === "aga",
+		},
 		workspace: { isWorkspaceAddVisible: showCatalog },
-		windows:
-			manifests[0] && !showCatalog
-				? [
-						{
-							loadedManifest: manifests[0],
-							sidePanel: source === "aga",
-							viewType: source === "hss" ? ("ThumbnailsView" as const) : ("ImageView" as const),
-						},
-					]
-				: [],
+		windows: manifests[0] && !showCatalog ? [{ loadedManifest: manifests[0] }] : [],
 	};
 }
 

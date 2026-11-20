@@ -1,11 +1,19 @@
-/** Check the initial manifest before starting Mirador. Subsequent image failures belong to Mirador. */
+/**
+ * Check the initial manifest before starting Mirador. Subsequent image failures belong to Mirador.
+ * With `manifest: false` there is no single initial manifest (the user picks one from a list), so
+ * Mirador starts without a check and reports failing entries itself.
+ */
 export async function openViewer(options: {
-	manifest?: string;
+	manifest?: string | false;
 	start: () => Promise<void>;
 	fetch?: typeof fetch;
 	logger?: Pick<Console, "error">;
 }): Promise<boolean> {
 	try {
+		if (options.manifest === false) {
+			await options.start();
+			return true;
+		}
 		if (!options.manifest) {
 			throw new Error("No IIIF manifest selected");
 		}

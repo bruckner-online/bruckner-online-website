@@ -44,6 +44,8 @@ void test("WAB filtering uses complete tokens and preserves mapping order", () =
 		}),
 	);
 	assert.deepEqual(selectSource({ source: "hss", wabId: "16" }).windows, []);
+	// Windows added from the list get the manuscript defaults, as a directly opened siglum does.
+	assert.deepEqual(view.window, { defaultView: "gallery", sideBarOpen: false });
 });
 
 void test("explicit siglum overrides WAB selection and opens its window directly", () => {
@@ -54,8 +56,7 @@ void test("explicit siglum overrides WAB selection and opens its window directly
 		view.windows[0]?.loadedManifest,
 		"https://iiifpresentation.acdh.oeaw.ac.at/bruckner/A-WnMus.Hs.38849/manifest",
 	);
-	assert.equal(view.windows[0].viewType, "ThumbnailsView");
-	assert.equal(view.windows[0].sidePanel, false);
+	assert.deepEqual(view.window, { defaultView: "gallery", sideBarOpen: false });
 });
 
 void test("first editions and AGA share manifest construction with their own display defaults", () => {
@@ -67,8 +68,10 @@ void test("first editions and AGA share manifest construction with their own dis
 	] as const) {
 		const view = selectSource(selection);
 		assert.deepEqual(view.catalog, []);
-		assert.equal(view.windows[0]!.viewType, "ImageView");
-		assert.equal(view.windows[0]!.sidePanel, selection.source === "aga");
+		assert.deepEqual(view.window, {
+			defaultView: "single",
+			sideBarOpen: selection.source === "aga",
+		});
 		assert.equal(
 			view.windows[0]?.loadedManifest,
 			`https://iiifpresentation.acdh.oeaw.ac.at/bruckner/drucke/${selection.source === "ed" ? selection.wabId : selection.aga}/manifest`,
@@ -86,7 +89,8 @@ void test("empty, unmapped, and invalid selections never construct a manifest", 
 		{ source: "aga" },
 		{ source: "hss", wabId: "missing" },
 	] as const) {
-		assert.deepEqual(selectSource(selection), {
+		const { window: _window, ...view } = selectSource(selection);
+		assert.deepEqual(view, {
 			catalog: [],
 			workspace: { isWorkspaceAddVisible: false },
 			windows: [],
@@ -108,7 +112,8 @@ void test("empty, unmapped, and invalid selections never construct a manifest", 
 			{ source: "ed", wabId: identifier },
 			{ source: "aga", aga: identifier },
 		] as const) {
-			assert.deepEqual(selectSource(selection), {
+			const { window: _window, ...view } = selectSource(selection);
+			assert.deepEqual(view, {
 				catalog: [],
 				workspace: { isWorkspaceAddVisible: false },
 				windows: [],
