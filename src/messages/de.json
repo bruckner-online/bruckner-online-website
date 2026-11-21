@@ -78,9 +78,9 @@
 			"secondary-sources": "Kopisten der Sekundärquellen",
 			"not-vienna": "Kopisten der Werke Bruckners außerhalb Wiens",
 			"duration": "Zeitraum der Tätigkeit der Kopisten zu Bruckners Lebzeiten",
+			"wab": "Kopisten nach WAB-Nummer",
 			"toc": "Gesamtbestand aller Kopisten",
 			"catalogue": "Katalogzugänge",
-			"search": "Suche",
 			"compare": "Handschriftenvergleich"
 		}
 	},

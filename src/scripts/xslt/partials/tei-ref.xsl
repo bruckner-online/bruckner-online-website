@@ -21,6 +21,7 @@
 					<xsl:map-entry key="'Tabelle_2.xml'" select="'sekundaerquellen'"/>
           <xsl:map-entry key="'Tabelle_3.xml'" select="'ausserhalb_wiens'"/>
 					<xsl:map-entry key="'Tabelle_4.xml'" select="'zu_bruckners_lebzeiten'"/>
+					<xsl:map-entry key="'Tabelle_5.xml'" select="'nach_wab_nummer'"/>
       	</xsl:map>
 		</xsl:variable>
     <xsl:template match="tei:ref">

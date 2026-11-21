@@ -1,0 +1,23 @@
+---
+import { readFileSync } from "node:fs";
+
+import { defaultLocale, type Locale } from "@/config/i18n.config";
+import { DataTable } from "@/features/kopisten/components/data-table";
+import KopistenLayout from "@/features/kopisten/layouts/kopisten-layout.astro";
+import PageLayout from "@/features/kopisten/layouts/kopisten-page-layout.astro";
+import { createI18n } from "@/lib/i18n";
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { t } = await createI18n(Astro.currentLocale as Locale | undefined);
+const labels = t("KopistenTable.labels");
+
+const html = readFileSync(`src/edition/meta/Tabelle_5.html`, "utf-8");
+---
+
+<PageLayout locale={locale} title={""}>
+	<KopistenLayout title={""}>
+		<DataTable labels={labels} client:only="solid-js">
+			<div set:html={html} />
+		</DataTable>
+	</KopistenLayout>
+</PageLayout>
