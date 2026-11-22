@@ -69,7 +69,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Build bruckner-kopisten site
         uses: ./.github/actions/bruckner-kopisten
@@ -78,17 +78,17 @@ jobs:
         run: mkdir -p node_modules/.astro
 
       - name: Cache astro build artefacts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules/.astro/
-          key: ${{ runner.os }}-astro-24.x-${{ github.run_id }}
-          restore-keys: ${{ runner.os }}-astro-24.x
+          key: ${{ runner.os }}-astro-26.x-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-astro-26.x
 
       - name: Set up docker buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Log in to the container registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: "${{ needs.env.outputs.registry }}"
           username: "${{ github.actor }}"
@@ -96,7 +96,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: "${{ needs.env.outputs.registry }}/${{ needs.env.outputs.image }}"
           tags: |
@@ -104,7 +104,7 @@ jobs:
             type=ref,event=branch
 
       - name: Build and push docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true

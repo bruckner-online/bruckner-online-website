@@ -1,1 +1,1 @@
-export { cx as cn, compose, type VariantProps, cva as variants } from "cva";
+export { cx as cn, type VariantProps, cva as variants } from "cva";

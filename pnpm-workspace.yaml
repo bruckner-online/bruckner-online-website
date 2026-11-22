@@ -1,15 +1,18 @@
 allowBuilds:
   esbuild: true
-  sharp: true
   lefthook: true
+  sharp: true
   typesense-instantsearch-adapter: true
-  unrs-resolver: true
+
+autoDedupe: true
 
 engineStrict: true
 
-overrides:
-  jiti: ^2
+lockfile:
+  includeResolutionSettings: true
+
+minimumReleaseAge: 720
+
+saveTypes: true
 
 shellEmulator: true
-
-strictDepBuilds: true

@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        node-version: [24.x]
+        node-version: [26.x]
         os: [ubuntu-24.04]
 
     env:
@@ -39,22 +39,20 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Build bruckner-kopisten site
         uses: ./.github/actions/bruckner-kopisten
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Use node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: Install pnpm and node.js ${{ matrix.node-version }}
+        uses: pnpm/setup@v3
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          runtime: node@${{ matrix.node-version }}
+          cache: true
+          install: false
 
       - name: Cache astro build artefacts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules/.astro/
           key: ${{ runner.os }}-astro-${{ matrix.node-version }}-${{ github.run_id }}
@@ -84,7 +82,7 @@ jobs:
       - name: Run e2e tests
         run: pnpm run test:e2e
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-report

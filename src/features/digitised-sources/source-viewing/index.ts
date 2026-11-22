@@ -1,4 +1,4 @@
-import mapping from "../data/siglum_wab_mapping.json";
+import mapping from "../data/siglum_wab_mapping.json" with { type: "json" };
 
 const knownSigla = new Set(
 	mapping.map((entry) => {

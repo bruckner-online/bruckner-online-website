@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import mapping from "../src/features/digitised-sources/data/siglum_wab_mapping.json";
+import mapping from "../src/features/digitised-sources/data/siglum_wab_mapping.json" with { type: "json" };
 import { selectSource } from "../src/features/digitised-sources/source-viewing/index.ts";
 
 void test("manuscripts default to the ordered catalog without a pre-opened window", () => {

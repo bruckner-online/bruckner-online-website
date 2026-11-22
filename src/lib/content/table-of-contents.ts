@@ -37,7 +37,7 @@ export const withTableOfContents = function withTableOfContents() {
 				};
 
 				if (element.properties.id != null) {
-					heading.id = element.properties.id as string;
+					heading.id = element.properties.id;
 				}
 
 				headings.push(heading);

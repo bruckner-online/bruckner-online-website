@@ -11,6 +11,8 @@ import { loadEnv } from "vite";
 
 const env = loadEnv(import.meta.env.MODE, process.cwd(), "");
 
+const siteUrl = env.PUBLIC_APP_BASE_URL != null ? new URL(env.PUBLIC_APP_BASE_URL) : null;
+
 export default defineConfig({
 	// Only routes that explicitly set cache options are stored. Each server
 	// process keeps its own bounded cache, cleared on restart/deployment.
@@ -89,6 +91,23 @@ export default defineConfig({
 			destination: "/forschung/kopisten",
 			status: 301,
 		},
+	},
+	/**
+	 * Astro only trusts the `Host` and `X-Forwarded-*` headers for allowed domains, and otherwise
+	 * builds request urls with `localhost`. Keystatic needs the public origin, e.g. for the GitHub
+	 * OAuth callback url.
+	 */
+	security: {
+		allowedDomains:
+			siteUrl != null
+				? [
+						{
+							protocol: siteUrl.protocol.slice(0, -1),
+							hostname: siteUrl.hostname,
+							port: siteUrl.port || (siteUrl.protocol === "https:" ? "443" : "80"),
+						},
+					]
+				: [],
 	},
 	server: {
 		port: 3000,

@@ -1,4 +1,3 @@
-import { err, isErr, ok } from "@acdh-oeaw/lib";
 import { createEnv, ValidationError } from "@acdh-oeaw/validate-env/astro";
 import * as v from "valibot";
 
@@ -9,24 +8,34 @@ const environment =
 			? Object.assign({}, process.env, import.meta.env)
 			: import.meta.env;
 
-const result = createEnv({
+/**
+ * Throws a `ValidationError` without stack trace, so the error message stays readable in logs.
+ */
+function parse<TSchema extends v.GenericSchema>(
+	schema: TSchema,
+	environment: Record<string, unknown>,
+): v.InferOutput<TSchema> {
+	const result = v.safeParse(schema, environment);
+
+	if (!result.success) {
+		const error = new ValidationError(
+			`Invalid or missing environment variables.\n${v.summarize(result.issues)}`,
+		);
+		delete error.stack;
+		throw error;
+	}
+
+	return result.output;
+}
+
+export const env = createEnv({
 	schemas: {
 		system(environment) {
 			const schema = v.object({
 				NODE_ENV: v.optional(v.picklist(["development", "production", "test"]), "production"),
 			});
 
-			const result = v.safeParse(schema, environment);
-
-			if (!result.success) {
-				return err(
-					new ValidationError(
-						`Invalid or missing environment variables.\n${v.summarize(result.issues)}`,
-					),
-				);
-			}
-
-			return ok(result.output);
+			return parse(schema, environment);
 		},
 		private(environment) {
 			const schema = v.object({
@@ -47,17 +56,7 @@ const result = createEnv({
 				KEYSTATIC_SECRET: v.optional(v.pipe(v.string(), v.nonEmpty())),
 			});
 
-			const result = v.safeParse(schema, environment);
-
-			if (!result.success) {
-				return err(
-					new ValidationError(
-						`Invalid or missing environment variables.\n${v.summarize(result.issues)}`,
-					),
-				);
-			}
-
-			return ok(result.output);
+			return parse(schema, environment);
 		},
 		public(environment) {
 			const schema = v.object({
@@ -94,17 +93,7 @@ const result = createEnv({
 				PUBLIC_TYPESENSE_SEARCH_API_KEY: v.pipe(v.string(), v.nonEmpty()),
 			});
 
-			const result = v.safeParse(schema, environment);
-
-			if (!result.success) {
-				return err(
-					new ValidationError(
-						`Invalid or missing environment variables.\n${v.summarize(result.issues)}`,
-					),
-				);
-			}
-
-			return ok(result.output);
+			return parse(schema, environment);
 		},
 	},
 	environment,
@@ -113,10 +102,3 @@ const result = createEnv({
 		environment.ENV_VALIDATION,
 	),
 });
-
-if (isErr(result)) {
-	delete result.error.stack;
-	throw result.error;
-}
-
-export const env = result.value;
