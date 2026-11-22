@@ -1,4 +1,4 @@
-FROM ghcr.io/acdh-oeaw/devcontainer-frontend:24
+FROM ghcr.io/acdh-oeaw/devcontainer-frontend:26
 
 RUN \
   echo "🔧 Installing java and ant..." && \

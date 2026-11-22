@@ -1,4 +1,4 @@
-import type { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
+import type { CollectionCreateSchema } from "typesense";
 
 export const collectionSchema: CollectionCreateSchema = {
 	name: process.env.PUBLIC_TYPESENSE_COLLECTION_NAME!,

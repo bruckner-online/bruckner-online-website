@@ -1,12 +1,15 @@
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 import { defineConfig, devices } from "@playwright/test";
-import { config as dotenv } from "dotenv";
-import { expand } from "dotenv-expand";
 import isCI from "is-in-ci";
 
+/** Earlier files take precedence, and variables already set in the environment are not overridden. */
 for (const envFilePath of [".env.test.local", ".env.local", ".env.test", ".env"]) {
-	expand(dotenv({ path: join(process.cwd(), envFilePath) }));
+	const filePath = join(process.cwd(), envFilePath);
+	if (existsSync(filePath)) {
+		process.loadEnvFile(filePath);
+	}
 }
 
 const port = Number(process.env.PLAYWRIGHT_PORT ?? 3000);

@@ -5,7 +5,7 @@ import { log } from "@acdh-oeaw/lib";
 import { Client, Errors } from "typesense";
 import * as v from "valibot";
 
-import { collectionSchema } from "@/features/bibliography/typesense-schema";
+import { collectionSchema } from "../typesense-schema.ts";
 
 async function main(): Promise<void> {
 	const nonEmptyString = v.pipe(v.string(), v.trim(), v.nonEmpty());

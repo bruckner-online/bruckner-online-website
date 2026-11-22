@@ -123,16 +123,7 @@ const indexName = String(import.meta.env.PUBLIC_TYPESENSE_COLLECTION_NAME);
 
 	import { withSearchAvailability } from "../search-client";
 
-	// CommonJS interop can wrap the adapter constructor in a default export.
-	const Adapter =
-		typeof TypesenseInstantSearchAdapter === "function"
-			? TypesenseInstantSearchAdapter
-			: (
-					TypesenseInstantSearchAdapter as unknown as {
-						default: typeof TypesenseInstantSearchAdapter;
-					}
-				).default;
-	const typesenseInstantsearchAdapter = new Adapter({
+	const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
 		server: {
 			connectionTimeoutSeconds: 5,
 			numRetries: 1,

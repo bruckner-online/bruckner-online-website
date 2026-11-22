@@ -77,7 +77,7 @@ Its generated files retain their existing locations in `src/edition/`, `src/data
 
 ## Getting started
 
-Requirements: Node.js 24, pnpm (the version specified in `package.json`), and Docker for generating
+Requirements: Node.js 26, pnpm (the version specified in `package.json`), and Docker for generating
 Kopisten edition data.
 
 ```sh

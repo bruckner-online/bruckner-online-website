@@ -176,7 +176,7 @@ test("removing a player stops its recording", async ({ page }) => {
 	const media = await player.locator("audio").elementHandle();
 	await expect
 		.poll(() => {
-			return media!.evaluate((node) => {
+			return media.evaluate((node) => {
 				return (node as HTMLAudioElement).paused;
 			});
 		})
@@ -186,7 +186,7 @@ test("removing a player stops its recording", async ({ page }) => {
 	});
 	await expect
 		.poll(() => {
-			return media!.evaluate((node) => {
+			return media.evaluate((node) => {
 				return (node as HTMLAudioElement).paused;
 			});
 		})

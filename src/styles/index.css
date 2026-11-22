@@ -98,10 +98,10 @@
 		*,
 		::before,
 		::after {
+			scroll-behavior: auto !important;
 			transition-duration: 0.01ms !important;
 			animation-duration: 0.01ms !important;
 			animation-iteration-count: 1 !important;
-			scroll-behavior: auto !important;
 		}
 	}
 
@@ -119,15 +119,15 @@
 
 	:root {
 		overflow: hidden;
+		block-size: 100%;
 		background-color: var(--color-white);
 		color: var(--color-neutral-950);
 		font-size: 1rem;
 		font-family: var(--font-body);
+		font-synthesis: none;
 		line-height: 1.5;
 		overflow-wrap: break-word;
 		tab-size: 4;
-		block-size: 100%;
-		font-synthesis: none;
 		text-rendering: optimizeLegibility;
 		text-size-adjust: none;
 		-webkit-tap-highlight-color: transparent;
@@ -174,8 +174,8 @@
 	}
 
 	textarea {
-		field-sizing: content;
 		min-block-size: 3lh;
+		field-sizing: content;
 	}
 
 	[id] {

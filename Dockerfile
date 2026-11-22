@@ -4,9 +4,24 @@
 # @see https://sharp.pixelplumbing.com/install#linux-memory-allocator
 
 # base
-FROM node:24-alpine AS base
+FROM node:26-alpine AS base
 
-RUN corepack enable
+# node.js >= 25 no longer ships corepack, so install the standalone pnpm binary
+# matching the `packageManager` version from `package.json`.
+ARG TARGETARCH
+COPY package.json /tmp/package.json
+RUN PNPM_VERSION="$(node -p 'require("/tmp/package.json").packageManager.split("@")[1].split("+")[0]')" \
+	&& case "${TARGETARCH:-amd64}" in \
+		amd64) PNPM_ARCH=x64 ;; \
+		arm64) PNPM_ARCH=arm64 ;; \
+		*) echo "Unsupported architecture: ${TARGETARCH}" >&2 && exit 1 ;; \
+	esac \
+	&& mkdir -p /usr/local/lib/pnpm \
+	&& wget -qO- "https://github.com/pnpm/pnpm/releases/download/v${PNPM_VERSION}/pnpm-linux-${PNPM_ARCH}-musl.tar.gz" \
+		| tar -xz -C /usr/local/lib/pnpm \
+	&& ln -s /usr/local/lib/pnpm/pnpm /usr/local/bin/pnpm \
+	&& rm /tmp/package.json \
+	&& pnpm --version
 
 RUN mkdir /app && chown -R node:node /app
 WORKDIR /app
@@ -19,7 +34,7 @@ RUN pnpm fetch --prod
 RUN pnpm install --frozen-lockfile --ignore-scripts --offline --prod
 
 # build
-FROM base as build
+FROM base AS build
 
 # Dependency lifecycle scripts must skip Git hooks in this Git-free build stage.
 ENV CI=true
@@ -65,7 +80,7 @@ RUN --mount=type=secret,id=KEYSTATIC_GITHUB_CLIENT_ID,uid=1000 \
 		pnpm run build
 
 # serve
-FROM node:24-alpine AS serve
+FROM node:26-alpine AS serve
 
 RUN mkdir /app && chown -R node:node /app
 WORKDIR /app
