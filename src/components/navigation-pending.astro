@@ -48,7 +48,12 @@
 		if (url.origin !== location.origin) {
 			return;
 		}
-		if (url.hash !== "" && url.pathname === location.pathname && url.search === location.search) {
+		// Fragment links do not load a page. A bare `href="#"` has an empty `url.hash`.
+		if (
+			link.href.includes("#") &&
+			url.pathname === location.pathname &&
+			url.search === location.search
+		) {
 			return;
 		}
 		start(event, link);
