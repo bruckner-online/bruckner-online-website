@@ -19,7 +19,14 @@ import { extname, join } from "node:path";
 import { parseArgs } from "node:util";
 
 import { log } from "@acdh-oeaw/lib";
-import { Client, S3Error } from "minio";
+import {
+	CreateBucketCommand,
+	HeadBucketCommand,
+	HeadObjectCommand,
+	NotFound,
+	PutObjectCommand,
+	S3Client,
+} from "@aws-sdk/client-s3";
 import sharp from "sharp";
 
 import { contentTypes, imageExtensions, s3Config } from "./config.ts";
@@ -60,14 +67,35 @@ if (unnormalized.length > 0) {
 	process.exit(1);
 }
 
-const { bucketName, ...connection } = s3Config();
-const client = new Client(connection);
+const { accessKeyId, bucketName, endpoint, secretAccessKey } = s3Config();
+const client = new S3Client({
+	credentials: { accessKeyId, secretAccessKey },
+	endpoint,
+	// S3-compatible servers (RustFS, Ceph) use path-style requests and ignore the region.
+	forcePathStyle: true,
+	region: "us-east-1",
+	// Default checksums of newer SDK versions are not supported by all S3-compatible servers.
+	requestChecksumCalculation: "WHEN_REQUIRED",
+	responseChecksumValidation: "WHEN_REQUIRED",
+});
 
-if (!(await client.bucketExists(bucketName))) {
+/** Returns `null` for a missing object or bucket (`HEAD` responses carry no error code). */
+async function head<T>(request: Promise<T>): Promise<T | null> {
+	try {
+		return await request;
+	} catch (error) {
+		if (error instanceof NotFound) {
+			return null;
+		}
+		throw error;
+	}
+}
+
+if ((await head(client.send(new HeadBucketCommand({ Bucket: bucketName })))) == null) {
 	if (dryRun) {
 		log.warn(`Bucket ${bucketName} does not exist.`);
 	} else {
-		await client.makeBucket(bucketName);
+		await client.send(new CreateBucketCommand({ Bucket: bucketName }));
 		log.info(`Created bucket ${bucketName}`);
 	}
 }
@@ -78,15 +106,8 @@ function version(hash: string): string {
 }
 
 async function storedVersion(key: string): Promise<string | null> {
-	try {
-		const { metaData } = await client.statObject(bucketName, key);
-		return (metaData["source-version"] as string | undefined) ?? null;
-	} catch (error) {
-		if (error instanceof S3Error && error.code === "NotFound") {
-			return null;
-		}
-		throw error;
-	}
+	const object = await head(client.send(new HeadObjectCommand({ Bucket: bucketName, Key: key })));
+	return object?.Metadata?.["source-version"] ?? null;
 }
 
 let uploaded = 0;
@@ -94,7 +115,7 @@ let skipped = 0;
 let resized = 0;
 
 log.info(
-	`${dryRun ? "Checking" : "Uploading"} ${String(keys.length)} images to ${bucketName} at ${connection.endPoint}`,
+	`${dryRun ? "Checking" : "Uploading"} ${String(keys.length)} images to ${bucketName} at ${endpoint}`,
 );
 
 for (const key of keys) {
@@ -125,11 +146,16 @@ for (const key of keys) {
 	}
 
 	if (!dryRun) {
-		await client.putObject(bucketName, key, body, body.length, {
-			"Content-Type":
-				contentTypes[extname(key).slice(1).toLowerCase()] ?? "application/octet-stream",
-			"source-version": version(hash),
-		});
+		await client.send(
+			new PutObjectCommand({
+				Bucket: bucketName,
+				Key: key,
+				Body: body,
+				ContentType:
+					contentTypes[extname(key).slice(1).toLowerCase()] ?? "application/octet-stream",
+				Metadata: { "source-version": version(hash) },
+			}),
+		);
 	}
 	uploaded++;
 }

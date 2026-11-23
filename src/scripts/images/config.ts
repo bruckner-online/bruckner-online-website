@@ -32,12 +32,10 @@ export function s3Config() {
 		}),
 	);
 	return {
-		accessKey: env.S3_ACCESS_KEY,
+		accessKeyId: env.S3_ACCESS_KEY,
 		bucketName: env.S3_BUCKET_NAME,
-		endPoint: env.S3_HOST,
-		port: env.S3_PORT,
-		secretKey: env.S3_SECRET_KEY,
-		useSSL: env.S3_PROTOCOL === "https",
+		endpoint: `${env.S3_PROTOCOL}://${env.S3_HOST}:${String(env.S3_PORT)}`,
+		secretAccessKey: env.S3_SECRET_KEY,
 	};
 }
 

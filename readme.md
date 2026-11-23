@@ -149,11 +149,12 @@ to browsers that accept it. Article pages rewrite the image links to signed imgp
 paths.
 
 `compose.yaml` runs RustFS (S3 API on port 9000, web UI on 9001) and imgproxy (port 8080) locally,
-configured like the shared instance, and uploads `tests/fixtures/images`. The local values in
-`.env.local.example` match these services.
+configured like the shared instance. The local values in `.env.local.example` match these services.
+Uploading the smoke test image also creates the bucket:
 
 ```sh
 docker compose up -d --wait
+pnpm images:upload tests/fixtures/images
 pnpm test:smoke:images
 ```
 

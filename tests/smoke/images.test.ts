@@ -1,9 +1,13 @@
 /**
  * Smoke tests for Lexikon images against running object storage and imgproxy.
  *
- * Start the local services first (`docker compose up -d --wait`), which upload the fixture in
- * `tests/fixtures/images`. Reads IMGPROXY_BASE_URL, IMGPROXY_KEY, IMGPROXY_SALT, and S3_BUCKET_NAME
- * from the environment or `.env.local`; for another instance, upload the fixture to its bucket.
+ * Start the local services and upload the fixture first:
+ *
+ *   docker compose up -d --wait
+ *   pnpm images:upload tests/fixtures/images
+ *
+ * Reads IMGPROXY_BASE_URL, IMGPROXY_KEY, IMGPROXY_SALT, and S3_BUCKET_NAME from the environment or
+ * `.env.local`. For another instance, upload the fixture to its bucket the same way.
  */
 import assert from "node:assert/strict";
 import { before, test } from "node:test";
@@ -39,6 +43,13 @@ before(async () => {
 		);
 	});
 	assert.equal(response.status, 200, "imgproxy health check failed");
+
+	const { status } = (await load(imgproxyUrl(fixture.key, { width: 320 }))).response;
+	assert.notEqual(
+		status,
+		404,
+		`Fixture not found in bucket ${config.bucketName}. Run \`pnpm images:upload tests/fixtures/images\`.`,
+	);
 });
 
 void test("article images load at every srcset width, never enlarged", async () => {

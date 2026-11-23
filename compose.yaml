@@ -1,13 +1,13 @@
 # Local object storage and image processing for Lexikon images.
 #
 #   docker compose up -d --wait
-#   pnpm images:upload ~/path/to/ABLO        # optional: upload the full image set
+#   pnpm images:upload tests/fixtures/images  # creates the bucket and uploads the smoke test image
 #   pnpm test:smoke:images
+#   pnpm images:upload ~/path/to/ABLO         # optional: upload the full image set
 #
 # Defaults match the local values in `.env.local.example`. To use other values, run
 # `docker compose --env-file .env.local up -d --wait`.
 #
-# The `rustfs-init` service creates the bucket and uploads `tests/fixtures/images` on every start.
 # imgproxy is configured like the shared ACDH instance (https://github.com/acdh-oeaw/imgproxy-helm):
 # WebP negotiation only, and sources up to 50 megapixels.
 
@@ -34,30 +34,11 @@ services:
       timeout: 2s
       retries: 30
 
-  rustfs-init:
-    image: amazon/aws-cli:2.40.2
-    depends_on:
-      rustfs:
-        condition: service_healthy
-    environment:
-      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY:-rustfsadmin}
-      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY:-rustfsadmin}
-      AWS_REGION: us-east-1
-      AWS_ENDPOINT_URL: http://rustfs:9000
-      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-bruckner-online-lexikon}
-    volumes:
-      - ./tests/fixtures/images:/fixtures:ro
-    entrypoint: ["sh", "-c"]
-    command:
-      - >-
-        aws s3api head-bucket --bucket "$$S3_BUCKET_NAME" 2>/dev/null || aws s3 mb
-        "s3://$$S3_BUCKET_NAME"; aws s3 sync --no-progress /fixtures "s3://$$S3_BUCKET_NAME"
-
   imgproxy:
     image: darthsim/imgproxy:v4.0.24
     depends_on:
-      rustfs-init:
-        condition: service_completed_successfully
+      rustfs:
+        condition: service_healthy
     environment:
       AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY:-rustfsadmin}
       AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY:-rustfsadmin}
