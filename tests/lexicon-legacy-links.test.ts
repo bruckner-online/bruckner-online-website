@@ -116,6 +116,15 @@ void test("only images below the previous image folder are served by imgproxy", 
 	);
 });
 
+void test("short citations are replaced by the full citation", () => {
+	assert.equal(
+		rewriteLegacyLinks(
+			`<li><a class="shortCit" href="#">Göll.-A.<span class="fullCit">August Göllerich, Anton Bruckner</span></a> 2/1, S. 64</li>`,
+		),
+		`<li>August Göllerich, Anton Bruckner 2/1, S. 64</li>`,
+	);
+});
+
 void test("links to other sites and relative links are left unchanged", () => {
 	const html = [
 		`<a href="d1e5337">Article</a>`,

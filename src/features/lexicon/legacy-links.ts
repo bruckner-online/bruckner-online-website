@@ -6,6 +6,12 @@ const origin = /^https?:\/\/(?:www\.)?bruckner-online\.at(?=[/?#]|$)/i;
 const link = /(<a\b[^>]*?\shref=")([^"]*)("[^>]*>)([^<]*)/gi;
 const image = /<img\b([^>]*?)\ssrc="https?:\/\/(?:www\.)?bruckner-online\.at(\/[^"]*)"([^>]*)>/gi;
 const source = /(\ssrc=")https?:\/\/(?:www\.)?bruckner-online\.at(?=\/)/gi;
+/**
+ * Short citations are dead `href="#"` links with the full citation in a nested span, meant
+ * for a tooltip. The full citation replaces them.
+ */
+const citation =
+	/<a class="shortCit" href="#">([^<]*)<span class="fullCit">([^<]*)<\/span>([^<]*)<\/a>/gi;
 
 /** Images of the previous site lived below this path; object keys are the paths below it. */
 const imagesPath = "/bilder_ablo/";
@@ -68,7 +74,11 @@ function resolve(url: URL, text: string): string {
 export function rewriteLegacyLinks(html: string, options: RewriteOptions = {}): string {
 	const { imageUrl } = options;
 
-	const linked = html.replace(
+	const cited = html.replace(citation, (_match, _short: string, full: string) => {
+		return full.trim();
+	});
+
+	const linked = cited.replace(
 		link,
 		(match, before: string, href: string, after: string, text: string) => {
 			if (!origin.test(href)) {
