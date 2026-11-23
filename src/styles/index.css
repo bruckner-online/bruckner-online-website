@@ -298,6 +298,11 @@ div[data-slug="werkverzeichnis/werksystematik"] ul {
 	@apply grid grid-cols-1 gap-x-8 md:grid-cols-[4fr_1fr];
 }
 
+/* Category links of the Lexikon API are adjacent anchors without whitespace between them. */
+#categories-container > div {
+	@apply flex flex-wrap gap-x-3;
+}
+
 /* datatables */
 
 .datatable-sorter {
