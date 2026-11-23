@@ -51,9 +51,13 @@ export const env = createEnv({
 				),
 				EMAIL_SMTP_SERVER: v.pipe(v.string(), v.nonEmpty()),
 				EMAIL_SMTP_USERNAME: v.optional(v.pipe(v.string(), v.nonEmpty())),
+				IMGPROXY_BASE_URL: v.optional(v.pipe(v.string(), v.url())),
+				IMGPROXY_KEY: v.optional(v.pipe(v.string(), v.hexadecimal())),
+				IMGPROXY_SALT: v.optional(v.pipe(v.string(), v.hexadecimal())),
 				KEYSTATIC_GITHUB_CLIENT_ID: v.optional(v.pipe(v.string(), v.nonEmpty())),
 				KEYSTATIC_GITHUB_CLIENT_SECRET: v.optional(v.pipe(v.string(), v.nonEmpty())),
 				KEYSTATIC_SECRET: v.optional(v.pipe(v.string(), v.nonEmpty())),
+				S3_BUCKET_NAME: v.optional(v.pipe(v.string(), v.nonEmpty())),
 			});
 
 			return parse(schema, environment);

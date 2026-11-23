@@ -1,0 +1,84 @@
+# Local object storage and image processing for Lexikon images.
+#
+#   docker compose up -d --wait
+#   pnpm images:upload ~/path/to/ABLO        # optional: upload the full image set
+#   pnpm test:smoke:images
+#
+# Defaults match the local values in `.env.local.example`. To use other values, run
+# `docker compose --env-file .env.local up -d --wait`.
+#
+# The `rustfs-init` service creates the bucket and uploads `tests/fixtures/images` on every start.
+# imgproxy is configured like the shared ACDH instance (https://github.com/acdh-oeaw/imgproxy-helm):
+# WebP negotiation only, and sources up to 50 megapixels.
+
+name: bruckner-online-images
+
+services:
+  rustfs:
+    image: rustfs/rustfs:1.0.5
+    environment:
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY:-rustfsadmin}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY:-rustfsadmin}
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_VOLUMES: /data
+    ports:
+      - "127.0.0.1:${S3_PORT:-9000}:9000"
+      - "127.0.0.1:${RUSTFS_WEB_UI_PORT:-9001}:9001"
+    volumes:
+      - rustfs-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9000/health/ready"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  rustfs-init:
+    image: amazon/aws-cli:2.40.2
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY:-rustfsadmin}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY:-rustfsadmin}
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT_URL: http://rustfs:9000
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-bruckner-online-lexikon}
+    volumes:
+      - ./tests/fixtures/images:/fixtures:ro
+    entrypoint: ["sh", "-c"]
+    command:
+      - >-
+        aws s3api head-bucket --bucket "$$S3_BUCKET_NAME" 2>/dev/null || aws s3 mb
+        "s3://$$S3_BUCKET_NAME"; aws s3 sync --no-progress /fixtures "s3://$$S3_BUCKET_NAME"
+
+  imgproxy:
+    image: darthsim/imgproxy:v4.0.24
+    depends_on:
+      rustfs-init:
+        condition: service_completed_successfully
+    environment:
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY:-rustfsadmin}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY:-rustfsadmin}
+      AWS_EC2_METADATA_DISABLED: "true"
+      IMGPROXY_USE_S3: "true"
+      IMGPROXY_S3_ENDPOINT: http://rustfs:9000
+      IMGPROXY_ALLOWED_SOURCES: s3://
+      IMGPROXY_KEY: ${IMGPROXY_KEY:-dacf85e6b235049d4b2b1b4fe92de8654bb089bbd7331f330ef75f533076bbef}
+      IMGPROXY_SALT: ${IMGPROXY_SALT:-c35ebfa16f4924cda219f8ac18e803ae617e8d41bc9c19f00a38a340704b6827}
+      # As on the shared ACDH instance.
+      IMGPROXY_AUTO_WEBP: "true"
+      IMGPROXY_MAX_SRC_RESOLUTION: "50"
+      IMGPROXY_DOWNLOAD_TIMEOUT: "7"
+      IMGPROXY_TIMEOUT: "9"
+    ports:
+      - "127.0.0.1:${IMGPROXY_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "imgproxy", "health"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+volumes:
+  rustfs-data:
