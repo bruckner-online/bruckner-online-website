@@ -23,6 +23,7 @@ The website brings together several research services and datasets:
 | Matomo                                                  | Analytics                       | `PUBLIC_MATOMO_BASE_URL`, `PUBLIC_MATOMO_ID`           | In the browser                                                                           |
 | SMTP server                                             | Contact form delivery           | `EMAIL_SMTP_*`, `EMAIL_CONTACT_ADDRESS`                | Request time                                                                             |
 | GitHub (Keystatic)                                      | Content editing at `/keystatic` | `PUBLIC_KEYSTATIC_*`, `KEYSTATIC_*`                    | Editing only                                                                             |
+| imgproxy and S3 bucket                                  | Lexikon article images          | `IMGPROXY_*`, `S3_BUCKET_NAME`                         | In the browser. See [Lexikon images](#lexikon-images).                                   |
 
 ### When a service is unavailable
 
@@ -135,6 +136,42 @@ routes and facsimile filenames are preserved. Resolving the collisions requires 
 and URL migration.
 
 CI uses the same Docker builder for validation and deployment builds.
+
+## Lexikon images
+
+Lexikon articles reference images that the previous site served from `/bilder_ablo/`, outside the
+Lexikon API. They are stored in an S3 bucket, with the paths below `/bilder_ablo/` as object keys
+(e.g. `notenbeispiele/Example.png`), and served through the shared ACDH
+[imgproxy](https://github.com/acdh-oeaw/imgproxy-helm) instance, which resizes them and serves WebP
+to browsers that accept it. Article pages rewrite the image links to signed imgproxy URLs with a
+`srcset` for the text or media column. This needs `IMGPROXY_BASE_URL`, `IMGPROXY_KEY`,
+`IMGPROXY_SALT`, and `S3_BUCKET_NAME` at runtime; without them, links keep their old, unavailable
+paths.
+
+`compose.yaml` runs RustFS (S3 API on port 9000, web UI on 9001) and imgproxy (port 8080) locally,
+configured like the shared instance. The local values in `.env.local.example` match these services.
+Uploading the smoke test image also creates the bucket:
+
+```sh
+docker compose up -d --wait
+pnpm images:upload tests/fixtures/images
+pnpm test:smoke:images
+```
+
+To upload and check the full image set (about 700 MB), point the scripts at the image directory:
+
+```sh
+pnpm images:upload ~/path/to/ABLO
+pnpm images:check ~/path/to/ABLO
+```
+
+`images:upload` uploads image files only, and requires NFC-normalized file names, since article
+markup percent-encodes NFC names and imgproxy uses object keys as given. imgproxy rejects sources
+above 50 megapixels, so larger images (some scans reach 100 megapixels) are downscaled to fit before
+upload, keeping key and format. Later runs skip unchanged files. The script reads the `S3_*`
+variables, and `images:check` and the smoke tests read the `IMGPROXY_*` variables and
+`S3_BUCKET_NAME`, from the environment or `.env.local`. To target the production bucket and
+imgproxy, set them in the environment, and run `images:check` after uploading.
 
 ## Bibliography search
 

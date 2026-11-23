@@ -65,6 +65,57 @@ void test("images on the previous site become relative", () => {
 	);
 });
 
+void test("images on the previous site are served by imgproxy when configured", () => {
+	const image = "/bilder_ablo/notenbeispiele/Gedenkst%C3%A4tten%20Alter%20Dom%20Tafel.png";
+	const imageUrl = (key: string, { width, height = 0 }: { width: number; height?: number }) => {
+		return `https://images.example.org/${String(width)}x${String(height)}/${key}`;
+	};
+	const url = (size: string) => {
+		return `https://images.example.org/${size}/notenbeispiele/Gedenkstätten Alter Dom Tafel.png`;
+	};
+	const figure = `<a href="http://www.bruckner-online.at${image}" target="_blank"><img src="http://www.bruckner-online.at${image}"></a>`;
+	const srcset = [320, 640, 960, 1280, 1920]
+		.map((width) => {
+			return `${url(`${String(width)}x0`)} ${String(width)}w`;
+		})
+		.join(", ");
+	const expected = (sizes: string) => {
+		return [
+			`<a href="${url("2560x2560")}" target="_blank">`,
+			`<img src="${url("960x0")}" srcset="${srcset}" sizes="${sizes}" loading="lazy" decoding="async">`,
+			`</a>`,
+		].join("");
+	};
+	const text =
+		"(min-width: 74rem) 845px, (min-width: 48rem) calc((100vw - 128px) * 0.8), calc(100vw - 96px)";
+	const media =
+		"(min-width: 74rem) 211px, (min-width: 48rem) calc((100vw - 128px) * 0.2), calc(100vw - 96px)";
+
+	assert.equal(rewriteLegacyLinks(figure, { imageUrl }), expected(text));
+	assert.equal(
+		rewriteLegacyLinks(`<div>${figure}</div><div id="medienleiste">${figure}</div>`, { imageUrl }),
+		`<div>${expected(text)}</div><div id="medienleiste">${expected(media)}</div>`,
+	);
+});
+
+void test("only images below the previous image folder are served by imgproxy", () => {
+	const imageUrl = () => {
+		return "https://images.example.org/";
+	};
+	assert.equal(
+		rewriteLegacyLinks(`<img src="http://www.bruckner-online.at/wp-content/a.png" alt="">`, {
+			imageUrl,
+		}),
+		`<img src="/wp-content/a.png" alt="">`,
+	);
+	assert.equal(
+		rewriteLegacyLinks(`<a href="http://www.bruckner-online.at/?page_id=1913">Text</a>`, {
+			imageUrl,
+		}),
+		`<a href="/anton-bruckner-2024">Text</a>`,
+	);
+});
+
 void test("links to other sites and relative links are left unchanged", () => {
 	const html = [
 		`<a href="d1e5337">Article</a>`,
