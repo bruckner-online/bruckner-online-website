@@ -21,9 +21,8 @@ ingress:
   path: "/"
   className: "traefik"
   annotations:
-    acme.cert-manager.io/http01-ingress-ingressclassname: "traefik"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    traefik.ingress.kubernetes.io/router.middlewares: kube-system-global-error-pages@kubernetescrd,kube-system-compress@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-redirect-https@kubernetescrd,kube-system-global-error-pages@kubernetescrd,kube-system-compress@kubernetescrd
 livenessProbe:
   path: /health
   initialDelaySeconds: 15
